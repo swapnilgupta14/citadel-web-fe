@@ -7,41 +7,41 @@ function App() {
     queryKey: ['welcome'],
     queryFn: async () => {
       await new Promise((resolve) => setTimeout(resolve, 1000))
-      return { message: 'Welcome to your modern React app! 🚀' }
+      return { message: 'Welcome to your mobile app! 📱' }
     },
   })
 
   const features = [
     { icon: Zap, text: 'Vite for blazing fast builds', color: 'text-yellow-600' },
-    { icon: Package, text: 'PNPM for fast package management', color: 'text-orange-600' },
-    { icon: Code, text: 'React Query for data management', color: 'text-blue-600' },
-    { icon: Palette, text: 'Tailwind CSS for styling', color: 'text-cyan-600' },
-    { icon: Rocket, text: 'Framer Motion for animations', color: 'text-purple-600' },
-    { icon: TestTube, text: 'Vitest + ESLint + Prettier', color: 'text-green-600' },
+    { icon: Package, text: 'PNPM for fast packages', color: 'text-orange-600' },
+    { icon: Code, text: 'React Query for data', color: 'text-blue-600' },
+    { icon: Palette, text: 'Tailwind CSS styling', color: 'text-cyan-600' },
+    { icon: Rocket, text: 'Framer Motion animations', color: 'text-purple-600' },
+    { icon: TestTube, text: 'Vitest + ESLint', color: 'text-green-600' },
   ]
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 p-4">
+    <div className="flex h-full flex-col bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 p-6">
+      {/* Mobile App Header */}
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
+        initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="w-full max-w-2xl rounded-2xl bg-white p-8 shadow-xl"
+        className="mb-6"
       >
-        <motion.h1
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.2 }}
-          className="mb-4 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-4xl font-bold text-transparent"
-        >
-          React + TypeScript + Tailwind
-        </motion.h1>
+        <h1 className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-3xl font-bold text-transparent">
+          Mobile React App
+        </h1>
+        <p className="mt-1 text-sm text-gray-600">Optimized for mobile screens</p>
+      </motion.div>
 
+      {/* Scrollable Content Area */}
+      <div className="flex-1 overflow-y-auto">
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.3 }}
-          className="mb-6 space-y-2"
+          className="space-y-3"
         >
           {features.map((feature, index) => (
             <motion.div
@@ -49,45 +49,58 @@ function App() {
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.4 + index * 0.1 }}
-              className="flex items-center gap-2 text-gray-700"
+              className="flex items-center gap-3 rounded-xl bg-white p-4 shadow-sm"
             >
-              <feature.icon className={`h-5 w-5 ${feature.color}`} />
-              <span>{feature.text}</span>
+              <div className="flex-shrink-0">
+                <feature.icon className={`h-6 w-6 ${feature.color}`} />
+              </div>
+              <span className="text-sm font-medium text-gray-700">{feature.text}</span>
             </motion.div>
           ))}
         </motion.div>
 
-        {isLoading ? (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="text-primary-600 flex items-center gap-2"
-          >
-            <Loader2 className="animate-spin" />
-            <span>Loading...</span>
-          </motion.div>
-        ) : error ? (
-          <div className="text-red-600">Error loading data</div>
-        ) : (
-          <motion.div
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            transition={{ delay: 0.8, type: 'spring' }}
-            className="border-primary-100 rounded-lg border bg-gradient-to-r from-blue-50 to-purple-50 p-4"
-          >
-            <p className="text-primary-900 font-medium">{data?.message}</p>
-          </motion.div>
-        )}
+        {/* Status Card */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.8 }}
+          className="mt-6"
+        >
+          {isLoading ? (
+            <div className="flex items-center justify-center gap-2 rounded-xl bg-white p-6 shadow-sm">
+              <Loader2 className="h-5 w-5 animate-spin text-primary-600" />
+              <span className="text-sm text-gray-600">Loading...</span>
+            </div>
+          ) : error ? (
+            <div className="rounded-xl bg-red-50 p-6 shadow-sm">
+              <p className="text-sm text-red-600">Error loading data</p>
+            </div>
+          ) : (
+            <motion.div
+              initial={{ scale: 0.9 }}
+              animate={{ scale: 1 }}
+              transition={{ type: 'spring' }}
+              className="rounded-xl bg-gradient-to-r from-blue-50 to-purple-50 p-6 shadow-sm"
+            >
+              <p className="text-center text-sm font-medium text-primary-900">
+                {data?.message}
+              </p>
+            </motion.div>
+          )}
+        </motion.div>
 
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 1 }}
-          className="mt-6 text-center text-sm text-gray-500"
+          className="mt-6 rounded-xl bg-white p-4 text-center shadow-sm"
         >
-          Edit <code className="rounded bg-gray-100 px-2 py-1">src/App.tsx</code> to get started
+          <p className="text-xs text-gray-500">
+            Edit <code className="rounded bg-gray-100 px-2 py-1">src/App.tsx</code> to get
+            started
+          </p>
         </motion.div>
-      </motion.div>
+      </div>
     </div>
   )
 }

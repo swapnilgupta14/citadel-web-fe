@@ -27,6 +27,11 @@ export default {
           "sans-serif",
         ],
       },
+      screens: {
+        xs: "320px",
+        "sm-phone": "375px",
+        "lg-phone": "414px",
+      },
     },
   },
   plugins: [require("@tailwindcss/forms"), require("@tailwindcss/typography")],

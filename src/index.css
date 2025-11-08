@@ -3,7 +3,38 @@
 @tailwind utilities;
 
 @layer base {
+  html,
   body {
-    @apply antialiased;
+    @apply h-full overflow-hidden antialiased;
+  }
+
+  body {
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+  }
+
+  #root {
+    @apply h-full mx-auto bg-white;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  @media (min-width: 768px) {
+    body {
+      @apply bg-gray-100;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #root {
+      width: 100%;
+      max-width: 428px;
+      min-width: 320px;
+      overflow: hidden;
+      box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
+    }
   }
 }
