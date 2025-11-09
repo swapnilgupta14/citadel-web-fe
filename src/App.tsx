@@ -241,7 +241,7 @@ function App() {
   };
 
   const handleLoginEmailBack = () => {
-    setCurrentPage("signup");
+    setCurrentPage("connect");
   };
 
   const handleLoginEmailContinue = async (email: string) => {
