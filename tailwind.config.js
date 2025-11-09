@@ -11,16 +11,7 @@ export default {
         },
         primary: {
           DEFAULT: "#1BEA7B",
-          50: "#E6FFF3",
-          100: "#CCFFE7",
-          200: "#99FFCF",
-          300: "#66FFB7",
-          400: "#33FF9F",
-          500: "#1BEA7B",
-          600: "#15BB62",
-          700: "#108C49",
-          800: "#0B5D31",
-          900: "#052E18",
+          dark: "#133422",
         },
         border: {
           DEFAULT: "#1A1A1A",

@@ -1,6 +1,7 @@
 import { useRef } from "react";
 import { motion, useMotionValue, useTransform } from "framer-motion";
 import { ChevronRight } from "lucide-react";
+import { ImageGrid } from "../components/ui/ImageGrid";
 
 interface SignupPageProps {
   onComplete: () => void;
@@ -25,69 +26,24 @@ export const SignupPage = ({ onComplete }: SignupPageProps) => {
   return (
     <div className="flex h-full flex-col bg-background">
       <div className="flex-1 flex items-center justify-center relative px-4 min-h-0 py-4">
-        <motion.div
+        <ImageGrid
           style={{
             scale: imageScale,
             x: imageX,
-            aspectRatio: "1 / 1.3",
           }}
-          className="relative w-full max-h-[70%]"
-        >
-          <motion.div className="absolute top-[2%] left-[14%] w-20 h-[6.5rem] bg-background-secondary border border-border overflow-hidden rounded-[3.75rem]">
-            <img
-              src="/Splash/Rectangle1.png"
-              alt=""
-              className="w-full h-full object-cover"
-            />
-          </motion.div>
-
-          <motion.div className="absolute top-0 right-[8%] w-[9.375rem] h-[12.5rem] bg-background-secondary border border-border overflow-hidden rounded-[3.75rem]">
-            <img
-              src="/Splash/Rectangle2.png"
-              alt=""
-              className="w-full h-full object-cover"
-            />
-          </motion.div>
-
-          <motion.div className="absolute bottom-[2%] left-[4%] w-[9.375rem] h-[12.5rem] bg-background-secondary border border-border overflow-hidden rounded-[3.75rem]">
-            <img
-              src="/Splash/Rectangle3.png"
-              alt=""
-              className="w-full h-full object-cover"
-            />
-          </motion.div>
-
-          <motion.div className="absolute bottom-0 right-[14%] w-20 h-[6.5rem] bg-background-secondary border border-border overflow-hidden rounded-[3.75rem]">
-            <img
-              src="/Splash/Rectangle4.png"
-              alt=""
-              className="w-full h-full object-cover"
-            />
-          </motion.div>
-
-          <motion.div className="absolute top-[25%] left-[6%]">
-            <img src="/vector1.png" alt="" className="w-5 h-5" />
-          </motion.div>
-
-          <motion.div className="absolute top-[42%] left-[44%]">
-            <img src="/vector1.png" alt="" className="w-4 h-4" />
-          </motion.div>
-
-          <motion.div className="absolute bottom-[10%] right-[5%]">
-            <img src="/vector2.png" alt="" className="w-5 h-5" />
-          </motion.div>
-        </motion.div>
+          className="max-h-[70%]"
+        />
       </div>
 
       <div
-        className="flex flex-col justify-between rounded-t-[45px] p-6 pb-4"
+        className="flex flex-col justify-center rounded-t-[45px] p-6 gap-8"
         style={{
           minHeight: "38%",
           maxHeight: "48%",
           background: "linear-gradient(180deg, #111111 0%, #040404 100%)",
         }}
       >
-        <div className="flex flex-col items-center gap-2">
+        <div className="flex flex-col items-center gap-3">
           <div className="w-10 h-10">
             <img src="/logo.png" alt="Citadel" className="w-full h-full" />
           </div>

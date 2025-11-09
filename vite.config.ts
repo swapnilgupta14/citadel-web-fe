@@ -25,5 +25,13 @@ export default defineConfig({
   server: {
     port: 5173,
     open: true,
+    proxy: {
+      '/api': {
+        target: 'https://citadelbackend-3.onrender.com',
+        changeOrigin: true,
+        secure: true,
+        rewrite: (path) => path,
+      },
+    },
   },
 })
