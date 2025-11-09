@@ -30,12 +30,9 @@ export const SignupPage = ({ onComplete }: SignupPageProps) => {
             scale: imageScale,
             x: imageX,
           }}
-          className="relative w-full h-[350px]"
+          className="relative w-full h-[22rem]"
         >
-          <motion.div
-            className="absolute top-2 left-14 w-[80px] h-[105px] bg-background-secondary border border-border overflow-hidden"
-            style={{ borderRadius: "60px 60px 60px 60px" }}
-          >
+          <motion.div className="absolute top-2 left-14 w-20 h-[6.5rem] bg-background-secondary border border-border overflow-hidden rounded-[3.75rem]">
             <img
               src="/Splash/Rectangle1.png"
               alt=""
@@ -43,10 +40,7 @@ export const SignupPage = ({ onComplete }: SignupPageProps) => {
             />
           </motion.div>
 
-          <motion.div
-            className="absolute top-0 right-8 w-[150px] h-[200px] bg-background-secondary border border-border overflow-hidden"
-            style={{ borderRadius: "60px 60px 60px 60px" }}
-          >
+          <motion.div className="absolute top-0 right-8 w-[9.375rem] h-[12.5rem] bg-background-secondary border border-border overflow-hidden rounded-[3.75rem]">
             <img
               src="/Splash/Rectangle2.png"
               alt=""
@@ -54,10 +48,7 @@ export const SignupPage = ({ onComplete }: SignupPageProps) => {
             />
           </motion.div>
 
-          <motion.div
-            className="absolute top-40 left-4 w-[150px] h-[200px] bg-background-secondary border border-border overflow-hidden"
-            style={{ borderRadius: "60px 60px 60px 60px" }}
-          >
+          <motion.div className="absolute top-40 left-4 w-[9.375rem] h-[12.5rem] bg-background-secondary border border-border overflow-hidden rounded-[3.75rem]">
             <img
               src="/Splash/Rectangle3.png"
               alt=""
@@ -65,10 +56,7 @@ export const SignupPage = ({ onComplete }: SignupPageProps) => {
             />
           </motion.div>
 
-          <motion.div
-            className="absolute bottom-0 right-14 w-[80px] h-[105px] bg-background-secondary border border-border overflow-hidden"
-            style={{ borderRadius: "60px 60px 60px 60px" }}
-          >
+          <motion.div className="absolute bottom-0 right-14 w-20 h-[6.5rem] bg-background-secondary border border-border overflow-hidden rounded-[3.75rem]">
             <img
               src="/Splash/Rectangle4.png"
               alt=""
@@ -96,12 +84,12 @@ export const SignupPage = ({ onComplete }: SignupPageProps) => {
           background: "linear-gradient(180deg, #111111 0%, #040404 100%)",
         }}
       >
-        <div className="flex flex-col items-center space-y-3">
+        <div className="flex flex-col items-center gap-3">
           <div className="w-12 h-12">
             <img src="/logo.png" alt="Citadel" className="w-full h-full" />
           </div>
 
-          <h2 className="text-[36px] font-bold text-text-primary text-center font-serif">
+          <h2 className="text-[2.25rem] leading-tight font-bold text-text-primary text-center font-serif">
             i'm good, wby?
           </h2>
         </div>
@@ -132,13 +120,11 @@ export const SignupPage = ({ onComplete }: SignupPageProps) => {
           </motion.div>
         </div>
 
-        <div className="px-14">
-          <p className="text-center text-sm text-text-muted">
-            By signing in you accept our{" "}
-            <span className="underline">Terms of use</span> and{" "}
-            <span className="underline">Privacy policy</span>
-          </p>
-        </div>
+        <p className="text-center text-sm text-text-muted px-4">
+          By signing in you accept our{" "}
+          <span className="underline">Terms of use</span> and{" "}
+          <span className="underline">Privacy policy</span>
+        </p>
       </div>
     </div>
   );
