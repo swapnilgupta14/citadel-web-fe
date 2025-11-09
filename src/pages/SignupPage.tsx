@@ -82,8 +82,8 @@ export const SignupPage = ({ onComplete }: SignupPageProps) => {
       <div
         className="flex flex-col justify-between rounded-t-[45px] p-6 pb-4"
         style={{
-          minHeight: "35%",
-          maxHeight: "45%",
+          minHeight: "38%",
+          maxHeight: "48%",
           background: "linear-gradient(180deg, #111111 0%, #040404 100%)",
         }}
       >
