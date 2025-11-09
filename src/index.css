@@ -4,12 +4,7 @@
 
 @layer base {
   * {
-    font-family:
-      "Inter",
-      system-ui,
-      -apple-system,
-      BlinkMacSystemFont,
-      sans-serif;
+    font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
   }
 
   html,
@@ -32,6 +27,7 @@
 
   @media (min-width: 768px) {
     body {
+      @apply bg-background-secondary;
       display: flex;
       align-items: center;
       justify-content: center;

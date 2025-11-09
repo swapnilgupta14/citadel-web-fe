@@ -45,6 +45,7 @@ export default {
           "BlinkMacSystemFont",
           "sans-serif",
         ],
+        serif: ["Roboto Serif", "Georgia", "serif"],
       },
       screens: {
         xs: "320px",
