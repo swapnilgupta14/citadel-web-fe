@@ -3,11 +3,15 @@ import { env } from "../config/env";
 
 const isDevelopment = import.meta.env.DEV;
 
+// In production, use /api if VITE_API_BASE_URL is not set (Vercel deployment with rewrites)
+// Otherwise use the configured API base URL
 const baseURL = isDevelopment
     ? "/api"
-    : env.VITE_API_BASE_URL.endsWith("/api")
-        ? env.VITE_API_BASE_URL
-        : `${env.VITE_API_BASE_URL}/api`;
+    : env.VITE_API_BASE_URL && env.VITE_API_BASE_URL !== "http://localhost:8000/api"
+        ? (env.VITE_API_BASE_URL.endsWith("/api")
+            ? env.VITE_API_BASE_URL
+            : `${env.VITE_API_BASE_URL}/api`)
+        : "/api"; // Use /api for Vercel deployment (handled by rewrites)
 
 export const axiosInstance = axios.create({
     baseURL,

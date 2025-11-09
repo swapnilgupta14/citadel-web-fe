@@ -27,7 +27,11 @@ export default defineConfig({
     open: true,
     proxy: {
       '/api': {
-        target: 'https://citadelbackend-3.onrender.com',
+        target: process.env.VITE_API_BASE_URL
+          ? (process.env.VITE_API_BASE_URL.endsWith('/api')
+            ? process.env.VITE_API_BASE_URL.replace('/api', '')
+            : process.env.VITE_API_BASE_URL)
+          : '',
         changeOrigin: true,
         secure: true,
         rewrite: (path) => path,
