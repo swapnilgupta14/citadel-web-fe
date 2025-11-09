@@ -45,7 +45,7 @@ export const SignupPage = ({ onComplete }: SignupPageProps) => {
       >
         <div className="flex flex-col items-center gap-3">
           <div className="w-10 h-10">
-            <img src="/logo.png" alt="Citadel" className="w-full h-full" />
+            <img src="/logo.svg" alt="Citadel" className="w-full h-full" />
           </div>
 
           <h2 className="text-[2rem] leading-tight font-bold text-text-primary text-center font-serif">
