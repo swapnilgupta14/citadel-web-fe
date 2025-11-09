@@ -11,6 +11,7 @@ import type { UniversitySelectionPageProps } from "../types/pages";
 export const UniversitySelectionPage = ({
   onBack,
   onContinue,
+  initialUniversityId,
 }: UniversitySelectionPageProps) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
@@ -30,6 +31,17 @@ export const UniversitySelectionPage = ({
     limit: 50,
     offset: 0,
   });
+
+  useEffect(() => {
+    if (initialUniversityId && data?.universities && data.universities.length > 0) {
+      const university = data.universities.find((u) => u.id === initialUniversityId);
+      if (university) {
+        setSelectedUniversity(university);
+        setSearchQuery(university.name);
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialUniversityId, data?.universities]);
 
   const shouldShowResults = useMemo(() => {
     if (!searchQuery.trim()) return false;
@@ -136,7 +148,11 @@ export const UniversitySelectionPage = ({
       {!shouldShowResults && (
         <div className="px-6 py-4 pb-6">
           <Button
-            onClick={isContinueEnabled ? onContinue : undefined}
+            onClick={
+              isContinueEnabled && selectedUniversity
+                ? () => onContinue(selectedUniversity.id)
+                : undefined
+            }
             disabled={!isContinueEnabled}
             variant={isContinueEnabled ? "primary" : "disabled"}
           >

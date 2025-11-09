@@ -1,15 +1,36 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "../components/ui/Button";
 import type { DateOfBirthPageProps } from "../types/pages";
+import { dateOfBirthSchema } from "../lib/validations";
 
 export const DateOfBirthPage = ({
   onBack,
   onContinue,
+  initialDateOfBirth,
 }: DateOfBirthPageProps) => {
-  const [day, setDay] = useState("");
-  const [month, setMonth] = useState("");
-  const [year, setYear] = useState("");
+  const parseDateOfBirth = (dob?: string) => {
+    if (!dob) return { day: "", month: "", year: "" };
+    const parts = dob.split("-");
+    if (parts.length === 3) {
+      return { year: parts[0], month: parts[1], day: parts[2] };
+    }
+    return { day: "", month: "", year: "" };
+  };
+
+  const initialValues = parseDateOfBirth(initialDateOfBirth);
+  const [day, setDay] = useState(initialValues.day);
+  const [month, setMonth] = useState(initialValues.month);
+  const [year, setYear] = useState(initialValues.year);
+
+  useEffect(() => {
+    const parsed = parseDateOfBirth(initialDateOfBirth);
+    setDay(parsed.day);
+    setMonth(parsed.month);
+    setYear(parsed.year);
+  }, [initialDateOfBirth]);
+  const [error, setError] = useState<string | null>(null);
+  const [touched, setTouched] = useState(false);
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
   const handleDayChange = (value: string) => {
@@ -86,22 +107,33 @@ export const DateOfBirthPage = ({
     },
   ];
 
-  const isValid =
-    day.length === 2 &&
-    month.length === 2 &&
-    year.length === 4 &&
-    parseInt(day) >= 1 &&
-    parseInt(day) <= 31 &&
-    parseInt(month) >= 1 &&
-    parseInt(month) <= 12 &&
-    parseInt(year) >= 1900 &&
-    parseInt(year) <= new Date().getFullYear();
+  const validateDateOfBirth = () => {
+    const result = dateOfBirthSchema.safeParse({ day, month, year });
+    if (!result.success) {
+      const firstError = result.error.issues[0];
+      setError(firstError.message);
+      return false;
+    }
+    setError(null);
+    return true;
+  };
 
   const handleContinue = () => {
-    if (isValid) {
+    setTouched(true);
+    if (validateDateOfBirth()) {
       onContinue({ day, month, year });
     }
   };
+
+  const isComplete = day.length === 2 && month.length === 2 && year.length === 4;
+  
+  const isDateValid = () => {
+    if (!isComplete) return false;
+    const result = dateOfBirthSchema.safeParse({ day, month, year });
+    return result.success;
+  };
+  
+  const isValid = isDateValid();
 
   return (
     <div className="flex h-full flex-col bg-background">
@@ -118,7 +150,7 @@ export const DateOfBirthPage = ({
         </h1>
       </div>
 
-      <div className="flex-1 flex flex-col px-4 py-4 min-h-0">
+      <div className="flex-1 flex flex-col px-4 py-4 min-h-0 gap-2">
         <div className="flex gap-3">
           {dateInputs.map((input) => (
             <input
@@ -131,15 +163,33 @@ export const DateOfBirthPage = ({
               inputMode="numeric"
               maxLength={input.maxLength}
               value={input.value}
-              onChange={(e) => input.onChange(e.target.value)}
+              onChange={(e) => {
+                input.onChange(e.target.value);
+                if (touched && isComplete) {
+                  validateDateOfBirth();
+                }
+              }}
               onKeyDown={(e) => handleKeyDown(input.index, e)}
+              onBlur={() => {
+                if (isComplete) {
+                  setTouched(true);
+                  validateDateOfBirth();
+                }
+              }}
               placeholder={input.placeholder}
-              className={`${input.width} h-[50px] px-2 py-2 bg-button-search rounded-2xl border border-border placeholder:text-text-secondary focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-center ${
+              className={`${input.width} h-[50px] px-2 py-2 bg-button-search rounded-2xl border placeholder:text-text-secondary focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-center ${
                 input.value ? "text-text-primary" : "text-text-secondary"
+              } ${
+                error && touched
+                  ? "border-red-500 focus:ring-red-500"
+                  : "border-border"
               }`}
             />
           ))}
         </div>
+        {error && touched && (
+          <p className="text-sm text-red-500 px-1">{error}</p>
+        )}
       </div>
 
       <div className="px-6 py-4 pb-6">

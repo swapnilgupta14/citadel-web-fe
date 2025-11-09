@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { SearchBar } from "../components/ui/SearchBar";
 import { Button } from "../components/ui/Button";
 import type { DegreeSelectionPageProps } from "../types/pages";
+import { degreeSchema, yearSchema } from "../lib/validations";
 
 const MOCK_DEGREES = [
   "Computer Science",
@@ -28,11 +29,26 @@ const MOCK_DEGREES = [
 export const DegreeSelectionPage = ({
   onBack,
   onContinue,
+  initialDegree,
+  initialYear,
 }: DegreeSelectionPageProps) => {
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState(initialDegree || "");
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
-  const [selectedDegree, setSelectedDegree] = useState<string | null>(null);
-  const [selectedYear, setSelectedYear] = useState<string | null>(null);
+  const [selectedDegree, setSelectedDegree] = useState<string | null>(initialDegree || null);
+  const [selectedYear, setSelectedYear] = useState<string | null>(initialYear || null);
+
+  useEffect(() => {
+    if (initialDegree) {
+      setSelectedDegree(initialDegree);
+      setSearchQuery(initialDegree);
+    }
+    if (initialYear) {
+      setSelectedYear(initialYear);
+    }
+  }, [initialDegree, initialYear]);
+  const [degreeError, setDegreeError] = useState<string | null>(null);
+  const [yearError, setYearError] = useState<string | null>(null);
+  const [touched, setTouched] = useState(false);
 
   useEffect(() => {
     if (searchQuery.trim()) {
@@ -62,10 +78,6 @@ export const DegreeSelectionPage = ({
 
   const hasResults = filteredDegrees.length > 0;
 
-  const handleSelectDegree = (degree: string) => {
-    setSelectedDegree(degree);
-    setSearchQuery(degree);
-  };
 
   const handleSearchChange = (value: string) => {
     setSearchQuery(value);
@@ -75,7 +87,70 @@ export const DegreeSelectionPage = ({
     }
   };
 
-  const isContinueEnabled = selectedDegree !== null && selectedYear !== null;
+  const validateDegree = (value: string | null) => {
+    if (value === null) {
+      setDegreeError("Please select a degree");
+      return false;
+    }
+    const result = degreeSchema.safeParse(value);
+    if (!result.success) {
+      setDegreeError(result.error.issues[0].message);
+      return false;
+    }
+    setDegreeError(null);
+    return true;
+  };
+
+  const validateYear = (value: string | null) => {
+    if (value === null) {
+      setYearError("Please select a year");
+      return false;
+    }
+    const result = yearSchema.safeParse(value);
+    if (!result.success) {
+      setYearError(result.error.issues[0].message);
+      return false;
+    }
+    setYearError(null);
+    return true;
+  };
+
+  const handleSelectDegree = (degree: string) => {
+    setSelectedDegree(degree);
+    setSearchQuery(degree);
+    if (touched) {
+      validateDegree(degree);
+    }
+  };
+
+  const handleSelectYear = (year: string) => {
+    setSelectedYear(year);
+    if (touched) {
+      validateYear(year);
+    }
+  };
+
+  const handleContinue = () => {
+    setTouched(true);
+    const isDegreeValid = validateDegree(selectedDegree);
+    const isYearValid = validateYear(selectedYear);
+
+    if (isDegreeValid && isYearValid && selectedDegree && selectedYear) {
+      onContinue({
+        degree: selectedDegree,
+        year: selectedYear,
+      });
+    }
+  };
+
+  const isDegreeValid = () => {
+    if (!selectedDegree || !selectedYear) return false;
+    const degreeResult = degreeSchema.safeParse(selectedDegree);
+    const yearResult = yearSchema.safeParse(selectedYear);
+    return degreeResult.success && yearResult.success;
+  };
+
+  const isContinueEnabled = isDegreeValid();
 
   const years = ["1st", "2nd", "3rd", "4th", "5th"];
 
@@ -114,25 +189,32 @@ export const DegreeSelectionPage = ({
               <label className="block text-text-primary mb-3 text-base">
                 Year
               </label>
-              <div className="flex gap-3">
-                {years.map((year) => (
-                  <motion.button
-                    key={year}
-                    onClick={() => setSelectedYear(year)}
-                    layout
-                    transition={{
-                      duration: 0.2,
-                      ease: "easeOut",
-                    }}
-                    className={`w-[3.5rem] px-4 py-2 rounded-lg text-sm font-medium border transition-all duration-200 ease-out ${
-                      selectedYear === year
-                        ? "bg-primary text-background border-transparent"
-                        : "bg-button-search text-text-primary border-border"
-                    }`}
-                  >
-                    {year}
-                  </motion.button>
-                ))}
+              <div className="flex flex-col gap-2">
+                <div className="flex gap-3">
+                  {years.map((year) => (
+                    <motion.button
+                      key={year}
+                      onClick={() => handleSelectYear(year)}
+                      layout
+                      transition={{
+                        duration: 0.2,
+                        ease: "easeOut",
+                      }}
+                      className={`w-[3.5rem] px-4 py-2 rounded-lg text-sm font-medium border transition-all duration-200 ease-out ${
+                        selectedYear === year
+                          ? "bg-primary text-background border-transparent"
+                          : yearError && touched
+                          ? "bg-button-search text-text-primary border-red-500"
+                          : "bg-button-search text-text-primary border-border"
+                      }`}
+                    >
+                      {year}
+                    </motion.button>
+                  ))}
+                </div>
+                {yearError && touched && (
+                  <p className="text-sm text-red-500 px-1">{yearError}</p>
+                )}
               </div>
             </motion.div>
           )}
@@ -168,16 +250,11 @@ export const DegreeSelectionPage = ({
 
       {!shouldShowResults && (
         <div className="px-6 py-4 pb-6">
+          {degreeError && touched && (
+            <p className="text-sm text-red-500 mb-2 px-1">{degreeError}</p>
+          )}
           <Button
-            onClick={
-              isContinueEnabled
-                ? () =>
-                    onContinue({
-                      degree: selectedDegree!,
-                      year: selectedYear!,
-                    })
-                : undefined
-            }
+            onClick={handleContinue}
             disabled={!isContinueEnabled}
             variant={isContinueEnabled ? "primary" : "disabled"}
           >

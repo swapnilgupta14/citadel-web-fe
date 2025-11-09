@@ -17,7 +17,7 @@ export const ConnectPage = ({ onContinue }: ConnectPageProps) => {
           />
         </div>
 
-        <div className="flex flex-col justify-between px-6 py-4 pb-6 items-center gap-6 min-h-fit">
+        <div className="flex flex-col justify-between px-6 py-4 pb-10 items-center gap-6 min-h-fit">
           <div className="flex flex-col items-center">
             <h1 className="text-3xl sm:text-4xl leading-tight font-bold text-text-primary text-center font-serif">
               Connect with students across universities
@@ -31,17 +31,27 @@ export const ConnectPage = ({ onContinue }: ConnectPageProps) => {
             Let's go
           </button>
 
-          <p className="text-center text-sm text-text-secondary">
+          <button
+            onClick={() => {
+              const event = new CustomEvent("navigateToLogin");
+              window.dispatchEvent(event);
+            }}
+            className="text-center text-sm text-text-secondary active:opacity-70 transition-opacity"
+          >
             Already a user?{" "}
-            <span className="text-text-primary underline font-medium cursor-pointer">
+            <span className="text-text-primary underline font-medium">
               Login
             </span>
-          </p>
+          </button>
         </div>
       </div>
 
-      <div className="h-[15%] min-h-[80px] max-h-[120px] overflow-hidden pointer-events-none bg-primary">
-        <span></span>
+      <div className="h-[15%] min-h-[80px] max-h-[120px] overflow-visible pointer-events-none relative">
+        <img
+          src="/Splash/waves.svg"
+          alt=""
+          className="absolute inset-0 h-full object-none w-full overflow-visible"
+        />
       </div>
     </div>
   );

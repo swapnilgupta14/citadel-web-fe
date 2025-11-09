@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "../components/ui/Button";
-import type { EmailEntryPageProps } from "../types/pages";
+import type { LoginEmailPageProps } from "../types/pages";
 import { emailSchema } from "../lib/validations";
 
-export const EmailEntryPage = ({ onBack, onContinue, initialEmail = "" }: EmailEntryPageProps) => {
+export const LoginEmailPage = ({ onBack, onContinue, initialEmail = "" }: LoginEmailPageProps) => {
   const [email, setEmail] = useState(initialEmail);
   const [error, setError] = useState<string | null>(null);
   const [touched, setTouched] = useState(false);
@@ -60,7 +60,7 @@ export const EmailEntryPage = ({ onBack, onContinue, initialEmail = "" }: EmailE
           <ArrowLeft className="w-6 h-6 text-text-primary" strokeWidth={2} />
         </button>
         <h1 className="text-3xl sm-phone:text-4xl leading-tight font-bold text-text-primary font-serif">
-          Your email
+          Login
         </h1>
       </div>
 
@@ -70,7 +70,7 @@ export const EmailEntryPage = ({ onBack, onContinue, initialEmail = "" }: EmailE
           value={email}
           onChange={(e) => handleEmailChange(e.target.value)}
           onBlur={handleBlur}
-          placeholder="Sign up with your university email ID."
+          placeholder="Enter your email address"
           className={`w-full h-11 px-4 py-2.5 bg-button-search rounded-lg border text-text-secondary placeholder:text-text-secondary focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent ${
             error && touched
               ? "border-red-500 focus:ring-red-500"
@@ -94,3 +94,4 @@ export const EmailEntryPage = ({ onBack, onContinue, initialEmail = "" }: EmailE
     </div>
   );
 };
+

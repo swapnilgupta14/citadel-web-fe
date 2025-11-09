@@ -1,15 +1,15 @@
 import { useState, useEffect, useRef } from "react";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "../components/ui/Button";
-import type { OTPEntryPageProps } from "../types/pages";
+import type { LoginOTPPageProps } from "../types/pages";
 import { otpSchema } from "../lib/validations";
 
-export const OTPEntryPage = ({
-  //   email,
+export const LoginOTPPage = ({
+  email,
   onBack,
   onContinue,
   onResendOTP,
-}: OTPEntryPageProps) => {
+}: LoginOTPPageProps) => {
   const [otp, setOtp] = useState(["", "", "", ""]);
   const [resendTimer, setResendTimer] = useState(30);
   const [error, setError] = useState<string | null>(null);
@@ -52,28 +52,17 @@ export const OTPEntryPage = ({
     }
   };
 
-  const handlePaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
+  const handlePaste = (e: React.ClipboardEvent) => {
     e.preventDefault();
     const pastedData = e.clipboardData.getData("text").slice(0, 4);
-    if (/^\d+$/.test(pastedData)) {
-      const newOtp = [...otp];
-      for (let i = 0; i < pastedData.length && i < 4; i++) {
+    if (/^\d{1,4}$/.test(pastedData)) {
+      const newOtp = ["", "", "", ""];
+      for (let i = 0; i < pastedData.length; i++) {
         newOtp[i] = pastedData[i];
       }
       setOtp(newOtp);
-      const nextEmptyIndex = newOtp.findIndex((val) => !val);
-      if (nextEmptyIndex !== -1) {
-        inputRefs.current[nextEmptyIndex]?.focus();
-      } else {
-        inputRefs.current[3]?.focus();
-      }
-    }
-  };
-
-  const handleResend = () => {
-    if (resendTimer === 0) {
-      setResendTimer(30);
-      onResendOTP();
+      const nextIndex = Math.min(pastedData.length, 3);
+      inputRefs.current[nextIndex]?.focus();
     }
   };
 
@@ -126,58 +115,52 @@ export const OTPEntryPage = ({
         <h1 className="text-3xl sm-phone:text-4xl leading-tight font-bold text-text-primary font-serif">
           Enter OTP
         </h1>
+        <p className="text-sm text-text-secondary mt-2">
+          We sent a code to {email}
+        </p>
       </div>
 
-      <div className="flex-1 flex flex-col px-4 py-4 min-h-0">
-        <div className="flex gap-3 justify-start">
-          {otp.map((digit, index) => (
-            <input
-              key={index}
-              ref={(el) => {
-                inputRefs.current[index] = el;
-              }}
-              type="text"
-              inputMode="numeric"
-              maxLength={1}
-              value={digit}
-              onChange={(e) => {
-                handleOTPChange(index, e.target.value);
-                if (!touched && e.target.value) {
-                  setTouched(true);
-                }
-              }}
-              onKeyDown={(e) => handleKeyDown(index, e)}
-              onPaste={handlePaste}
-              onBlur={() => {
-                if (isOTPComplete) {
-                  setTouched(true);
-                  validateOTP();
-                }
-              }}
-              className={`w-16 h-16 text-center text-2xl font-semibold bg-button-search rounded-3xl border text-text-primary focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent ${
-                error && touched
-                  ? "border-red-500 focus:ring-red-500"
-                  : "border-border"
-              }`}
-            />
-          ))}
+      <div className="flex-1 flex flex-col px-4 py-4 min-h-0 gap-6">
+        <div className="flex flex-col gap-4">
+          <div className="flex gap-3 justify-center">
+            {otp.map((digit, index) => (
+              <input
+                key={index}
+                ref={(el) => {
+                  inputRefs.current[index] = el;
+                }}
+                type="text"
+                inputMode="numeric"
+                maxLength={1}
+                value={digit}
+                onChange={(e) => handleOTPChange(index, e.target.value)}
+                onKeyDown={(e) => handleKeyDown(index, e)}
+                onPaste={handlePaste}
+                className={`w-14 h-14 text-center text-2xl font-bold bg-button-search rounded-lg border text-text-primary focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent ${
+                  error && touched
+                    ? "border-red-500 focus:ring-red-500"
+                    : "border-border"
+                }`}
+              />
+            ))}
+          </div>
+          {error && touched && (
+            <p className="text-sm text-red-500 text-center px-1">{error}</p>
+          )}
         </div>
-        {error && touched && (
-          <p className="text-sm text-red-500 mt-4 px-1">{error}</p>
-        )}
 
-        <div className="mt-6">
+        <div className="flex flex-col items-center gap-4 mt-auto">
           <button
-            onClick={handleResend}
+            onClick={onResendOTP}
             disabled={resendTimer > 0}
             className={`text-sm ${
               resendTimer > 0
-                ? "text-text-secondary cursor-not-allowed"
-                : "text-text-primary underline cursor-pointer"
+                ? "text-text-muted cursor-not-allowed"
+                : "text-primary active:opacity-70 transition-opacity"
             }`}
           >
             {resendTimer > 0
-              ? `Resend OTP in ${resendTimer} seconds`
+              ? `Resend OTP in ${resendTimer}s`
               : "Resend OTP"}
           </button>
         </div>
@@ -195,3 +178,4 @@ export const OTPEntryPage = ({
     </div>
   );
 };
+
