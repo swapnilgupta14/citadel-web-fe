@@ -24,7 +24,7 @@ export const SignupPage = ({ onComplete }: SignupPageProps) => {
 
   return (
     <div className="flex h-full flex-col bg-background">
-      <div className="flex-1 flex items-center justify-center relative px-5">
+      <div className="flex-1 flex items-center justify-center relative px-4">
         <motion.div
           style={{
             scale: imageScale,
