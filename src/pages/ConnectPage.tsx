@@ -6,15 +6,15 @@ interface ConnectPageProps {
 
 export const ConnectPage = ({ onContinue }: ConnectPageProps) => {
   return (
-    <div className="relative flex h-full flex-col bg-background">
-      <div className="flex flex-col h-[85%] relative z-10">
-        <div className="flex-1 flex items-center justify-center relative px-4 min-h-0 py-4">
+    <div className="relative flex h-full flex-col bg-background overflow-hidden">
+      <div className="flex flex-col flex-1 relative z-10 min-h-0">
+        <div className="flex-1 flex items-center justify-center relative px-4 py-4 min-h-0">
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.5 }}
-            className="relative w-full max-h-[70%]"
-            style={{ aspectRatio: "1 / 1.3" }}
+            className="relative w-full max-w-full max-h-full"
+            style={{ aspectRatio: "1 / 1.3", maxHeight: "70%" }}
           >
             <motion.div className="absolute top-[2%] left-[14%] w-20 h-[6.5rem] bg-background-secondary border border-border overflow-hidden rounded-[3.75rem]">
               <img
@@ -62,25 +62,16 @@ export const ConnectPage = ({ onContinue }: ConnectPageProps) => {
           </motion.div>
         </div>
 
-        <motion.div
-          initial={{ y: 100, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-          className="flex flex-col justify-between p-6 pb-4 items-center mb-4 gap-8"
-          style={{
-            minHeight: "35%",
-            maxHeight: "45%",
-          }}
-        >
+        <div className="flex flex-col justify-between px-6 py-4 pb-6 items-center gap-6 min-h-fit">
           <div className="flex flex-col items-center">
-            <h1 className="text-[36px] leading-tight font-bold text-text-primary text-center font-serif">
+            <h1 className="text-3xl sm:text-4xl leading-tight font-bold text-text-primary text-center font-serif">
               Connect with students across universities
             </h1>
           </div>
 
           <button
             onClick={onContinue}
-            className="w-[80%] h-14 bg-primary rounded-full flex items-center justify-center text-background text-lg font-semibold shadow-lg active:scale-95 transition-transform"
+            className="w-4/5 min-h-[3.5rem] bg-primary rounded-full flex items-center justify-center text-background text-lg font-semibold shadow-lg active:scale-95 transition-transform"
           >
             Let's go
           </button>
@@ -91,10 +82,10 @@ export const ConnectPage = ({ onContinue }: ConnectPageProps) => {
               Login
             </span>
           </p>
-        </motion.div>
+        </div>
       </div>
 
-      <div className="absolute bottom-0 left-0 right-0 h-[15%] overflow-hidden pointer-events-none z-0 bg-primary">
+      <div className="h-[15%] min-h-[80px] max-h-[120px] overflow-hidden pointer-events-none bg-primary">
         <span></span>
       </div>
     </div>
