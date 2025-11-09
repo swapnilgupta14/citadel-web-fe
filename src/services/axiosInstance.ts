@@ -1,27 +1,10 @@
 import axios from "axios";
-import { env } from "../config/env";
 
 const isDevelopment = import.meta.env.DEV;
 
 const baseURL = isDevelopment
     ? "/api"
-    : (() => {
-        const apiBaseUrl = env.VITE_API_BASE_URL;
-
-        if (apiBaseUrl &&
-            apiBaseUrl !== '' &&
-            apiBaseUrl !== 'http://localhost:8000/api' &&
-            !apiBaseUrl.includes('localhost')) {
-            const base = apiBaseUrl.endsWith("/api")
-                ? apiBaseUrl
-                : `${apiBaseUrl}/api`;
-            console.log('Using direct API URL:', base);
-            return base;
-        }
-
-        console.log('Using relative API path - requests will be proxied through Vercel rewrites');
-        return "/api";
-    })();
+    : "/api";
 
 export const axiosInstance = axios.create({
     baseURL,
