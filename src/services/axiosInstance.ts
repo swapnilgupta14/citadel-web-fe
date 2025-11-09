@@ -1,4 +1,5 @@
 import axios from "axios";
+import { auth } from "../lib/auth";
 
 const isDevelopment = import.meta.env.DEV;
 
@@ -16,6 +17,10 @@ export const axiosInstance = axios.create({
 
 axiosInstance.interceptors.request.use(
     (config) => {
+        const accessToken = auth.getAccessToken();
+        if (accessToken && config.headers) {
+            config.headers.Authorization = `Bearer ${accessToken}`;
+        }
         return config;
     },
     (error) => {

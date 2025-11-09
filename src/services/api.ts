@@ -61,8 +61,7 @@ export const authApi = {
 
 export const profileApi = {
     createProfile: async (
-        data: CreateProfileData,
-        accessToken: string
+        data: CreateProfileData
     ): Promise<CreateProfileResponse> => {
         const response = await axiosInstance.post<CreateProfileResponse>(
             "/v1/users/profile",
@@ -73,11 +72,6 @@ export const profileApi = {
                 universityId: data.universityId,
                 degree: data.degree,
                 year: parseInt(data.year.replace(/\D/g, "")) || parseInt(data.year) || 1,
-            },
-            {
-                headers: {
-                    Authorization: `Bearer ${accessToken}`,
-                },
             }
         );
         return response.data;

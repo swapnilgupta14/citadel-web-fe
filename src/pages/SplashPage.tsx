@@ -1,18 +1,29 @@
 import { useEffect } from "react";
 import { motion } from "framer-motion";
+import { auth } from "../lib/auth";
 
 interface SplashPageProps {
   onComplete: () => void;
+  onAuthenticated: () => void;
 }
 
-export const SplashPage = ({ onComplete }: SplashPageProps) => {
+export const SplashPage = ({
+  onComplete,
+  onAuthenticated,
+}: SplashPageProps) => {
   useEffect(() => {
-    const timer = setTimeout(() => {
-      onComplete();
-    }, 2500);
-
-    return () => clearTimeout(timer);
-  }, [onComplete]);
+    if (auth.isAuthenticated()) {
+      const timer = setTimeout(() => {
+        onAuthenticated();
+      }, 1500);
+      return () => clearTimeout(timer);
+    } else {
+      const timer = setTimeout(() => {
+        onComplete();
+      }, 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [onComplete, onAuthenticated]);
 
   return (
     <motion.div
