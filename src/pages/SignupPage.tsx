@@ -31,7 +31,7 @@ export const SignupPage = ({ onComplete }: SignupPageProps) => {
             x: imageX,
             aspectRatio: "1 / 1.3",
           }}
-          className="relative w-[90%] max-h-[70%]"
+          className="relative w-full max-h-[70%]"
         >
           <motion.div className="absolute top-[2%] left-[14%] w-20 h-[6.5rem] bg-background-secondary border border-border overflow-hidden rounded-[3.75rem]">
             <img
