@@ -4,18 +4,37 @@ export default {
   theme: {
     extend: {
       colors: {
+        background: {
+          DEFAULT: "#000000",
+          secondary: "#111111",
+          tertiary: "#2C2C2C",
+        },
         primary: {
-          50: "#eff6ff",
-          100: "#dbeafe",
-          200: "#bfdbfe",
-          300: "#93c5fd",
-          400: "#60a5fa",
-          500: "#3b82f6",
-          600: "#2563eb",
-          700: "#1d4ed8",
-          800: "#1e40af",
-          900: "#1e3a8a",
-          950: "#172554",
+          DEFAULT: "#1BEA7B",
+          50: "#E6FFF3",
+          100: "#CCFFE7",
+          200: "#99FFCF",
+          300: "#66FFB7",
+          400: "#33FF9F",
+          500: "#1BEA7B",
+          600: "#15BB62",
+          700: "#108C49",
+          800: "#0B5D31",
+          900: "#052E18",
+        },
+        border: {
+          DEFAULT: "#1A1A1A",
+        },
+        slider: {
+          bg: "#161616",
+        },
+        button: {
+          search: "rgba(255, 255, 255, 0.16)",
+        },
+        text: {
+          primary: "#FFFFFF",
+          secondary: "rgba(255, 255, 255, 0.7)",
+          muted: "#2C2C2C",
         },
       },
       fontFamily: {

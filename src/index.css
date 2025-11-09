@@ -3,9 +3,18 @@
 @tailwind utilities;
 
 @layer base {
+  * {
+    font-family:
+      "Inter",
+      system-ui,
+      -apple-system,
+      BlinkMacSystemFont,
+      sans-serif;
+  }
+
   html,
   body {
-    @apply h-full overflow-hidden antialiased;
+    @apply h-full overflow-hidden antialiased bg-background text-text-primary;
   }
 
   body {
@@ -16,14 +25,13 @@
   }
 
   #root {
-    @apply h-full mx-auto bg-white;
+    @apply h-full mx-auto bg-background;
     width: 100%;
     max-width: 100%;
   }
 
   @media (min-width: 768px) {
     body {
-      @apply bg-gray-100;
       display: flex;
       align-items: center;
       justify-content: center;
