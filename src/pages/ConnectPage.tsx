@@ -1,4 +1,5 @@
 import { ImageGrid } from "../components/ui/ImageGrid";
+import { Button } from "../components/ui/Button";
 
 interface ConnectPageProps {
   onContinue: () => void;
@@ -24,12 +25,11 @@ export const ConnectPage = ({ onContinue }: ConnectPageProps) => {
             </h1>
           </div>
 
-          <button
-            onClick={onContinue}
-            className="w-4/5 min-h-[3.5rem] bg-primary rounded-full flex items-center justify-center text-background text-lg font-semibold shadow-lg active:scale-95 transition-transform"
-          >
-            Let's go
-          </button>
+          <div className="w-4/5">
+            <Button onClick={onContinue} variant="primary">
+              Let's go
+            </Button>
+          </div>
 
           <button
             onClick={() => {

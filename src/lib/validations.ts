@@ -4,31 +4,31 @@ export const emailSchema = z
     .string()
     .min(1, "Email is required")
     .email("Please enter a valid email address")
-    .refine(
-        (email) => {
-            const emailLower = email.toLowerCase().trim();
-            const domain = emailLower.split("@")[1];
+    // .refine(
+    //     (email) => {
+    //         const emailLower = email.toLowerCase().trim();
+    //         const domain = emailLower.split("@")[1];
 
-            if (!domain) {
-                return false;
-            }
+    //         if (!domain) {
+    //             return false;
+    //         }
 
-            const universityDomains = [
-                ".edu",
-                ".ac.in",
-                ".edu.in",
-                ".ac.uk",
-                ".edu.au",
-            ];
+    //         const universityDomains = [
+    //             ".edu",
+    //             ".ac.in",
+    //             ".edu.in",
+    //             ".ac.uk",
+    //             ".edu.au",
+    //         ];
 
-            return universityDomains.some((univDomain) =>
-                domain.endsWith(univDomain)
-            );
-        },
-        {
-            message: "Please use your university email address (e.g., @university.edu)",
-        }
-    );
+    //         return universityDomains.some((univDomain) =>
+    //             domain.endsWith(univDomain)
+    //         );
+    //     },
+    //     {
+    //         message: "Please use your university email address (e.g., @university.edu)",
+    //     }
+    // );
 
 export const otpSchema = z
     .string()

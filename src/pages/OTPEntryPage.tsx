@@ -5,10 +5,12 @@ import type { OTPEntryPageProps } from "../types/pages";
 import { otpSchema } from "../lib/validations";
 
 export const OTPEntryPage = ({
-  //   email,
+  email,
   onBack,
   onContinue,
   onResendOTP,
+  isLoading = false,
+  isResending = false,
 }: OTPEntryPageProps) => {
   const [otp, setOtp] = useState(["", "", "", ""]);
   const [resendTimer, setResendTimer] = useState(30);
@@ -126,10 +128,15 @@ export const OTPEntryPage = ({
         <h1 className="text-3xl sm-phone:text-4xl leading-tight font-bold text-text-primary font-serif">
           Enter OTP
         </h1>
+        {email && (
+          <p className="text-sm text-text-secondary mt-2">
+            We sent a code to {email}
+          </p>
+        )}
       </div>
 
       <div className="flex-1 flex flex-col px-4 py-4 min-h-0">
-        <div className="flex gap-3 justify-start">
+        <div className="flex gap-3">
           {otp.map((digit, index) => (
             <input
               key={index}
@@ -169,16 +176,27 @@ export const OTPEntryPage = ({
         <div className="mt-6">
           <button
             onClick={handleResend}
-            disabled={resendTimer > 0}
-            className={`text-sm ${
-              resendTimer > 0
+            disabled={resendTimer > 0 || isResending}
+            className={`text-sm flex items-center gap-2 ${
+              resendTimer > 0 || isResending
                 ? "text-text-secondary cursor-not-allowed"
                 : "text-text-primary underline cursor-pointer"
             }`}
           >
-            {resendTimer > 0
-              ? `Resend OTP in ${resendTimer} seconds`
-              : "Resend OTP"}
+            {isResending ? (
+              <>
+                <span className="flex gap-1">
+                  <span className="w-1 h-1 rounded-full bg-text-secondary animate-bounce" style={{ animationDelay: "0ms", animationDuration: "600ms" }} />
+                  <span className="w-1 h-1 rounded-full bg-text-secondary animate-bounce" style={{ animationDelay: "150ms", animationDuration: "600ms" }} />
+                  <span className="w-1 h-1 rounded-full bg-text-secondary animate-bounce" style={{ animationDelay: "300ms", animationDuration: "600ms" }} />
+                </span>
+                Resending...
+              </>
+            ) : resendTimer > 0 ? (
+              `Resend OTP in ${resendTimer} seconds`
+            ) : (
+              "Resend OTP"
+            )}
           </button>
         </div>
       </div>
@@ -188,6 +206,7 @@ export const OTPEntryPage = ({
           onClick={handleContinue}
           disabled={!isOTPValid()}
           variant={isOTPValid() ? "primary" : "disabled"}
+          isLoading={isLoading}
         >
           Continue
         </Button>

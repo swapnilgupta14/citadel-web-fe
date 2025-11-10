@@ -4,7 +4,7 @@ import { Button } from "../components/ui/Button";
 import type { LoginEmailPageProps } from "../types/pages";
 import { emailSchema } from "../lib/validations";
 
-export const LoginEmailPage = ({ onBack, onContinue, initialEmail = "" }: LoginEmailPageProps) => {
+export const LoginEmailPage = ({ onBack, onContinue, initialEmail = "", isLoading = false }: LoginEmailPageProps) => {
   const [email, setEmail] = useState(initialEmail);
   const [error, setError] = useState<string | null>(null);
   const [touched, setTouched] = useState(false);
@@ -87,6 +87,7 @@ export const LoginEmailPage = ({ onBack, onContinue, initialEmail = "" }: LoginE
           onClick={handleContinue}
           disabled={!isEmailValid()}
           variant={isEmailValid() ? "primary" : "disabled"}
+          isLoading={isLoading}
         >
           Continue
         </Button>

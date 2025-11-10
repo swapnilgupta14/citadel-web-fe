@@ -5,7 +5,6 @@ import { SignupPage } from "./pages/SignupPage";
 import { EmailEntryPage } from "./pages/EmailEntryPage";
 import { OTPEntryPage } from "./pages/OTPEntryPage";
 import { LoginEmailPage } from "./pages/LoginEmailPage";
-import { LoginOTPPage } from "./pages/LoginOTPPage";
 import { ConnectPage } from "./pages/ConnectPage";
 import { UniversitySelectionPage } from "./pages/UniversitySelectionPage";
 import { WhoAreYouPage } from "./pages/WhoAreYouPage";
@@ -30,6 +29,7 @@ function App() {
     accessToken,
     userEmail,
     isLoading: authLoading,
+    isResending,
     sendOTP,
     verifyOTP,
     resendOTP,
@@ -96,8 +96,6 @@ function App() {
     }
   };
 
-  const isLoading = authLoading || signupLoading;
-
   return (
     <MobileLayout>
       <AnimatePresence mode="wait">
@@ -120,15 +118,18 @@ function App() {
           onBack={loginHandlers.handleLoginEmailBack}
           onContinue={handleLoginEmailContinue}
           initialEmail={userEmail}
+          isLoading={authLoading}
         />
       )}
 
       {currentPage === "loginOTP" && (
-        <LoginOTPPage
+        <OTPEntryPage
           email={userEmail}
           onBack={loginHandlers.handleLoginOTPBack}
           onContinue={handleLoginOTPContinue}
           onResendOTP={handleLoginResendOTP}
+          isLoading={authLoading}
+          isResending={isResending}
         />
       )}
 
@@ -149,6 +150,7 @@ function App() {
           onBack={signupHandlers.handleEmailBack}
           onContinue={handleEmailContinue}
           initialEmail={userEmail}
+          isLoading={authLoading}
         />
       )}
 
@@ -158,6 +160,8 @@ function App() {
           onBack={signupHandlers.handleOTPBack}
           onContinue={handleOTPContinue}
           onResendOTP={handleResendOTP}
+          isLoading={authLoading}
+          isResending={isResending}
         />
       )}
 
@@ -179,19 +183,13 @@ function App() {
       )}
 
       {currentPage === "degree" && (
-        <>
-          {isLoading && (
-            <div className="fixed inset-0 bg-background/80 flex items-center justify-center z-50">
-              <div className="text-text-primary">Creating your profile...</div>
-            </div>
-          )}
-          <DegreeSelectionPage
-            onBack={signupHandlers.handleDegreeBack}
-            onContinue={handleDegreeContinue}
-            initialDegree={signupData.degree}
-            initialYear={signupData.year}
-          />
-        </>
+        <DegreeSelectionPage
+          onBack={signupHandlers.handleDegreeBack}
+          onContinue={handleDegreeContinue}
+          initialDegree={signupData.degree}
+          initialYear={signupData.year}
+          isLoading={signupLoading}
+        />
       )}
 
       <AnimatePresence mode="wait">

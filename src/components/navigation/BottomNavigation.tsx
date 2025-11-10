@@ -1,6 +1,4 @@
 import { Calendar, Search, User } from "lucide-react";
-import type { Page } from "../../hooks/useNavigation";
-
 interface BottomNavigationProps {
   activePage: "events" | "explore" | "profile";
   onNavigate: (page: "events" | "explore" | "profile") => void;
@@ -29,7 +27,7 @@ export const BottomNavigation = ({
   ];
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 h-[92px] bg-background border-t border-border z-50">
+    <nav className="fixed bottom-0 left-0 right-0 md:left-1/2 md:right-auto md:-translate-x-1/2 md:max-w-[393px] w-full h-[92px] bg-background border-t border-border z-50">
       <div className="flex items-center justify-around h-full px-4 pb-6 pt-2 relative">
         {navItems.map((item) => {
           const Icon = item.icon;
@@ -62,4 +60,3 @@ export const BottomNavigation = ({
     </nav>
   );
 };
-

@@ -8,6 +8,7 @@ export type EmailEntryPageProps = {
   onBack: () => void;
   onContinue: (email: string) => void;
   initialEmail?: string;
+  isLoading?: boolean;
 };
 
 export type OTPEntryPageProps = {
@@ -15,6 +16,8 @@ export type OTPEntryPageProps = {
   onBack: () => void;
   onContinue: (otp: string) => void;
   onResendOTP: () => void;
+  isLoading?: boolean;
+  isResending?: boolean;
 };
 
 export type WhoAreYouPageProps = {
@@ -35,6 +38,7 @@ export type DegreeSelectionPageProps = {
   onContinue: (data: { degree: string; year: string }) => void;
   initialDegree?: string;
   initialYear?: string;
+  isLoading?: boolean;
 };
 
 export type SuccessPageProps = {
@@ -45,6 +49,7 @@ export type LoginEmailPageProps = {
   onBack: () => void;
   onContinue: (email: string) => void;
   initialEmail?: string;
+  isLoading?: boolean;
 };
 
 export type LoginOTPPageProps = {

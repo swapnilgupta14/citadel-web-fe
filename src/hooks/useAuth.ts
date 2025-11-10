@@ -7,6 +7,7 @@ export const useAuth = () => {
     const [accessToken, setAccessToken] = useState<string | null>(null);
     const [userEmail, setUserEmail] = useState("");
     const [isLoading, setIsLoading] = useState(false);
+    const [isResending, setIsResending] = useState(false);
 
     useEffect(() => {
         const savedAccessToken = auth.getAccessToken();
@@ -56,7 +57,7 @@ export const useAuth = () => {
     };
 
     const resendOTP = async (email: string) => {
-        setIsLoading(true);
+        setIsResending(true);
         try {
             await authApi.sendOTP(email);
             showToast.success("OTP resent successfully!");
@@ -64,7 +65,7 @@ export const useAuth = () => {
             const errorMessage = handleApiError(err);
             showToast.error(errorMessage);
         } finally {
-            setIsLoading(false);
+            setIsResending(false);
         }
     };
 
@@ -72,6 +73,7 @@ export const useAuth = () => {
         accessToken,
         userEmail,
         isLoading,
+        isResending,
         sendOTP,
         verifyOTP,
         resendOTP,

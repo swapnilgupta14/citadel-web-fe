@@ -24,8 +24,8 @@ const pageVariants = {
 
 const pageTransition = {
   type: "tween" as const,
-  ease: "easeInOut" as const,
-  duration: 0.3,
+  ease: "easeOut" as const,
+  duration: 0.15,
 };
 
 export const ProtectedPagesLayout = () => {

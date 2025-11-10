@@ -31,6 +31,7 @@ export const DegreeSelectionPage = ({
   onContinue,
   initialDegree,
   initialYear,
+  isLoading = false,
 }: DegreeSelectionPageProps) => {
   const [searchQuery, setSearchQuery] = useState(initialDegree || "");
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
@@ -257,6 +258,7 @@ export const DegreeSelectionPage = ({
             onClick={handleContinue}
             disabled={!isContinueEnabled}
             variant={isContinueEnabled ? "primary" : "disabled"}
+            isLoading={isLoading}
           >
             Continue
           </Button>
