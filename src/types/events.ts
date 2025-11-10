@@ -30,3 +30,26 @@ export interface City {
     comingSoon?: boolean;
 }
 
+export interface DinnerPreferences {
+    city: string;
+    preferredAreas: string[];
+    language?: string[];
+    dietaryRestriction?: string;
+    hasCompletedSetup: boolean;
+}
+
+export interface DinnerPreferencesResponse {
+    success: boolean;
+    data: {
+        hasCompletedSetup: boolean;
+        preferences: DinnerPreferences;
+    };
+}
+
+export interface UpdatePreferencesRequest {
+    city?: string;
+    preferredAreas?: string[];
+    language?: string[];
+    dietaryRestriction?: string;
+}
+

@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { type AxiosError, type InternalAxiosRequestConfig } from "axios";
 import { auth } from "../lib/storage/auth";
 import { env } from "../config/env";
 
@@ -37,11 +37,70 @@ axiosInstance.interceptors.request.use(
     }
 );
 
+let isRefreshing = false;
+let failedRequestsQueue: Array<{
+    resolve: (value: string | null) => void;
+    reject: (reason: unknown) => void;
+}> = [];
+
+const processQueue = (error: unknown = null, token: string | null = null) => {
+    failedRequestsQueue.forEach(({ resolve, reject }) => {
+        if (error) {
+            reject(error);
+        } else {
+            resolve(token);
+        }
+    });
+    failedRequestsQueue = [];
+};
+
+export const handleLogout = () => {
+    console.log("Session expired. Logging out...");
+    auth.clearAll();
+
+    if (window.location.pathname !== "/connect") {
+        window.location.href = "/connect";
+    }
+};
+
+const refreshAccessToken = async (): Promise<string | null> => {
+    try {
+        const response = await axios.post(
+            `${baseURL}/v1/auth/refresh`,
+            {},
+            {
+                withCredentials: true,
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            }
+        );
+
+        if (response.data?.success && response.data?.tokens?.accessToken) {
+            const newAccessToken = response.data.tokens.accessToken;
+            const refreshToken = response.data.tokens.refreshToken || auth.getRefreshToken();
+
+            if (refreshToken) {
+                auth.setTokens(newAccessToken, refreshToken);
+            }
+
+            return newAccessToken;
+        }
+
+        return null;
+    } catch (error) {
+        console.error("Token refresh failed:", error);
+        return null;
+    }
+};
+
 axiosInstance.interceptors.response.use(
     (response) => {
         return response;
     },
-    (error) => {
+    async (error: AxiosError) => {
+        const originalRequest = error.config as InternalAxiosRequestConfig & { _retry?: boolean };
+
         if (!error.response && error.request) {
             const isCorsError = error.code === 'ERR_NETWORK' ||
                 error.message?.includes('CORS') ||
@@ -69,17 +128,71 @@ axiosInstance.interceptors.response.use(
                 baseURL: error.config?.baseURL,
             });
             return Promise.reject(new Error("Network error. Please check your connection."));
-        } else if (error.response) {
+        }
+
+        if (error.response && (error.response.status === 401 || error.response.status === 403)) {
+            if (originalRequest?.url?.includes('/auth/refresh')) {
+                handleLogout();
+                return Promise.reject(error);
+            }
+
+            if (originalRequest._retry) {
+                handleLogout();
+                return Promise.reject(error);
+            }
+
+            if (isRefreshing) {
+                return new Promise((resolve, reject) => {
+                    failedRequestsQueue.push({ resolve, reject });
+                })
+                    .then((token) => {
+                        if (originalRequest.headers) {
+                            originalRequest.headers.Authorization = `Bearer ${token}`;
+                        }
+                        return axiosInstance(originalRequest);
+                    })
+                    .catch((err) => Promise.reject(err));
+            }
+
+            originalRequest._retry = true;
+            isRefreshing = true;
+
+            try {
+                const newToken = await refreshAccessToken();
+
+                if (newToken) {
+                    if (originalRequest.headers) {
+                        originalRequest.headers.Authorization = `Bearer ${newToken}`;
+                    }
+
+                    processQueue(null, newToken);
+                    return axiosInstance(originalRequest);
+                } else {
+                    processQueue(new Error("Token refresh failed"), null);
+                    handleLogout();
+                    return Promise.reject(new Error("Session expired. Please login again."));
+                }
+            } catch (refreshError) {
+                processQueue(refreshError, null);
+                handleLogout();
+                return Promise.reject(refreshError);
+            } finally {
+                isRefreshing = false;
+            }
+        }
+
+        if (error.response) {
+            const errorData = error.response.data as { message?: string } | undefined;
             return Promise.reject(
                 new Error(
-                    error.response.data?.message ||
+                    errorData?.message ||
                     error.response.statusText ||
                     "Request failed"
                 )
             );
-        } else {
-            return Promise.reject(error);
         }
+
+        return Promise.reject(error);
     }
 );
 

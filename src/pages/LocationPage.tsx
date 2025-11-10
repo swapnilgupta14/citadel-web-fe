@@ -8,18 +8,20 @@ import { ImageWithPlaceholder } from "../components/ui/ImageWithPlaceholder";
 interface LocationPageProps {
   onBack: () => void;
   onSelectCity: (city: City) => void;
+  onNavigateToAreaSelection: (city: City) => void;
   selectedCityId?: string;
 }
 
 export const LocationPage = ({
   onBack,
   onSelectCity,
+  onNavigateToAreaSelection,
   selectedCityId,
 }: LocationPageProps) => {
   const handleCitySelect = (city: City) => {
     if (city.isAvailable) {
       onSelectCity(city);
-      onBack();
+      onNavigateToAreaSelection(city);
     }
   };
 

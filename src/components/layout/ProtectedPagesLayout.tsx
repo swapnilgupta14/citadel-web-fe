@@ -6,12 +6,15 @@ import { ExplorePage } from "../../pages/ExplorePage";
 import { EventsPage } from "../../pages/EventsPage";
 import { ProfilePage } from "../../pages/ProfilePage";
 import { LocationPage } from "../../pages/LocationPage";
+import { AreaSelectionPage } from "../../pages/AreaSelectionPage";
 import type { City } from "../../types/events";
 import {
   navigationPersistence,
   type ProtectedPage,
 } from "../../lib/storage/navigationPersistence";
 import { getLandmarkImage } from "../../lib/helpers/eventUtils";
+import { showToast } from "../../lib/helpers/toast";
+import { useUpdateDinnerPreferences } from "../../hooks/queries";
 
 const defaultCity: City = {
   id: "new-delhi",
@@ -24,10 +27,11 @@ export const ProtectedPagesLayout = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
+  const updatePreferencesMutation = useUpdateDinnerPreferences();
+
   const getInitialCity = (): City => {
     const persistedCity = navigationPersistence.getSelectedCity();
     if (persistedCity) {
-      // Normalize city name: if id is "new-delhi" but name is "Delhi", update to "New Delhi"
       const normalizedName =
         persistedCity.id === "new-delhi" && persistedCity.name === "Delhi"
           ? "New Delhi"
@@ -48,6 +52,8 @@ export const ProtectedPagesLayout = () => {
   const [selectedCity, setSelectedCity] = useState<City | undefined>(
     selectedCityRef.current
   );
+
+  const [tempCity, setTempCity] = useState<City | undefined>();
 
   const getCurrentPageFromPath = (path: string): ProtectedPage => {
     if (path === "/events") return "events";
@@ -91,18 +97,51 @@ export const ProtectedPagesLayout = () => {
     navigate(path);
   };
 
-  const handleSelectCity = (city: City) => {
-    selectedCityRef.current = city;
-    navigationPersistence.saveSelectedCity({
-      id: city.id,
-      name: city.name,
-      landmarkImage: city.landmarkImage,
-      isAvailable: city.isAvailable,
-      comingSoon: city.comingSoon,
-    });
+  const handleNavigateToAreaSelection = (city: City) => {
+    setTempCity(city);
+    navigate("/area-selection");
+  };
 
-    setSelectedCity(city);
-    navigate(-1);
+  const handleSelectCity = (city: City) => {
+    setTempCity(city);
+  };
+
+  const handleAreaSelectionComplete = async (selectedAreas: string[]) => {
+    if (!tempCity) return;
+
+    try {
+      await updatePreferencesMutation.mutateAsync({
+        city: tempCity.name,
+        preferredAreas: selectedAreas,
+      });
+
+      selectedCityRef.current = tempCity;
+      navigationPersistence.saveSelectedCity({
+        id: tempCity.id,
+        name: tempCity.name,
+        landmarkImage: tempCity.landmarkImage,
+        isAvailable: tempCity.isAvailable,
+        comingSoon: tempCity.comingSoon,
+      });
+
+      setSelectedCity(tempCity);
+      setTempCity(undefined);
+
+      showToast.success("Location updated successfully!");
+      navigate("/events");
+    } catch (error) {
+      console.error("Error saving preferences:", error);
+      showToast.error("Failed to update location. Please try again.");
+    }
+  };
+
+  const handleAreaSelectionBack = () => {
+    navigate("/location");
+  };
+
+  const handleAreaSelectionClose = () => {
+    setTempCity(undefined);
+    navigate("/events");
   };
 
   return (
@@ -114,7 +153,18 @@ export const ProtectedPagesLayout = () => {
               key="location"
               onBack={() => navigate(-1)}
               onSelectCity={handleSelectCity}
+              onNavigateToAreaSelection={handleNavigateToAreaSelection}
               selectedCityId={selectedCity?.id}
+            />
+          ) : location.pathname === "/area-selection" ? (
+            <AreaSelectionPage
+              key="area-selection"
+              cityId={tempCity?.id || ""}
+              cityName={tempCity?.name || ""}
+              onBack={handleAreaSelectionBack}
+              onClose={handleAreaSelectionClose}
+              onContinue={handleAreaSelectionComplete}
+              isLoading={updatePreferencesMutation.isPending}
             />
           ) : (
             <div className="h-full pb-[92px]">
@@ -144,12 +194,13 @@ export const ProtectedPagesLayout = () => {
           )}
         </AnimatePresence>
       </div>
-      {location.pathname !== "/location" && (
-        <BottomNavigation
-          activePage={currentPage}
-          onNavigate={handleNavigate}
-        />
-      )}
+      {location.pathname !== "/location" &&
+        location.pathname !== "/area-selection" && (
+          <BottomNavigation
+            activePage={currentPage}
+            onNavigate={handleNavigate}
+          />
+        )}
     </div>
   );
 };

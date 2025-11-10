@@ -4,7 +4,31 @@ export type UserData = {
   isProfileComplete: boolean;
 };
 
+type JwtPayload = {
+  exp?: number;
+  iat?: number;
+  sub?: string;
+  [key: string]: unknown;
+};
+
 const USER_DATA_KEY = "citadel_user_data";
+
+const parseJwt = (token: string): JwtPayload | null => {
+  try {
+    const base64Url = token.split('.')[1];
+    if (!base64Url) return null;
+    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    const jsonPayload = decodeURIComponent(
+      atob(base64)
+        .split('')
+        .map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+        .join('')
+    );
+    return JSON.parse(jsonPayload) as JwtPayload;
+  } catch {
+    return null;
+  }
+};
 
 export const auth = {
   getAccessToken: (): string | null => {
@@ -50,10 +74,27 @@ export const auth = {
   clearAll: () => {
     auth.clearTokens();
     auth.clearUserData();
+    localStorage.removeItem("citadel_selected_city");
+    localStorage.removeItem("citadel_current_page");
+    localStorage.removeItem("citadel_signup_data");
+    localStorage.removeItem("citadel_signup_email");
   },
 
   isAuthenticated: (): boolean => {
     return !!localStorage.getItem("accessToken");
+  },
+
+  isTokenExpired: (token: string, clockSkewSeconds: number = 30): boolean => {
+    const payload = parseJwt(token);
+    if (!payload || !payload.exp) return true;
+    const nowSeconds = Math.floor(Date.now() / 1000);
+    return nowSeconds >= (payload.exp - clockSkewSeconds);
+  },
+
+  isAccessTokenExpired: (): boolean => {
+    const token = auth.getAccessToken();
+    if (!token) return true;
+    return auth.isTokenExpired(token);
   },
 };
 

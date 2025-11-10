@@ -15,6 +15,8 @@ import type {
     AvailableSlotsResponse,
     BookEventRequest,
     BookEventResponse,
+    DinnerPreferencesResponse,
+    UpdatePreferencesRequest,
 } from "../types/events";
 
 export const universitiesApi = {
@@ -148,6 +150,35 @@ export const eventsApi = {
     ): Promise<BookEventResponse> => {
         const response = await axiosInstance.post<BookEventResponse>(
             "/v1/events/book",
+            data
+        );
+        return response.data;
+    },
+};
+
+export const dinnerPreferencesApi = {
+    getPreferences: async (): Promise<DinnerPreferencesResponse> => {
+        const response = await axiosInstance.get<DinnerPreferencesResponse>(
+            "/v1/dinner-preferences"
+        );
+        return response.data;
+    },
+
+    updatePreferences: async (
+        data: UpdatePreferencesRequest
+    ): Promise<DinnerPreferencesResponse> => {
+        const response = await axiosInstance.patch<DinnerPreferencesResponse>(
+            "/v1/dinner-preferences",
+            data
+        );
+        return response.data;
+    },
+
+    savePreferences: async (
+        data: UpdatePreferencesRequest
+    ): Promise<DinnerPreferencesResponse> => {
+        const response = await axiosInstance.post<DinnerPreferencesResponse>(
+            "/v1/dinner-preferences",
             data
         );
         return response.data;
