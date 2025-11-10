@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { SearchBar } from "../components/ui/SearchBar";
 import { Skeleton } from "../components/ui/Skeleton";
 import { Button } from "../components/ui/Button";
-import { useUniversities } from "../hooks/useUniversities";
+import { useUniversities } from "../hooks/queries/useUniversities";
 import type { University } from "../types/universities";
 import type { UniversitySelectionPageProps } from "../types/pages";
 

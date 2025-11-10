@@ -1,5 +1,5 @@
-import type { SignupData } from "../hooks/useSignupFlow";
-import type { Page } from "../hooks/useNavigation";
+import type { SignupData } from "../hooks/logic/useSignupFlow";
+import type { Page } from "../hooks/logic/useNavigation";
 
 export const createSignupHandlers = (
     updateSignupData: (data: Partial<SignupData>) => void,

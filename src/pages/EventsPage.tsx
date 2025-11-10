@@ -1,10 +1,12 @@
-import { useState, useEffect, useMemo, useCallback } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Calendar, RefreshCw } from "lucide-react";
-import { eventsApi } from "../services/api";
 import type { EventSlot, City } from "../types/events";
 import { showToast, handleApiError } from "../lib/toast";
 import { getLandmarkImage, formatDate, formatTime } from "../lib/eventUtils";
 import { ImageWithPlaceholder } from "../components/ui/ImageWithPlaceholder";
+import { useEvents, useBookEvent } from "../hooks/queries/useEvents";
+import { Button } from "../components/ui/Button";
+import { EventSlotSkeleton } from "../components/ui/Skeleton";
 interface EventsPageProps {
   onOpenLocation: () => void;
   selectedCity?: City;
@@ -28,42 +30,42 @@ export const EventsPage = ({
   onOpenLocation,
   selectedCity,
 }: EventsPageProps) => {
-  const [slots, setSlots] = useState<EventSlot[]>([]);
   const [selectedSlot, setSelectedSlot] = useState<EventSlot | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [isBooking, setIsBooking] = useState(false);
-  const [peopleWaiting, setPeopleWaiting] = useState(0);
 
   const currentCity = useMemo(
     () => selectedCity || defaultCity,
     [selectedCity]
   );
 
-  const loadSlots = useCallback(async () => {
-    setIsLoading(true);
-    try {
-      // Use API city name for the request, but display name for UI
-      const apiCityName = getApiCityName(currentCity.id);
-      const response = await eventsApi.getAvailableSlots(apiCityName);
-      setSlots(response.slots);
+  const apiCityName = useMemo(
+    () => getApiCityName(currentCity.id),
+    [currentCity.id]
+  );
 
-      // Calculate people waiting (sum of available spots)
-      const totalWaiting = response.slots.reduce(
-        (sum, slot) => sum + slot.spotsAvailable,
+  const {
+    data: eventsData,
+    isLoading,
+    error,
+  } = useEvents({ city: apiCityName });
+
+  const bookEventMutation = useBookEvent();
+
+  const slots = useMemo(() => eventsData?.slots || [], [eventsData?.slots]);
+  const peopleWaiting = useMemo(
+    () =>
+      slots.reduce(
+        (sum: number, slot: EventSlot) => sum + slot.spotsAvailable,
         0
-      );
-      setPeopleWaiting(totalWaiting);
-    } catch (err) {
-      const errorMessage = handleApiError(err);
-      showToast.error(errorMessage);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [currentCity.id]);
+      ),
+    [slots]
+  );
 
   useEffect(() => {
-    loadSlots();
-  }, [loadSlots]);
+    if (error) {
+      const errorMessage = handleApiError(error);
+      showToast.error(errorMessage);
+    }
+  }, [error]);
 
   const handleSlotSelect = (slot: EventSlot) => {
     setSelectedSlot(slot);
@@ -72,21 +74,17 @@ export const EventsPage = ({
   const handleBookSeat = async () => {
     if (!selectedSlot) return;
 
-    setIsBooking(true);
     try {
-      await eventsApi.bookEvent({
+      await bookEventMutation.mutateAsync({
         slotId: selectedSlot.id,
         paymentMethodId: "razorpay_placeholder",
       });
 
       showToast.success("Seat booked successfully!");
       setSelectedSlot(null);
-      loadSlots();
     } catch (err) {
       const errorMessage = handleApiError(err);
       showToast.error(errorMessage);
-    } finally {
-      setIsBooking(false);
     }
   };
 
@@ -113,7 +111,7 @@ export const EventsPage = ({
             </h2>
             <button
               onClick={onOpenLocation}
-              className="flex items-center gap-1 text-white/90 text-sm active:opacity-70 transition-opacity"
+              className="flex items-center gap-1 text-white text-sm active:opacity-70 transition-opacity"
             >
               <span className="underline text-[15px]">Change location</span>
               <RefreshCw className="w-4 h-4" strokeWidth={2} />
@@ -122,9 +120,9 @@ export const EventsPage = ({
         </div>
       </div>
 
-      <div className="flex-1 flex flex-col bg-background rounded-t-3xl -mt-6 relative z-10 min-h-0">
-        <div className="flex-1 flex flex-col px-4 py-6 min-h-0 overflow-y-auto">
-          <div className="mb-6 flex flex-col items-center justify-center">
+      <div className="flex-1 flex flex-col bg-background rounded-t-3xl -mt-6 z-10 min-h-0 overflow-hidden relative">
+        <div className="flex-1 flex flex-col px-4 py-6 min-h-0 overflow-hidden">
+          <div className="mb-6 flex flex-col items-center justify-center flex-shrink-0">
             <h3 className="text-white mb-1 font-bold text-2xl text-center">
               Book your next{" "}
               <span className="text-primary font-bold italic font-serif">
@@ -137,45 +135,43 @@ export const EventsPage = ({
           </div>
 
           {isLoading ? (
-            <div className="flex-1 flex items-center justify-center">
-              <p className="text-white/70">Loading available slots...</p>
+            <div className="flex-1 flex flex-col gap-3 overflow-y-auto min-h-0 [&::-webkit-scrollbar]:hidden [scrollbar-width:none]">
+              <EventSlotSkeleton count={3} />
             </div>
           ) : slots.length === 0 ? (
             <div className="flex-1 flex items-center justify-center">
               <p className="text-white/70">No upcoming events available</p>
             </div>
           ) : (
-            <div className="flex flex-col gap-3 mb-6">
-              {slots.slice(0, 3).map((slot) => {
+            <div
+              className={`flex-1 flex flex-col gap-3 overflow-y-auto min-h-0 [&::-webkit-scrollbar]:hidden [scrollbar-width:none] ${slots.length > 0 ? "pb-24" : ""}`}
+            >
+              {slots.map((slot: EventSlot) => {
                 const isSelected = selectedSlot?.id === slot.id;
                 return (
                   <button
                     key={slot.id}
                     onClick={() => handleSlotSelect(slot)}
-                    className={`w-full p-4 rounded-xl text-left transition-all ${
-                      isSelected
-                        ? "bg-white/10 border-2 border-white"
-                        : "bg-white/5 border border-white/20"
-                    } active:scale-[0.98]`}
+                    className={`w-full p-4 rounded-xl text-left transition-all duration-150 bg-[#111111] ${
+                      isSelected ? "border-2 border-primary" : "border-0"
+                    } active:scale-[0.99]`}
                   >
                     <div className="flex items-center justify-between">
                       <div>
                         <div className="text-white font-semibold text-base mb-1">
                           {formatDate(slot.date)}
                         </div>
-                        <div className="text-white/70 text-sm">
+                        <div className="text-white text-sm">
                           {formatTime(slot.time)}
                         </div>
                       </div>
                       <div
                         className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
-                          isSelected
-                            ? "border-white bg-white"
-                            : "border-white/50"
+                          isSelected ? "border-primary bg-primary" : ""
                         }`}
                       >
                         {isSelected && (
-                          <div className="w-2 h-2 bg-black rounded-full"></div>
+                          <div className="w-2 h-2 bg-background rounded-full"></div>
                         )}
                       </div>
                     </div>
@@ -186,19 +182,18 @@ export const EventsPage = ({
           )}
         </div>
 
-        <div className="px-6 py-4 pb-6">
-          <button
-            onClick={handleBookSeat}
-            disabled={!selectedSlot || isBooking}
-            className={`w-full py-4 rounded-full text-white font-semibold transition-all ${
-              selectedSlot
-                ? "bg-primary hover:bg-primary/90 active:scale-95"
-                : "bg-white/20 cursor-not-allowed"
-            }`}
-          >
-            {isBooking ? "Booking..." : "Book my seat"}
-          </button>
-        </div>
+        {slots.length > 0 && (
+          <div className="absolute bottom-0 left-0 right-0 px-6 py-4 flex-shrink-0 border-t border-border/20 bg-background">
+            <Button
+              onClick={handleBookSeat}
+              disabled={!selectedSlot || bookEventMutation.isPending}
+              isLoading={bookEventMutation.isPending}
+              variant="primary"
+            >
+              Book my seat
+            </Button>
+          </div>
+        )}
       </div>
     </div>
   );

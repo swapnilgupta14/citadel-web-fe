@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { auth } from "../lib/auth";
+import { auth } from "../../lib/auth";
 
 export type Page =
     | "splash"

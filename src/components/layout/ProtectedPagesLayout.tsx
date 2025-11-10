@@ -117,28 +117,30 @@ export const ProtectedPagesLayout = () => {
               selectedCityId={selectedCity?.id}
             />
           ) : (
-            <Routes location={location} key={location.pathname}>
-              <Route
-                path="/events"
-                element={
-                  <EventsPage
-                    onOpenLocation={() => navigate("/location")}
-                    selectedCity={selectedCity}
-                  />
-                }
-              />
-              <Route path="/explore" element={<ExplorePage />} />
-              <Route path="/profile" element={<ProfilePage />} />
-              <Route
-                path="/*"
-                element={
-                  <EventsPage
-                    onOpenLocation={() => navigate("/location")}
-                    selectedCity={selectedCity}
-                  />
-                }
-              />
-            </Routes>
+            <div className="h-full pb-[92px]">
+              <Routes location={location} key={location.pathname}>
+                <Route
+                  path="/events"
+                  element={
+                    <EventsPage
+                      onOpenLocation={() => navigate("/location")}
+                      selectedCity={selectedCity}
+                    />
+                  }
+                />
+                <Route path="/explore" element={<ExplorePage />} />
+                <Route path="/profile" element={<ProfilePage />} />
+                <Route
+                  path="/*"
+                  element={
+                    <EventsPage
+                      onOpenLocation={() => navigate("/location")}
+                      selectedCity={selectedCity}
+                    />
+                  }
+                />
+              </Routes>
+            </div>
           )}
         </AnimatePresence>
       </div>

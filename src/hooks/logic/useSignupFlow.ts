@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
-import { profileApi } from "../services/api";
-import { signupPersistence } from "../lib/signupPersistence";
-import { auth } from "../lib/auth";
-import { showToast, handleApiError } from "../lib/toast";
+import { profileApi } from "../../services/api";
+import { signupPersistence } from "../../lib/signupPersistence";
+import { auth } from "../../lib/auth";
+import { showToast, handleApiError } from "../../lib/toast";
 
 export type SignupData = {
   universityId?: string;

@@ -1,6 +1,6 @@
 import { useQuery, keepPreviousData } from "@tanstack/react-query";
-import { universitiesApi } from "../services/api";
-import type { UniversitiesParams } from "../types/universities";
+import { universitiesApi } from "../../services/api";
+import type { UniversitiesParams } from "../../types/universities";
 
 export const useUniversities = (params: UniversitiesParams = {}) => {
     const { search = "", limit = 50, offset = 0 } = params;
