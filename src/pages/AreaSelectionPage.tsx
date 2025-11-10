@@ -81,7 +81,7 @@ export const AreaSelectionPage = ({
           </p>
         </div>
 
-        <div className="grid grid-cols-2 gap-4 overflow-y-auto flex-1 min-h-0 p-2">
+        <div className="p-2 grid grid-cols-2 auto-rows-min gap-x-4 gap-y-4 overflow-y-auto flex-1 min-h-0">
           {areas.map((area) => {
             const isSelected = selectedAreas.includes(area);
 
@@ -89,7 +89,7 @@ export const AreaSelectionPage = ({
               <button
                 key={area}
                 onClick={() => toggleArea(area)}
-                className={`relative w-full aspect-[1/0.6] overflow-hidden transition-all duration-300 bg-background-secondary rounded-2xl ${
+                className={`relative w-full aspect-[6/3] overflow-hidden transition-all duration-300 bg-background-secondary rounded-2xl ${
                   isSelected
                     ? "ring-4 ring-primary"
                     : "ring-2 ring-border hover:scale-105"
