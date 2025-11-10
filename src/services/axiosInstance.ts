@@ -1,5 +1,5 @@
 import axios from "axios";
-import { auth } from "../lib/auth";
+import { auth } from "../lib/storage/auth";
 import { env } from "../config/env";
 
 const isDevelopment = import.meta.env.DEV;

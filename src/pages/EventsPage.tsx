@@ -1,8 +1,12 @@
 import { useState, useMemo, useEffect } from "react";
 import { Calendar, RefreshCw } from "lucide-react";
 import type { EventSlot, City } from "../types/events";
-import { showToast, handleApiError } from "../lib/toast";
-import { getLandmarkImage, formatDate, formatTime } from "../lib/eventUtils";
+import { showToast, handleApiError } from "../lib/helpers/toast";
+import {
+  getLandmarkImage,
+  formatDate,
+  formatTime,
+} from "../lib/helpers/eventUtils";
 import { ImageWithPlaceholder } from "../components/ui/ImageWithPlaceholder";
 import { useEvents, useBookEvent } from "../hooks/queries/useEvents";
 import { Button } from "../components/ui/Button";

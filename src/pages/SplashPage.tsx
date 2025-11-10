@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { motion } from "framer-motion";
-import { auth } from "../lib/auth";
+import { auth } from "../lib/storage/auth";
 
 interface SplashPageProps {
   onComplete: () => void;

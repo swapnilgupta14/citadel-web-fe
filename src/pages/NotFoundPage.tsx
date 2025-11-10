@@ -1,6 +1,6 @@
 import { ArrowLeft } from "lucide-react";
 import { Button } from "../components/ui/Button";
-import { auth } from "../lib/auth";
+import { auth } from "../lib/storage/auth";
 
 interface NotFoundPageProps {
   onBack: () => void;

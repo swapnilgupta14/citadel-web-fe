@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "../components/ui/Button";
 import type { WhoAreYouPageProps } from "../types/pages";
-import { nameSchema, genderSchema } from "../lib/validations";
+import { nameSchema, genderSchema } from "../lib/helpers/validations";
 
 type Gender = "male" | "female" | "other";
 

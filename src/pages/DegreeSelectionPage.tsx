@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { SearchBar } from "../components/ui/SearchBar";
 import { Button } from "../components/ui/Button";
 import type { DegreeSelectionPageProps } from "../types/pages";
-import { degreeSchema, yearSchema } from "../lib/validations";
+import { degreeSchema, yearSchema } from "../lib/helpers/validations";
 
 const MOCK_DEGREES = [
   "Computer Science",

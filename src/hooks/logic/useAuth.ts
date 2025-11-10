@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { authApi } from "../../services/api";
-import { auth } from "../../lib/auth";
-import { showToast, handleApiError } from "../../lib/toast";
+import { auth } from "../../lib/storage/auth";
+import { showToast, handleApiError } from "../../lib/helpers/toast";
 
 export const useAuth = () => {
     const [accessToken, setAccessToken] = useState<string | null>(null);

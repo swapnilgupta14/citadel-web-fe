@@ -10,8 +10,8 @@ import type { City } from "../../types/events";
 import {
   navigationPersistence,
   type ProtectedPage,
-} from "../../lib/navigationPersistence";
-import { getLandmarkImage } from "../../lib/eventUtils";
+} from "../../lib/storage/navigationPersistence";
+import { getLandmarkImage } from "../../lib/helpers/eventUtils";
 
 const defaultCity: City = {
   id: "new-delhi",

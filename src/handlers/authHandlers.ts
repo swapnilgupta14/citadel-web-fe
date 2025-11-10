@@ -1,4 +1,4 @@
-import { auth } from "../lib/auth";
+import { auth } from "../lib/storage/auth";
 
 export const authHandlers = {
   handleSplashComplete: (navigateTo: (page: "signup" | "home") => void) => {

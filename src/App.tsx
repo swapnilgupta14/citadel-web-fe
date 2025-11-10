@@ -21,8 +21,8 @@ import { useSignupFlow } from "./hooks/logic/useSignupFlow";
 import { authHandlers } from "./handlers/authHandlers";
 import { createSignupHandlers } from "./handlers/signupHandlers";
 import { createLoginHandlers } from "./handlers/loginHandlers";
-import { signupPersistence } from "./lib/signupPersistence";
-import { showToast } from "./lib/toast";
+import { signupPersistence } from "./lib/storage/signupPersistence";
+import { showToast } from "./lib/helpers/toast";
 
 function App() {
   const location = useLocation();

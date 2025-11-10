@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "../components/ui/Button";
 import type { DateOfBirthPageProps } from "../types/pages";
-import { dateOfBirthSchema } from "../lib/validations";
+import { dateOfBirthSchema } from "../lib/helpers/validations";
 
 export const DateOfBirthPage = ({
   onBack,

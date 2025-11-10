@@ -1,5 +1,5 @@
 import type { City } from "../types/events";
-import { getLandmarkImage } from "../lib/eventUtils";
+import { getLandmarkImage } from "../lib/helpers/eventUtils";
 
 export const CITIES: City[] = [
   {

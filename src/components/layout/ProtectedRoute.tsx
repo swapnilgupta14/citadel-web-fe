@@ -1,5 +1,5 @@
 import { type ReactNode } from "react";
-import { auth } from "../../lib/auth";
+import { auth } from "../../lib/storage/auth";
 
 interface ProtectedRouteProps {
   children: ReactNode;
