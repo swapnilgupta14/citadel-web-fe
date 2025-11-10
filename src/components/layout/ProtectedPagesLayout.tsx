@@ -4,6 +4,8 @@ import { BottomNavigation } from "../navigation/BottomNavigation";
 import { ExplorePage } from "../../pages/ExplorePage";
 import { EventsPage } from "../../pages/EventsPage";
 import { ProfilePage } from "../../pages/ProfilePage";
+import { LocationPage } from "../../pages/LocationPage";
+import type { City } from "../../types/events";
 
 type ProtectedPage = "events" | "explore" | "profile";
 
@@ -31,6 +33,13 @@ const pageTransition = {
 export const ProtectedPagesLayout = () => {
   const [currentPage, setCurrentPage] = useState<ProtectedPage>("explore");
   const [direction, setDirection] = useState(0);
+  const [showLocationPage, setShowLocationPage] = useState(false);
+  const [selectedCity, setSelectedCity] = useState<City | undefined>({
+    id: "new-delhi",
+    name: "Delhi",
+    landmarkImage: "/landmarks/new-delhi.jpg",
+    isAvailable: true,
+  });
 
   const handleNavigate = (page: ProtectedPage) => {
     const pageOrder: ProtectedPage[] = ["events", "explore", "profile"];
@@ -41,10 +50,20 @@ export const ProtectedPagesLayout = () => {
     setCurrentPage(page);
   };
 
+  const handleSelectCity = (city: City) => {
+    setSelectedCity(city);
+    setShowLocationPage(false);
+  };
+
   const renderPage = () => {
     switch (currentPage) {
       case "events":
-        return <EventsPage />;
+        return (
+          <EventsPage
+            onOpenLocation={() => setShowLocationPage(true)}
+            selectedCity={selectedCity}
+          />
+        );
       case "explore":
         return <ExplorePage />;
       case "profile":
@@ -73,6 +92,24 @@ export const ProtectedPagesLayout = () => {
         </AnimatePresence>
       </div>
       <BottomNavigation activePage={currentPage} onNavigate={handleNavigate} />
+
+      <AnimatePresence>
+        {showLocationPage && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="absolute inset-0 z-50 bg-background"
+          >
+            <LocationPage
+              onBack={() => setShowLocationPage(false)}
+              onSelectCity={handleSelectCity}
+              selectedCityId={selectedCity?.id}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };

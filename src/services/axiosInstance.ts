@@ -1,11 +1,20 @@
 import axios from "axios";
 import { auth } from "../lib/auth";
+import { env } from "../config/env";
 
 const isDevelopment = import.meta.env.DEV;
 
-const baseURL = isDevelopment
-    ? "/api"
-    : "/api";
+const getBaseURL = (): string => {
+    if (isDevelopment && env.VITE_API_BASE_URL) {
+        const url = env.VITE_API_BASE_URL.endsWith('/api')
+            ? env.VITE_API_BASE_URL
+            : `${env.VITE_API_BASE_URL}/api`;
+        return url;
+    }
+    return "/api";
+};
+
+const baseURL = getBaseURL();
 
 export const axiosInstance = axios.create({
     baseURL,
