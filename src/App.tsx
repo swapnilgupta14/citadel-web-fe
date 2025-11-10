@@ -1,4 +1,5 @@
 import { AnimatePresence } from "framer-motion";
+import { useLocation } from "react-router-dom";
 import { MobileLayout } from "./components/layout/MobileLayout";
 import { SplashPage } from "./pages/SplashPage";
 import { SignupPage } from "./pages/SignupPage";
@@ -24,7 +25,13 @@ import { signupPersistence } from "./lib/signupPersistence";
 import { showToast } from "./lib/toast";
 
 function App() {
+  const location = useLocation();
   const { currentPage, navigateTo } = useNavigation();
+  const isProtectedRoute = location.pathname.startsWith("/events") || 
+                           location.pathname.startsWith("/explore") || 
+                           location.pathname.startsWith("/profile") ||
+                           location.pathname === "/" ||
+                           location.pathname === "/home";
   const {
     accessToken,
     userEmail,
@@ -201,7 +208,7 @@ function App() {
         )}
       </AnimatePresence>
 
-      {currentPage === "home" && (
+      {(currentPage === "home" || isProtectedRoute) && (
         <ProtectedRoute
           fallback={
             <div className="flex h-full items-center justify-center">

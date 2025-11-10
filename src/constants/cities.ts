@@ -4,7 +4,7 @@ import { getLandmarkImage } from "../lib/eventUtils";
 export const CITIES: City[] = [
   {
     id: "new-delhi",
-    name: "Delhi",
+    name: "New Delhi",
     landmarkImage: getLandmarkImage("new-delhi"),
     isAvailable: true,
   },

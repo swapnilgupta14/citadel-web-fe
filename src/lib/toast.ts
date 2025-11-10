@@ -18,7 +18,9 @@ export const showToast = {
     },
 
     error: (message: string) => {
+        toast.dismiss("error-toast");
         toast.error(message, {
+            id: "error-toast",
             duration: 3000,
             position: "top-center",
             style: {

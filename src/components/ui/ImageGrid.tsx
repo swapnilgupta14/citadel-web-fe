@@ -1,4 +1,5 @@
 import { motion, type MotionStyle, type HTMLMotionProps } from "framer-motion";
+import { ImageWithPlaceholder } from "./ImageWithPlaceholder";
 
 type ImageGridProps = {
   className?: string;
@@ -25,7 +26,7 @@ export const ImageGrid = ({
       className={`relative w-full ${className}`}
     >
       <motion.div className="absolute top-[2%] left-[14%] w-20 h-[6.5rem] bg-background-secondary border border-border overflow-hidden rounded-[3.75rem]">
-        <img
+        <ImageWithPlaceholder
           src="/Splash/Rectangle1.png"
           alt=""
           className="w-full h-full object-cover"
@@ -33,7 +34,7 @@ export const ImageGrid = ({
       </motion.div>
 
       <motion.div className="absolute top-0 right-[8%] w-[9.375rem] h-[12.5rem] bg-background-secondary border border-border overflow-hidden rounded-[3.75rem]">
-        <img
+        <ImageWithPlaceholder
           src="/Splash/Rectangle2.png"
           alt=""
           className="w-full h-full object-cover"
@@ -41,7 +42,7 @@ export const ImageGrid = ({
       </motion.div>
 
       <motion.div className="absolute bottom-[2%] left-[4%] w-[9.375rem] h-[12.5rem] bg-background-secondary border border-border overflow-hidden rounded-[3.75rem]">
-        <img
+        <ImageWithPlaceholder
           src="/Splash/Rectangle3.png"
           alt=""
           className="w-full h-full object-cover"
@@ -49,7 +50,7 @@ export const ImageGrid = ({
       </motion.div>
 
       <motion.div className="absolute bottom-0 right-[14%] w-20 h-[6.5rem] bg-background-secondary border border-border overflow-hidden rounded-[3.75rem]">
-        <img
+        <ImageWithPlaceholder
           src="/Splash/Rectangle4.png"
           alt=""
           className="w-full h-full object-cover"
@@ -57,15 +58,15 @@ export const ImageGrid = ({
       </motion.div>
 
       <motion.div className="absolute top-[25%] left-[6%]">
-        <img src="/vector1.png" alt="" className="w-5 h-5" />
+        <ImageWithPlaceholder src="/vector1.png" alt="" className="w-5 h-5" />
       </motion.div>
 
       <motion.div className="absolute top-[42%] left-[44%]">
-        <img src="/vector1.png" alt="" className="w-4 h-4" />
+        <ImageWithPlaceholder src="/vector1.png" alt="" className="w-4 h-4" />
       </motion.div>
 
       <motion.div className="absolute bottom-[10%] right-[5%]">
-        <img src="/vector2.png" alt="" className="w-5 h-5" />
+        <ImageWithPlaceholder src="/vector2.png" alt="" className="w-5 h-5" />
       </motion.div>
     </motion.div>
   );

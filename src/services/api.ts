@@ -101,12 +101,46 @@ export const eventsApi = {
             params.area = area;
         }
 
-        const response = await axiosInstance.get<AvailableSlotsResponse>(
-            "/v1/events/available-slots",
+        const response = await axiosInstance.get<{
+            success: boolean;
+            data: {
+                events: Array<{
+                    id: string;
+                    eventDate: string | Date;
+                    eventTime: string;
+                    city: string;
+                    area: string;
+                    maxAttendees: number;
+                    currentAttendees: number;
+                    availableSeats: number;
+                    bookingFee: number;
+                    status: string;
+                    isBooked: boolean;
+                    isFull: boolean;
+                }>;
+                totalEvents: number;
+            };
+        }>(
+            "/v1/dinner-events/upcoming",
             { params }
         );
 
-        return response.data;
+        if (response.data.success && response.data.data) {
+            return {
+                slots: response.data.data.events.map((event) => ({
+                    id: event.id,
+                    date: typeof event.eventDate === 'string'
+                        ? event.eventDate
+                        : event.eventDate.toISOString().split('T')[0],
+                    time: event.eventTime,
+                    spotsAvailable: event.availableSeats,
+                    totalSpots: event.maxAttendees,
+                    estimatedCost: event.bookingFee,
+                })),
+            };
+        }
+
+        return { slots: [] };
     },
 
     bookEvent: async (

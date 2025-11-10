@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import type { SuccessPageProps } from "../types/pages";
+import { ImageWithPlaceholder } from "../components/ui/ImageWithPlaceholder";
 
 export const SuccessPage = ({ onComplete }: SuccessPageProps) => {
   const [isExiting, setIsExiting] = useState(false);
@@ -35,7 +36,7 @@ export const SuccessPage = ({ onComplete }: SuccessPageProps) => {
         transition={{ duration: 1.5, ease: "easeOut" }}
         className="flex flex-col items-center justify-center"
       >
-        <img
+        <ImageWithPlaceholder
           src="/success.svg"
           alt="Success"
           className="w-[75px] h-[75px] mb-6 object-contain"

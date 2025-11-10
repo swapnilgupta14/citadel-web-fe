@@ -2,6 +2,7 @@ import { useRef } from "react";
 import { motion, useMotionValue, useTransform } from "framer-motion";
 import { ChevronRight } from "lucide-react";
 import { ImageGrid } from "../components/ui/ImageGrid";
+import { ImageWithPlaceholder } from "../components/ui/ImageWithPlaceholder";
 
 interface SignupPageProps {
   onComplete: () => void;
@@ -45,7 +46,11 @@ export const SignupPage = ({ onComplete }: SignupPageProps) => {
       >
         <div className="flex flex-col items-center gap-3">
           <div className="w-10 h-10">
-            <img src="/logo.svg" alt="Citadel" className="w-full h-full" />
+            <ImageWithPlaceholder
+              src="/logo.svg"
+              alt="Citadel"
+              className="w-full h-full"
+            />
           </div>
 
           <h2 className="text-[2rem] leading-tight font-bold text-text-primary text-center font-serif">

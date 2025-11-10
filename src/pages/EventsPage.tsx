@@ -1,15 +1,28 @@
-import { useState, useEffect } from "react";
-import { Calendar, RotateCcw } from "lucide-react";
-import { Button } from "../components/ui/Button";
+import { useState, useEffect, useMemo, useCallback } from "react";
+import { Calendar, RefreshCw } from "lucide-react";
 import { eventsApi } from "../services/api";
 import type { EventSlot, City } from "../types/events";
 import { showToast, handleApiError } from "../lib/toast";
 import { getLandmarkImage, formatDate, formatTime } from "../lib/eventUtils";
-
+import { ImageWithPlaceholder } from "../components/ui/ImageWithPlaceholder";
 interface EventsPageProps {
   onOpenLocation: () => void;
   selectedCity?: City;
 }
+
+const defaultCity: City = {
+  id: "new-delhi",
+  name: "New Delhi",
+  landmarkImage: getLandmarkImage("new-delhi"),
+  isAvailable: true,
+};
+
+const getApiCityName = (cityId: string): string => {
+  if (cityId === "new-delhi") {
+    return "Delhi";
+  }
+  return cityId;
+};
 
 export const EventsPage = ({
   onOpenLocation,
@@ -19,24 +32,19 @@ export const EventsPage = ({
   const [selectedSlot, setSelectedSlot] = useState<EventSlot | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isBooking, setIsBooking] = useState(false);
-  const [peopleWaiting, setPeopleWaiting] = useState(5);
+  const [peopleWaiting, setPeopleWaiting] = useState(0);
 
-  const currentCity = selectedCity || {
-    id: "new-delhi",
-    name: "Delhi",
-    landmarkImage: getLandmarkImage("new-delhi"),
-    isAvailable: true,
-  };
+  const currentCity = useMemo(
+    () => selectedCity || defaultCity,
+    [selectedCity]
+  );
 
-  useEffect(() => {
-    loadSlots();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentCity.id]);
-
-  const loadSlots = async () => {
+  const loadSlots = useCallback(async () => {
     setIsLoading(true);
     try {
-      const response = await eventsApi.getAvailableSlots(currentCity.name);
+      // Use API city name for the request, but display name for UI
+      const apiCityName = getApiCityName(currentCity.id);
+      const response = await eventsApi.getAvailableSlots(apiCityName);
       setSlots(response.slots);
 
       // Calculate people waiting (sum of available spots)
@@ -51,7 +59,11 @@ export const EventsPage = ({
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [currentCity.id]);
+
+  useEffect(() => {
+    loadSlots();
+  }, [loadSlots]);
 
   const handleSlotSelect = (slot: EventSlot) => {
     setSelectedSlot(slot);
@@ -80,96 +92,90 @@ export const EventsPage = ({
 
   return (
     <div className="flex h-full flex-col bg-background relative overflow-hidden">
-      <div className="flex items-center justify-center px-4 pt-4 pb-2 relative z-10">
-        <button
-          className="flex items-center gap-2 px-4 py-2 rounded-full bg-background-secondary text-text-primary text-sm font-medium active:opacity-70 transition-opacity"
-          aria-label="View bookings"
-        >
-          <Calendar className="w-4 h-4" strokeWidth={2} />
-          View Bookings
-        </button>
-      </div>
-      <div className="relative h-[40%] min-h-[200px] max-h-[300px]">
-        <img
+      <div className="relative h-[34%]">
+        <ImageWithPlaceholder
           src={currentCity.landmarkImage || getLandmarkImage(currentCity.id)}
           alt={currentCity.name}
           className="w-full h-full object-cover"
           loading="lazy"
-          onError={(e) => {
-            (e.target as HTMLImageElement).src =
-              "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='300'%3E%3Crect fill='%232C2C2C' width='400' height='300'/%3E%3Ctext fill='%23ffffff' font-family='sans-serif' font-size='24' x='50%25' y='50%25' text-anchor='middle' dy='.3em'%3E" +
-              encodeURIComponent(currentCity.name) +
-              "%3C/text%3E%3C/svg%3E";
-          }}
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-background/20 to-background" />
-        <div className="absolute top-1/2 left-0 right-0 px-4 transform -translate-y-1/2">
-          <h2 className="text-4xl sm-phone:text-5xl font-bold text-text-primary font-serif mb-2">
-            {currentCity.name}
-          </h2>
+        <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 px-6">
           <button
-            onClick={onOpenLocation}
-            className="flex items-center gap-2 text-sm text-text-secondary active:opacity-70 transition-opacity"
+            className="flex items-center gap-2 px-5 py-2 rounded-full border border-white text-white text-[15px] font-medium bg-transparent active:opacity-70 transition-opacity"
+            aria-label="View bookings"
           >
-            <RotateCcw className="w-4 h-4" strokeWidth={2} />
-            Change location
+            <Calendar className="w-4 h-4" strokeWidth={2} />
+            View Bookings
           </button>
+          <div className="text-center flex flex-col items-center justify-center">
+            <h2 className="text-white text-3xl font-bold text-center font-serif pb-1">
+              {currentCity.name}
+            </h2>
+            <button
+              onClick={onOpenLocation}
+              className="flex items-center gap-1 text-white/90 text-sm active:opacity-70 transition-opacity"
+            >
+              <span className="underline text-[15px]">Change location</span>
+              <RefreshCw className="w-4 h-4" strokeWidth={2} />
+            </button>
+          </div>
         </div>
       </div>
 
       <div className="flex-1 flex flex-col bg-background rounded-t-3xl -mt-6 relative z-10 min-h-0">
         <div className="flex-1 flex flex-col px-4 py-6 min-h-0 overflow-y-auto">
-          <div className="mb-6">
-            <h3 className="text-2xl sm-phone:text-3xl font-bold text-text-primary font-serif">
-              Book your next <span className="text-primary">DINNER</span>
+          <div className="mb-6 flex flex-col items-center justify-center">
+            <h3 className="text-white mb-1 font-bold text-2xl text-center">
+              Book your next{" "}
+              <span className="text-primary font-bold italic font-serif">
+                DINNER
+              </span>
             </h3>
-            <p className="text-sm text-text-secondary mt-2">
+            <p className="text-white text-sm font-medium text-[15px]">
               {peopleWaiting} people are waiting for you
             </p>
           </div>
 
           {isLoading ? (
             <div className="flex-1 flex items-center justify-center">
-              <p className="text-text-secondary">Loading available slots...</p>
+              <p className="text-white/70">Loading available slots...</p>
             </div>
           ) : slots.length === 0 ? (
             <div className="flex-1 flex items-center justify-center">
-              <p className="text-text-secondary">
-                No available slots at the moment
-              </p>
+              <p className="text-white/70">No upcoming events available</p>
             </div>
           ) : (
             <div className="flex flex-col gap-3 mb-6">
-              {slots.map((slot) => {
+              {slots.slice(0, 3).map((slot) => {
                 const isSelected = selectedSlot?.id === slot.id;
                 return (
                   <button
                     key={slot.id}
                     onClick={() => handleSlotSelect(slot)}
-                    className={`w-full text-left p-4 rounded-2xl border-2 transition-all ${
+                    className={`w-full p-4 rounded-xl text-left transition-all ${
                       isSelected
-                        ? "border-primary bg-primary/10"
-                        : "border-border bg-background-secondary"
+                        ? "bg-white/10 border-2 border-white"
+                        : "bg-white/5 border border-white/20"
                     } active:scale-[0.98]`}
                   >
                     <div className="flex items-center justify-between">
-                      <div className="flex-1">
-                        <p className="text-base font-semibold text-text-primary">
+                      <div>
+                        <div className="text-white font-semibold text-base mb-1">
                           {formatDate(slot.date)}
-                        </p>
-                        <p className="text-sm text-text-secondary mt-1">
+                        </div>
+                        <div className="text-white/70 text-sm">
                           {formatTime(slot.time)}
-                        </p>
+                        </div>
                       </div>
                       <div
                         className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
                           isSelected
-                            ? "border-primary bg-primary"
-                            : "border-border"
+                            ? "border-white bg-white"
+                            : "border-white/50"
                         }`}
                       >
                         {isSelected && (
-                          <div className="w-2 h-2 rounded-full bg-background" />
+                          <div className="w-2 h-2 bg-black rounded-full"></div>
                         )}
                       </div>
                     </div>
@@ -180,15 +186,18 @@ export const EventsPage = ({
           )}
         </div>
 
-        <div className="px-6 py-4 pb-6 border-t border-border">
-          <Button
+        <div className="px-6 py-4 pb-6">
+          <button
             onClick={handleBookSeat}
-            disabled={!selectedSlot}
-            variant={selectedSlot ? "primary" : "disabled"}
-            isLoading={isBooking}
+            disabled={!selectedSlot || isBooking}
+            className={`w-full py-4 rounded-full text-white font-semibold transition-all ${
+              selectedSlot
+                ? "bg-primary hover:bg-primary/90 active:scale-95"
+                : "bg-white/20 cursor-not-allowed"
+            }`}
           >
-            Book my seat
-          </Button>
+            {isBooking ? "Booking..." : "Book my seat"}
+          </button>
         </div>
       </div>
     </div>
