@@ -76,12 +76,12 @@ export const AreaSelectionPage = ({
             Where would you like to have{" "}
             <span className="text-primary font-serif italic">DINNER?</span>
           </h2>
-          <p className="text-[15px] text-white font-medium mt-2">
+          <p className="text-sm sm-phone:text-base text-white font-medium mt-2">
             Select preferred areas in {cityName}
           </p>
         </div>
 
-        <div className="grid grid-cols-2 auto-rows-[102px] gap-4 overflow-y-auto flex-1 min-h-0 p-2">
+        <div className="grid grid-cols-2 gap-4 overflow-y-auto flex-1 min-h-0 p-2">
           {areas.map((area) => {
             const isSelected = selectedAreas.includes(area);
 
@@ -89,7 +89,7 @@ export const AreaSelectionPage = ({
               <button
                 key={area}
                 onClick={() => toggleArea(area)}
-                className={`relative w-full overflow-hidden transition-all duration-300 bg-background-secondary rounded-[15px] ${
+                className={`relative w-full aspect-[1/0.6] overflow-hidden transition-all duration-300 bg-background-secondary rounded-2xl ${
                   isSelected
                     ? "ring-4 ring-primary"
                     : "ring-2 ring-border hover:scale-105"

@@ -67,12 +67,12 @@ export const LocationPage = ({
           <h2 className="font-semibold text-3xl sm-phone:text-4xl leading-tight text-text-primary font-serif">
             Select <span className="text-primary font-serif italic">CITY</span>
           </h2>
-          <p className="text-[15px] text-white font-medium mt-2">
+          <p className="text-sm sm-phone:text-base text-white font-medium mt-2">
             You can change it later
           </p>
         </div>
 
-        <div className="grid grid-cols-2 auto-rows-[184px] gap-4 overflow-y-auto flex-1 min-h-0 justify-items-center p-2">
+        <div className="grid grid-cols-2 gap-4 overflow-y-auto flex-1 min-h-0 p-2">
           {CITIES.map((city) => {
             const isSelected = selectedCityId === city.id;
             const isDisabled = !city.isAvailable;
@@ -82,7 +82,7 @@ export const LocationPage = ({
                 key={city.id}
                 onClick={() => handleCitySelect(city)}
                 disabled={isDisabled}
-                className={`relative w-[173px] h-[184px] rounded-2xl overflow-hidden ${
+                className={`relative w-full aspect-[173/184] rounded-2xl overflow-hidden ${
                   isSelected
                     ? "ring-2 ring-primary"
                     : isDisabled
