@@ -10,6 +10,7 @@ import type {
 import type {
     CreateProfileResponse,
     CreateProfileData,
+    GetProfileResponse,
 } from "../types/profile";
 import type {
     AvailableSlotsResponse,
@@ -67,6 +68,13 @@ export const authApi = {
 };
 
 export const profileApi = {
+    getProfile: async (): Promise<GetProfileResponse> => {
+        const response = await axiosInstance.get<GetProfileResponse>(
+            "/v1/profile/me"
+        );
+        return response.data;
+    },
+
     createProfile: async (
         data: CreateProfileData
     ): Promise<CreateProfileResponse> => {
@@ -168,16 +176,6 @@ export const dinnerPreferencesApi = {
         data: UpdatePreferencesRequest
     ): Promise<DinnerPreferencesResponse> => {
         const response = await axiosInstance.patch<DinnerPreferencesResponse>(
-            "/v1/dinner-preferences",
-            data
-        );
-        return response.data;
-    },
-
-    savePreferences: async (
-        data: UpdatePreferencesRequest
-    ): Promise<DinnerPreferencesResponse> => {
-        const response = await axiosInstance.post<DinnerPreferencesResponse>(
             "/v1/dinner-preferences",
             data
         );

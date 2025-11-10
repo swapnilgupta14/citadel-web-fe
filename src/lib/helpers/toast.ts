@@ -35,6 +35,22 @@ export const showToast = {
         });
     },
 
+    info: (message: string) => {
+        toast(message, {
+            duration: 3000,
+            position: "top-center",
+            style: {
+                background: "#2C2C2C",
+                color: "#FFFFFF",
+                borderRadius: "0.5rem",
+                padding: "0.75rem 1rem",
+                fontSize: "0.875rem",
+                fontWeight: "500",
+                maxWidth: "90%",
+            },
+        });
+    },
+
     loading: (message: string) => {
         return toast.loading(message, {
             position: "top-center",

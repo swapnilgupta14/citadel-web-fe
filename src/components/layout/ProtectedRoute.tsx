@@ -1,4 +1,4 @@
-import { type ReactNode } from "react";
+import { type ReactNode, useEffect } from "react";
 import { auth } from "../../lib/storage/auth";
 
 interface ProtectedRouteProps {
@@ -10,6 +10,13 @@ export const ProtectedRoute = ({
   children,
   fallback = null,
 }: ProtectedRouteProps) => {
+  useEffect(() => {
+    if (!auth.isAuthenticated()) {
+      auth.clearAll();
+      window.location.href = "/";
+    }
+  }, []);
+
   if (!auth.isAuthenticated()) {
     return <>{fallback}</>;
   }

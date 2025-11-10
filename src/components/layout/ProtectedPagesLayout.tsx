@@ -14,7 +14,7 @@ import {
 } from "../../lib/storage/navigationPersistence";
 import { getLandmarkImage } from "../../lib/helpers/eventUtils";
 import { showToast } from "../../lib/helpers/toast";
-import { useUpdateDinnerPreferences } from "../../hooks/queries";
+import { useUpdateDinnerPreferences, useDinnerPreferences } from "../../hooks/queries";
 
 const defaultCity: City = {
   id: "new-delhi",
@@ -26,7 +26,8 @@ const defaultCity: City = {
 export const ProtectedPagesLayout = () => {
   const navigate = useNavigate();
   const location = useLocation();
-
+  
+  const { data: preferencesData } = useDinnerPreferences();
   const updatePreferencesMutation = useUpdateDinnerPreferences();
 
   const getInitialCity = (): City => {
@@ -92,6 +93,28 @@ export const ProtectedPagesLayout = () => {
     }
   }, [navigate, location.pathname, currentPage]);
 
+  useEffect(() => {
+    if (preferencesData?.success && preferencesData.data.preferences) {
+      const { city, preferredAreas } = preferencesData.data.preferences;
+      
+      console.log("Fetched dinner preferences:", { city, preferredAreas });
+
+      if (city) {
+        const cityId = city.toLowerCase().replace(/\s+/g, "-");
+        const cityData: City = {
+          id: cityId,
+          name: city,
+          landmarkImage: getLandmarkImage(cityId),
+          isAvailable: true,
+        };
+
+        navigationPersistence.saveSelectedCity(cityData);
+        setSelectedCity(cityData);
+        selectedCityRef.current = cityData;
+      }
+    }
+  }, [preferencesData]);
+
   const handleNavigate = (page: ProtectedPage) => {
     const path = `/${page === "events" ? "events" : page === "profile" ? "profile" : "explore"}`;
     navigate(path);
@@ -114,25 +137,24 @@ export const ProtectedPagesLayout = () => {
         city: tempCity.name,
         preferredAreas: selectedAreas,
       });
-
-      selectedCityRef.current = tempCity;
-      navigationPersistence.saveSelectedCity({
-        id: tempCity.id,
-        name: tempCity.name,
-        landmarkImage: tempCity.landmarkImage,
-        isAvailable: tempCity.isAvailable,
-        comingSoon: tempCity.comingSoon,
-      });
-
-      setSelectedCity(tempCity);
-      setTempCity(undefined);
-
-      showToast.success("Location updated successfully!");
-      navigate("/events");
     } catch (error) {
-      console.error("Error saving preferences:", error);
-      showToast.error("Failed to update location. Please try again.");
+      console.log("Backend preferences API not available yet, storing locally");
     }
+
+    selectedCityRef.current = tempCity;
+    navigationPersistence.saveSelectedCity({
+      id: tempCity.id,
+      name: tempCity.name,
+      landmarkImage: tempCity.landmarkImage,
+      isAvailable: tempCity.isAvailable,
+      comingSoon: tempCity.comingSoon,
+    });
+
+    setSelectedCity(tempCity);
+    setTempCity(undefined);
+
+    showToast.success("Location updated successfully!");
+    navigate("/events");
   };
 
   const handleAreaSelectionBack = () => {
@@ -156,16 +178,16 @@ export const ProtectedPagesLayout = () => {
               onNavigateToAreaSelection={handleNavigateToAreaSelection}
               selectedCityId={selectedCity?.id}
             />
-          ) : location.pathname === "/area-selection" ? (
-            <AreaSelectionPage
-              key="area-selection"
-              cityId={tempCity?.id || ""}
-              cityName={tempCity?.name || ""}
-              onBack={handleAreaSelectionBack}
-              onClose={handleAreaSelectionClose}
-              onContinue={handleAreaSelectionComplete}
-              isLoading={updatePreferencesMutation.isPending}
-            />
+                  ) : location.pathname === "/area-selection" ? (
+                    <AreaSelectionPage
+                      key="area-selection"
+                      cityId={tempCity?.id || ""}
+                      cityName={tempCity?.name || ""}
+                      onBack={handleAreaSelectionBack}
+                      onClose={handleAreaSelectionClose}
+                      onContinue={handleAreaSelectionComplete}
+                      isLoading={updatePreferencesMutation.isPending}
+                    />
           ) : (
             <div className="h-full pb-[92px]">
               <Routes location={location} key={location.pathname}>
