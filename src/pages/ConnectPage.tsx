@@ -33,8 +33,7 @@ export const ConnectPage = ({ onContinue }: ConnectPageProps) => {
 
           <button
             onClick={() => {
-              const event = new CustomEvent("navigateToLogin");
-              window.dispatchEvent(event);
+              window.location.href = "/login";
             }}
             className="text-center text-sm text-text-secondary active:opacity-70 transition-opacity"
           >

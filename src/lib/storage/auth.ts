@@ -80,6 +80,11 @@ export const auth = {
     localStorage.removeItem("citadel_signup_email");
   },
 
+  logout: () => {
+    auth.clearAll();
+    window.location.href = "/connect";
+  },
+
   isAuthenticated: (): boolean => {
     return !!localStorage.getItem("accessToken");
   },

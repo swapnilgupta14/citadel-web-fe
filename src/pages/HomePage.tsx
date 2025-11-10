@@ -1,10 +1,39 @@
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { SplashPage } from "./SplashPage";
+import { StartPage } from "./StartPage";
+import { auth } from "../lib/storage/auth";
+
 export const HomePage = () => {
-  return (
-    <div className="flex h-full items-center justify-center">
-      <div className="text-center space-y-4">
-        <h1 className="text-4xl font-bold text-text-primary">Welcome!</h1>
-        <p className="text-text-secondary">You've completed the signup flow</p>
-      </div>
-    </div>
-  );
+  const navigate = useNavigate();
+  const [showSplash, setShowSplash] = useState(true);
+
+  useEffect(() => {
+    if (auth.isAuthenticated() && !showSplash) {
+      navigate("/events", { replace: true });
+    }
+  }, [showSplash, navigate]);
+
+  const handleSplashComplete = () => {
+    setShowSplash(false);
+  };
+
+  const handleSplashAuthenticated = () => {
+    navigate("/events");
+  };
+
+  const handleStartComplete = () => {
+    navigate("/connect");
+  };
+
+  if (showSplash) {
+    return (
+      <SplashPage
+        onComplete={handleSplashComplete}
+        onAuthenticated={handleSplashAuthenticated}
+      />
+    );
+  }
+
+  return <StartPage onComplete={handleStartComplete} />;
 };

@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
-import { AnimatePresence } from "framer-motion";
+import { useNavigate, useLocation } from "react-router-dom";
 import { BottomNavigation } from "../navigation/BottomNavigation";
 import { ExplorePage } from "../../pages/ExplorePage";
 import { EventsPage } from "../../pages/EventsPage";
@@ -57,9 +56,10 @@ export const ProtectedPagesLayout = () => {
   const [tempCity, setTempCity] = useState<City | undefined>();
 
   const getCurrentPageFromPath = (path: string): ProtectedPage => {
-    if (path === "/events") return "events";
+    if (path === "/events" || path === "/location" || path === "/area-selection") return "events";
     if (path === "/profile") return "profile";
-    return "explore";
+    if (path === "/explore") return "explore";
+    return "events";
   };
 
   const currentPage = getCurrentPageFromPath(location.pathname);
@@ -82,16 +82,10 @@ export const ProtectedPagesLayout = () => {
       selectedCityRef.current = updatedCity;
     }
 
-    const persistedPage = navigationPersistence.getCurrentPage();
-    const currentPath = location.pathname;
-    const persistedPath = `/${persistedPage === "events" ? "events" : persistedPage === "profile" ? "profile" : "explore"}`;
-
-    if (currentPath === "/" || currentPath === "/home") {
-      navigate(persistedPath, { replace: true });
-    } else if (location.pathname !== "/location") {
+    if (location.pathname !== "/location" && location.pathname !== "/area-selection") {
       navigationPersistence.saveCurrentPage(currentPage);
     }
-  }, [navigate, location.pathname, currentPage]);
+  }, [location.pathname, currentPage]);
 
   useEffect(() => {
     if (preferencesData?.success && preferencesData.data.preferences) {
@@ -166,63 +160,74 @@ export const ProtectedPagesLayout = () => {
     navigate("/events");
   };
 
+  const handleLocationBack = () => {
+    navigate("/events");
+  };
+
+  const handleLocationClose = () => {
+    navigate("/events");
+  };
+
+  const renderPage = () => {
+    if (location.pathname === "/location") {
+      return (
+        <LocationPage
+          key="location"
+          onBack={handleLocationBack}
+          onClose={handleLocationClose}
+          onSelectCity={handleSelectCity}
+          onNavigateToAreaSelection={handleNavigateToAreaSelection}
+          selectedCityId={selectedCity?.id}
+        />
+      );
+    }
+
+    if (location.pathname === "/area-selection") {
+      return (
+        <AreaSelectionPage
+          key="area-selection"
+          cityId={tempCity?.id || ""}
+          cityName={tempCity?.name || ""}
+          onBack={handleAreaSelectionBack}
+          onClose={handleAreaSelectionClose}
+          onContinue={handleAreaSelectionComplete}
+          isLoading={updatePreferencesMutation.isPending}
+        />
+      );
+    }
+
+    if (location.pathname === "/explore") {
+      return <ExplorePage key="explore" />;
+    }
+
+    if (location.pathname === "/profile") {
+      return <ProfilePage key="profile" />;
+    }
+
+    return (
+      <EventsPage
+        key="events"
+        onOpenLocation={() => navigate("/location")}
+        selectedCity={selectedCity}
+      />
+    );
+  };
+
+  const showBottomNav = location.pathname !== "/location" && location.pathname !== "/area-selection";
+
   return (
     <div className="flex h-full flex-col bg-background relative">
       <div className="flex-1 overflow-hidden relative">
-        <AnimatePresence>
-          {location.pathname === "/location" ? (
-            <LocationPage
-              key="location"
-              onBack={() => navigate(-1)}
-              onSelectCity={handleSelectCity}
-              onNavigateToAreaSelection={handleNavigateToAreaSelection}
-              selectedCityId={selectedCity?.id}
-            />
-                  ) : location.pathname === "/area-selection" ? (
-                    <AreaSelectionPage
-                      key="area-selection"
-                      cityId={tempCity?.id || ""}
-                      cityName={tempCity?.name || ""}
-                      onBack={handleAreaSelectionBack}
-                      onClose={handleAreaSelectionClose}
-                      onContinue={handleAreaSelectionComplete}
-                      isLoading={updatePreferencesMutation.isPending}
-                    />
-          ) : (
-            <div className="h-full pb-[92px]">
-              <Routes location={location} key={location.pathname}>
-                <Route
-                  path="/events"
-                  element={
-                    <EventsPage
-                      onOpenLocation={() => navigate("/location")}
-                      selectedCity={selectedCity}
-                    />
-                  }
-                />
-                <Route path="/explore" element={<ExplorePage />} />
-                <Route path="/profile" element={<ProfilePage />} />
-                <Route
-                  path="/*"
-                  element={
-                    <EventsPage
-                      onOpenLocation={() => navigate("/location")}
-                      selectedCity={selectedCity}
-                    />
-                  }
-                />
-              </Routes>
-            </div>
-          )}
-        </AnimatePresence>
+        <div className={`h-full ${showBottomNav ? 'pb-[92px]' : ''}`}>
+          {renderPage()}
+        </div>
       </div>
-      {location.pathname !== "/location" &&
-        location.pathname !== "/area-selection" && (
-          <BottomNavigation
-            activePage={currentPage}
-            onNavigate={handleNavigate}
-          />
-        )}
+      {showBottomNav && (
+        <BottomNavigation
+          activePage={currentPage}
+          onNavigate={handleNavigate}
+        />
+      )}
     </div>
   );
 };

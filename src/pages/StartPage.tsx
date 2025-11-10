@@ -4,11 +4,11 @@ import { ChevronRight } from "lucide-react";
 import { ImageGrid } from "../components/ui/ImageGrid";
 import { ImageWithPlaceholder } from "../components/ui/ImageWithPlaceholder";
 
-interface SignupPageProps {
+interface StartPageProps {
   onComplete: () => void;
 }
 
-export const SignupPage = ({ onComplete }: SignupPageProps) => {
+export const StartPage = ({ onComplete }: StartPageProps) => {
   const constraintsRef = useRef<HTMLDivElement>(null);
   const x = useMotionValue(0);
 
@@ -93,3 +93,4 @@ export const SignupPage = ({ onComplete }: SignupPageProps) => {
     </div>
   );
 };
+

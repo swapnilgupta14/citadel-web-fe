@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { ArrowLeft, X } from "lucide-react";
 import { motion } from "framer-motion";
 import type { City } from "../types/events";
@@ -7,6 +8,7 @@ import { ImageWithPlaceholder } from "../components/ui/ImageWithPlaceholder";
 
 interface LocationPageProps {
   onBack: () => void;
+  onClose: () => void;
   onSelectCity: (city: City) => void;
   onNavigateToAreaSelection: (city: City) => void;
   selectedCityId?: string;
@@ -14,10 +16,13 @@ interface LocationPageProps {
 
 export const LocationPage = ({
   onBack,
+  onClose,
   onSelectCity,
   onNavigateToAreaSelection,
   selectedCityId,
 }: LocationPageProps) => {
+  const [isExiting, setIsExiting] = useState(false);
+
   const handleCitySelect = (city: City) => {
     if (city.isAvailable) {
       onSelectCity(city);
@@ -25,11 +30,17 @@ export const LocationPage = ({
     }
   };
 
+  const handleClose = () => {
+    setIsExiting(true);
+    setTimeout(() => {
+      onClose();
+    }, 300);
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
+      animate={{ opacity: isExiting ? 0 : 1 }}
       transition={{ duration: 0.3, ease: "easeInOut" }}
       className="flex h-full flex-col bg-background"
     >
@@ -43,7 +54,7 @@ export const LocationPage = ({
         </button>
         <h1 className="text-base font-semibold text-text-primary">Location</h1>
         <button
-          onClick={onBack}
+          onClick={handleClose}
           className="p-2 -mr-2 active:opacity-70 transition-opacity"
           aria-label="Close"
         >

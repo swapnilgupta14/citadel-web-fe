@@ -21,9 +21,8 @@ interface ProfileMenuItem {
 
 export const ProfilePage = () => {
   const handleLogout = () => {
-    auth.clearAll();
     showToast.success("Logged out successfully");
-    window.location.href = "/";
+    auth.logout();
   };
 
   const handleEventBookings = () => {
@@ -122,13 +121,13 @@ export const ProfilePage = () => {
                 key={item.id}
                 onClick={item.onClick}
                 className={`w-full flex items-center gap-4 p-4 bg-background-secondary active:scale-[0.98] transition-transform ${
-                  !isLast ? "border-b border-white/10" : ""
+                  !isLast ? "border-b border-border" : ""
                 }`}
               >
                 <div className="w-11 h-11 rounded-xl bg-white/10 flex items-center justify-center flex-shrink-0">
                   <Icon className={`w-6 h-6 ${iconColor}`} strokeWidth={2} />
                 </div>
-                <span className={`text-xl font-medium ${textColor}`}>
+                <span className={`text-lg font-medium ${textColor}`}>
                   {item.label}
                 </span>
               </button>

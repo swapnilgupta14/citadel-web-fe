@@ -1,24 +1,15 @@
-import { type ReactNode, useEffect } from "react";
+import { type ReactNode } from "react";
+import { Navigate } from "react-router-dom";
 import { auth } from "../../lib/storage/auth";
 
 interface ProtectedRouteProps {
   children: ReactNode;
-  fallback?: ReactNode;
 }
 
-export const ProtectedRoute = ({
-  children,
-  fallback = null,
-}: ProtectedRouteProps) => {
-  useEffect(() => {
-    if (!auth.isAuthenticated()) {
-      auth.clearAll();
-      window.location.href = "/";
-    }
-  }, []);
-
+export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
   if (!auth.isAuthenticated()) {
-    return <>{fallback}</>;
+    return <Navigate to="/" replace />;
   }
+  
   return <>{children}</>;
 };

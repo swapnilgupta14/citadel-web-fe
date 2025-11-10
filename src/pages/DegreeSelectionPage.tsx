@@ -7,23 +7,17 @@ import type { DegreeSelectionPageProps } from "../types/pages";
 import { degreeSchema, yearSchema } from "../lib/helpers/validations";
 
 const MOCK_DEGREES = [
-  "Computer Science",
-  "Engineering",
-  "Business Administration",
-  "Medicine",
-  "Law",
-  "Arts",
-  "Science",
-  "Mathematics",
-  "Physics",
-  "Chemistry",
-  "Biology",
-  "Economics",
-  "Psychology",
-  "Sociology",
-  "History",
-  "Literature",
-  "Philosophy",
+  "B.Tech",
+  "B.Des",
+  "B.A.",
+  "B.Sc",
+  "BBA",
+  "M.Tech",
+  "M.A.",
+  "PhD",
+  "B.Pharm",
+  "MCA",
+  "LLB",
 ];
 
 export const DegreeSelectionPage = ({

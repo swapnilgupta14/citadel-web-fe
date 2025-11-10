@@ -56,10 +56,9 @@ const processQueue = (error: unknown = null, token: string | null = null) => {
 
 export const handleLogout = () => {
     console.log("Session expired. Logging out...");
-    auth.clearAll();
-
+    
     if (window.location.pathname !== "/connect") {
-        window.location.href = "/connect";
+        auth.logout();
     }
 };
 
