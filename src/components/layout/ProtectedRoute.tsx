@@ -7,9 +7,11 @@ interface ProtectedRouteProps {
 }
 
 export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
-  if (!auth.isAuthenticated()) {
+  const isAuthenticated = auth.isAuthenticated();
+
+  if (!isAuthenticated) {
     return <Navigate to="/" replace />;
   }
-  
+
   return <>{children}</>;
 };

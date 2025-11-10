@@ -82,7 +82,7 @@ export const auth = {
 
   logout: () => {
     auth.clearAll();
-    window.location.href = "/connect";
+    window.location.replace("/connect");
   },
 
   isAuthenticated: (): boolean => {
