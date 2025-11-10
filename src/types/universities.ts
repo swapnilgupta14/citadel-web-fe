@@ -2,6 +2,7 @@ export type University = {
   id: string;
   name: string;
   country: string;
+  domain?: string;
 };
 
 export type UniversitiesResponse = {

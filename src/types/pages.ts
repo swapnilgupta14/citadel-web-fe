@@ -1,6 +1,6 @@
 export type UniversitySelectionPageProps = {
   onBack: () => void;
-  onContinue: (universityId: string) => void;
+  onContinue: (university: { id: string; name: string; country: string; domain?: string }) => void;
   initialUniversityId?: string;
 };
 

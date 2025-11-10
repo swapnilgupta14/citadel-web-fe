@@ -33,14 +33,19 @@ export const UniversitySelectionPage = ({
   });
 
   useEffect(() => {
-    if (initialUniversityId && data?.universities && data.universities.length > 0) {
-      const university = data.universities.find((u) => u.id === initialUniversityId);
+    if (
+      initialUniversityId &&
+      data?.universities &&
+      data.universities.length > 0
+    ) {
+      const university = data.universities.find(
+        (u) => u.id === initialUniversityId
+      );
       if (university) {
         setSelectedUniversity(university);
         setSearchQuery(university.name);
       }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [initialUniversityId, data?.universities]);
 
   const shouldShowResults = useMemo(() => {
@@ -71,7 +76,19 @@ export const UniversitySelectionPage = ({
     }
   };
 
-  const isContinueEnabled = selectedUniversity !== null;
+  const isContinueEnabled =
+    selectedUniversity !== null && selectedUniversity.id !== undefined;
+
+  const handleContinue = () => {
+    if (selectedUniversity?.id) {
+      onContinue({
+        id: selectedUniversity.id,
+        name: selectedUniversity.name,
+        country: selectedUniversity.country,
+        domain: selectedUniversity.domain,
+      });
+    }
+  };
 
   return (
     <div className="flex h-full flex-col">
@@ -122,9 +139,9 @@ export const UniversitySelectionPage = ({
                     style={{ backgroundColor: "rgba(255, 255, 255, 0.7)" }}
                   >
                     {hasResults ? (
-                      searchResults.map((university) => (
+                      searchResults.map((university, index) => (
                         <button
-                          key={university.id}
+                          key={university.id || `university-${index}`}
                           onClick={() => handleSelectUniversity(university)}
                           className="w-full text-left py-4 px-5 border-b border-border bg-background-secondary hover:bg-background active:bg-background transition-colors text-text-primary"
                         >
@@ -148,11 +165,7 @@ export const UniversitySelectionPage = ({
       {!shouldShowResults && (
         <div className="px-6 py-4 pb-6">
           <Button
-            onClick={
-              isContinueEnabled && selectedUniversity
-                ? () => onContinue(selectedUniversity.id)
-                : undefined
-            }
+            onClick={handleContinue}
             disabled={!isContinueEnabled}
             variant={isContinueEnabled ? "primary" : "disabled"}
           >

@@ -35,14 +35,34 @@ export const universitiesApi = {
             queryParams.search = search;
         }
 
-        const response = await axiosInstance.get<UniversitiesResponse>(
+        const response = await axiosInstance.get<{
+            universities: Array<{
+                _id: string;
+                name: string;
+                country: string;
+                domain?: string;
+                createdAt?: string;
+                updatedAt?: string;
+                __v?: number;
+            }>;
+            hasMore: boolean;
+        }>(
             "/v1/universities",
             {
                 params: queryParams,
             }
         );
 
-        return response.data;
+        // Transform _id to id to match our TypeScript types
+        return {
+            universities: response.data.universities.map((university) => ({
+                id: university._id,
+                name: university.name,
+                country: university.country,
+                domain: university.domain,
+            })),
+            hasMore: response.data.hasMore,
+        };
     },
 };
 
@@ -79,14 +99,16 @@ export const profileApi = {
         data: CreateProfileData
     ): Promise<CreateProfileResponse> => {
         const response = await axiosInstance.post<CreateProfileResponse>(
-            "/v1/users/profile",
+            "/v1/onboarding",
             {
                 name: data.name,
-                dateOfBirth: data.dateOfBirth,
+                dob: data.dateOfBirth,
                 gender: data.gender,
-                universityId: data.universityId,
+                university: data.university,
                 degree: data.degree,
                 year: parseInt(data.year.replace(/\D/g, "")) || parseInt(data.year) || 1,
+                skills: [],
+                friends: [],
             }
         );
         return response.data;

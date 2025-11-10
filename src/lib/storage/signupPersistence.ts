@@ -2,7 +2,12 @@ const SIGNUP_DATA_KEY = "citadel_signup_data";
 const SIGNUP_EMAIL_KEY = "citadel_signup_email";
 
 export type PersistedSignupData = {
-    universityId?: string;
+    university?: {
+        id: string;
+        name: string;
+        country: string;
+        domain?: string;
+    };
     name?: string;
     gender?: "male" | "female" | "other";
     dateOfBirth?: string;

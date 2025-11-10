@@ -37,14 +37,23 @@ export const SignupFlow = () => {
     isLoading: signupLoading,
     updateSignupData,
     createProfile,
+    clearSignupData,
   } = useSignupFlow();
 
   const handleUniversityBack = () => {
+    clearSignupData();
     navigate("/connect");
   };
 
-  const handleUniversityContinue = (universityId: string) => {
-    updateSignupData({ universityId });
+  const handleUniversityContinue = (university: {
+    id: string;
+    name: string;
+    country: string;
+    domain?: string;
+  }) => {
+    console.log("=== UNIVERSITY SELECTION - Continue ===");
+    console.log("University:", university);
+    updateSignupData({ university });
     setCurrentStep("email");
   };
 
@@ -64,11 +73,15 @@ export const SignupFlow = () => {
   };
 
   const handleOTPContinue = async (otp: string) => {
+    console.log("=== OTP VERIFICATION - Continue ===");
+    console.log("Email:", userEmail);
+    console.log("OTP:", otp);
     try {
       await verifyOTP(userEmail, otp);
+      console.log("OTP verified successfully");
       setCurrentStep("whoAreYou");
-    } catch {
-      // Error already handled
+    } catch (error) {
+      console.error("OTP verification failed:", error);
     }
   };
 
@@ -84,6 +97,8 @@ export const SignupFlow = () => {
     name: string;
     gender: "male" | "female" | "other";
   }) => {
+    console.log("=== WHO ARE YOU - Continue ===");
+    console.log("Name and gender data:", data);
     updateSignupData({
       name: data.name,
       gender: data.gender,
@@ -100,7 +115,10 @@ export const SignupFlow = () => {
     month: string;
     year: string;
   }) => {
+    console.log("=== DATE OF BIRTH - Continue ===");
+    console.log("Date data:", data);
     const dateOfBirth = `${data.year}-${data.month.padStart(2, "0")}-${data.day.padStart(2, "0")}`;
+    console.log("Formatted date of birth:", dateOfBirth);
     updateSignupData({ dateOfBirth });
     setCurrentStep("degree");
   };
@@ -113,13 +131,23 @@ export const SignupFlow = () => {
     degree: string;
     year: string;
   }) => {
+    console.log("=== SIGNUP FLOW - Degree Continue ===");
+    console.log("Degree data received:", data);
+    console.log("Current signup data before update:", signupData);
+
     updateSignupData(data);
 
     const finalData = { ...signupData, ...data };
+    console.log("Final data to be sent:", finalData);
+
     const success = await createProfile(finalData);
+    console.log("Profile creation success:", success);
 
     if (success) {
+      console.log("Moving to success page");
       setCurrentStep("success");
+    } else {
+      console.log("Profile creation failed, staying on degree page");
     }
   };
 
@@ -132,7 +160,7 @@ export const SignupFlow = () => {
       <UniversitySelectionPage
         onBack={handleUniversityBack}
         onContinue={handleUniversityContinue}
-        initialUniversityId={signupData.universityId}
+        initialUniversityId={signupData.university?.id}
       />
     );
   }

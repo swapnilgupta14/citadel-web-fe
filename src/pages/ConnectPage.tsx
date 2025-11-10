@@ -1,11 +1,16 @@
+import { useEffect } from "react";
 import { ImageGrid } from "../components/ui/ImageGrid";
 import { Button } from "../components/ui/Button";
+import { signupPersistence } from "../lib/storage/signupPersistence";
 
 interface ConnectPageProps {
   onContinue: () => void;
 }
 
 export const ConnectPage = ({ onContinue }: ConnectPageProps) => {
+  useEffect(() => {
+    signupPersistence.clearSignupData();
+  }, []);
   return (
     <div className="relative flex h-full flex-col bg-background overflow-hidden">
       <div className="flex flex-col flex-1 relative z-10 min-h-0">

@@ -7,9 +7,11 @@ import { LoginFlow } from "./routes/LoginFlow";
 import { ProtectedRoute } from "./components/layout/ProtectedRoute";
 import { ProtectedPagesLayout } from "./components/layout/ProtectedPagesLayout";
 import { auth } from "./lib/storage/auth";
+import { signupPersistence } from "./lib/storage/signupPersistence";
 
 function App() {
   const handleConnectSignup = () => {
+    signupPersistence.clearSignupData();
     window.location.href = "/signup";
   };
 

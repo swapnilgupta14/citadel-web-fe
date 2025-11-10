@@ -10,6 +10,9 @@ import {
 } from "lucide-react";
 import { auth } from "../lib/storage/auth";
 import { showToast } from "../lib/helpers/toast";
+import { useProfile } from "../hooks/queries/useProfile";
+import { ImageWithPlaceholder } from "../components/ui/ImageWithPlaceholder";
+import { ProfileSkeleton } from "../components/ui/ProfileSkeleton";
 
 interface ProfileMenuItem {
   id: string;
@@ -20,6 +23,9 @@ interface ProfileMenuItem {
 }
 
 export const ProfilePage = () => {
+  const { data: profileResponse, isLoading } = useProfile();
+  const profile = profileResponse?.data;
+
   const handleLogout = () => {
     showToast.success("Logged out successfully");
     auth.logout();
@@ -89,25 +95,65 @@ export const ProfilePage = () => {
     },
   ];
 
+  const generateUserCode = (name: string, id: number): string => {
+    const initials = name
+      .split(" ")
+      .map((n) => n[0])
+      .join("")
+      .toUpperCase()
+      .slice(0, 2);
+    const code = id.toString().slice(-4);
+    return `#${initials}${code}`;
+  };
+
+  const userData = auth.getUserData();
+  const displayName = profile?.name || "User";
+  const userId = profile?.id || parseInt(userData?.id || "0");
+  const userCode = profile
+    ? generateUserCode(profile.name, profile.id)
+    : `#${userId.toString().slice(-4)}`;
+  const primarySlot = profile?.slots?.find((slot) => slot.slot === 0);
+  const profileImage =
+    primarySlot?.image?.cloudfrontUrl || profile?.images?.[0]?.cloudfrontUrl;
+
   return (
     <div className="flex h-full flex-col bg-background overflow-y-auto">
       <div className="flex-1 py-6">
-        <div className="flex flex-col items-center py-6">
-          <button
-            onClick={handleUploadPhoto}
-            className="relative w-[130px] h-[130px] rounded-[5px] border-2 border-dashed border-white bg-background-secondary flex items-center justify-center mb-6 active:scale-95 transition-transform"
-            aria-label="Upload profile photo"
-          >
-            <Plus className="w-12 h-12 text-primary" strokeWidth={2} />
-          </button>
+        <div className="flex flex-col items-center py-6 mb-6">
+          {isLoading ? (
+            <ProfileSkeleton />
+          ) : (
+            <>
+              <button
+                onClick={handleUploadPhoto}
+                className="relative w-[130px] h-[130px] rounded-[5px] border-2 border-dashed border-white bg-background-secondary flex items-center justify-center mb-6 active:scale-95 transition-transform overflow-hidden"
+                aria-label="Upload profile photo"
+              >
+                {profileImage ? (
+                  <ImageWithPlaceholder
+                    src={profileImage}
+                    alt={displayName}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <Plus className="w-12 h-12 text-primary" strokeWidth={2} />
+                )}
+              </button>
 
-          <h1 className="text-3xl font-bold text-text-primary font-serif mb-2">
-            Nisarg Patel
-          </h1>
-          <p className="text-lg text-primary font-semibold">#NP7F2</p>
+              <h1 className="text-3xl font-bold text-text-primary font-serif mb-2">
+                {displayName}
+              </h1>
+              <p className="text-lg text-primary font-semibold">{userCode}</p>
+              {profile?.university && (
+                <p className="text-sm text-text-secondary mt-1">
+                  {profile.university.name}
+                </p>
+              )}
+            </>
+          )}
         </div>
 
-        <div>
+        <div className="flex flex-col">
           {profileMenuItems.map((item, index) => {
             const Icon = item.icon;
             const textColor = item.isDanger

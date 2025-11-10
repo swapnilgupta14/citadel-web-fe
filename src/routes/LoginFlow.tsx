@@ -1,14 +1,19 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { LoginEmailPage } from "../pages/LoginEmailPage";
 import { OTPEntryPage } from "../pages/OTPEntryPage";
 import { useAuth } from "../hooks/logic/useAuth";
+import { signupPersistence } from "../lib/storage/signupPersistence";
 
 type LoginStep = "email" | "otp";
 
 export const LoginFlow = () => {
   const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState<LoginStep>("email");
+
+  useEffect(() => {
+    signupPersistence.clearSignupData();
+  }, []);
 
   const {
     userEmail,
@@ -69,4 +74,3 @@ export const LoginFlow = () => {
 
   return null;
 };
-
