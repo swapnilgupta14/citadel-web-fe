@@ -31,11 +31,9 @@ export const ProfileMenuSkeleton = ({
             }`}
           >
             <div className="w-11 h-11 rounded-xl bg-white/5 flex-shrink-0" />
-            <div className="h-6 bg-background-tertiary rounded flex-1 max-w-[200px]" />
           </div>
         );
       })}
     </div>
   );
 };
-

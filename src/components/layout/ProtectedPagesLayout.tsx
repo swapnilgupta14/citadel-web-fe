@@ -6,14 +6,21 @@ import { EventsPage } from "../../pages/EventsPage";
 import { ProfilePage } from "../../pages/ProfilePage";
 import { LocationPage } from "../../pages/LocationPage";
 import { AreaSelectionPage } from "../../pages/AreaSelectionPage";
+import { QuizPage } from "../../pages/QuizPage";
+import { PersonalityQuizPage } from "../../pages/PersonalityQuizPage";
+import { EventDetailPage } from "../../pages/EventDetailPage";
+import { ProgressLoader } from "../ui/ProgressLoader";
 import type { City } from "../../types/events";
 import {
   navigationPersistence,
   type ProtectedPage,
 } from "../../lib/storage/navigationPersistence";
 import { getLandmarkImage } from "../../lib/helpers/eventUtils";
-import { showToast } from "../../lib/helpers/toast";
-import { useUpdateDinnerPreferences, useDinnerPreferences } from "../../hooks/queries";
+import {
+  useUpdateDinnerPreferences,
+  useDinnerPreferences,
+  useSaveInitialPreferences,
+} from "../../hooks/queries";
 
 const defaultCity: City = {
   id: "new-delhi",
@@ -25,9 +32,13 @@ const defaultCity: City = {
 export const ProtectedPagesLayout = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  
+
   const { data: preferencesData } = useDinnerPreferences();
+  const saveInitialPreferencesMutation = useSaveInitialPreferences();
   const updatePreferencesMutation = useUpdateDinnerPreferences();
+
+  const hasCompletedSetup = preferencesData?.data?.hasCompletedSetup ?? false;
+  const savedPreferences = preferencesData?.data?.preferences;
 
   const getInitialCity = (): City => {
     const persistedCity = navigationPersistence.getSelectedCity();
@@ -48,15 +59,27 @@ export const ProtectedPagesLayout = () => {
   };
 
   const selectedCityRef = useRef<City | undefined>(getInitialCity());
+  const hasLocationOpenedRef = useRef<boolean>(false);
 
   const [selectedCity, setSelectedCity] = useState<City | undefined>(
     selectedCityRef.current
   );
 
   const [tempCity, setTempCity] = useState<City | undefined>();
+  const [isBookingFlow, setIsBookingFlow] = useState(false);
+  const [selectedSlotId, setSelectedSlotId] = useState<string | null>(null);
+  const [_pendingEventId, _setPendingEventId] = useState<string | null>(null);
 
   const getCurrentPageFromPath = (path: string): ProtectedPage => {
-    if (path === "/events" || path === "/location" || path === "/area-selection") return "events";
+    if (
+      path === "/events" ||
+      path === "/location" ||
+      path === "/area-selection" ||
+      path === "/quiz" ||
+      path === "/personality-quiz" ||
+      path.startsWith("/events/")
+    )
+      return "events";
     if (path === "/profile") return "profile";
     if (path === "/explore") return "explore";
     return "events";
@@ -82,16 +105,20 @@ export const ProtectedPagesLayout = () => {
       selectedCityRef.current = updatedCity;
     }
 
-    if (location.pathname !== "/location" && location.pathname !== "/area-selection") {
+    if (
+      location.pathname !== "/location" &&
+      location.pathname !== "/area-selection" &&
+      location.pathname !== "/personality-quiz" &&
+      location.pathname !== "/finding-matches" &&
+      !location.pathname.startsWith("/events/")
+    ) {
       navigationPersistence.saveCurrentPage(currentPage);
     }
   }, [location.pathname, currentPage]);
 
   useEffect(() => {
     if (preferencesData?.success && preferencesData.data.preferences) {
-      const { city, preferredAreas } = preferencesData.data.preferences;
-      
-      console.log("Fetched dinner preferences:", { city, preferredAreas });
+      const { city } = preferencesData.data.preferences;
 
       if (city) {
         const cityId = city.toLowerCase().replace(/\s+/g, "-");
@@ -109,6 +136,18 @@ export const ProtectedPagesLayout = () => {
     }
   }, [preferencesData]);
 
+  useEffect(() => {
+    if (
+      preferencesData &&
+      !hasCompletedSetup &&
+      !hasLocationOpenedRef.current &&
+      location.pathname === "/events"
+    ) {
+      hasLocationOpenedRef.current = true;
+      navigate("/location");
+    }
+  }, [preferencesData, hasCompletedSetup, location.pathname, navigate]);
+
   const handleNavigate = (page: ProtectedPage) => {
     const path = `/${page === "events" ? "events" : page === "profile" ? "profile" : "explore"}`;
     navigate(path);
@@ -119,6 +158,23 @@ export const ProtectedPagesLayout = () => {
     navigate("/area-selection");
   };
 
+  useEffect(() => {
+    if (
+      savedPreferences?.city &&
+      !tempCity &&
+      location.pathname === "/area-selection"
+    ) {
+      const cityId = savedPreferences.city.toLowerCase().replace(/\s+/g, "-");
+      const cityData: City = {
+        id: cityId,
+        name: savedPreferences.city,
+        landmarkImage: getLandmarkImage(cityId),
+        isAvailable: true,
+      };
+      setTempCity(cityData);
+    }
+  }, [savedPreferences, location.pathname, tempCity]);
+
   const handleSelectCity = (city: City) => {
     setTempCity(city);
   };
@@ -127,12 +183,24 @@ export const ProtectedPagesLayout = () => {
     if (!tempCity) return;
 
     try {
-      await updatePreferencesMutation.mutateAsync({
-        city: tempCity.name,
-        preferredAreas: selectedAreas,
-      });
+      if (!hasCompletedSetup) {
+        const initialPayload = {
+          city: tempCity.name,
+          preferredAreas: selectedAreas,
+          budget: "medium",
+          language: [],
+          dietaryRestriction: "any",
+        };
+        await saveInitialPreferencesMutation.mutateAsync(initialPayload);
+      } else {
+        await updatePreferencesMutation.mutateAsync({
+          city: tempCity.name,
+          preferredAreas: selectedAreas,
+        });
+      }
     } catch (error) {
-      console.log("Backend preferences API not available yet, storing locally");
+      console.error("Backend preferences API error:", error);
+      return;
     }
 
     selectedCityRef.current = tempCity;
@@ -147,8 +215,11 @@ export const ProtectedPagesLayout = () => {
     setSelectedCity(tempCity);
     setTempCity(undefined);
 
-    showToast.success("Location updated successfully!");
-    navigate("/events");
+    if (isBookingFlow) {
+      navigate("/personality-quiz");
+    } else {
+      navigate("/events");
+    }
   };
 
   const handleAreaSelectionBack = () => {
@@ -165,10 +236,72 @@ export const ProtectedPagesLayout = () => {
   };
 
   const handleLocationClose = () => {
+    setIsBookingFlow(false);
+    setSelectedSlotId(null);
     navigate("/events");
   };
 
+  const handleStartBookingFlow = (slotId: string) => {
+    setSelectedSlotId(slotId);
+    setIsBookingFlow(true);
+    navigate("/location");
+  };
+
+  const handlePersonalityQuizComplete = async () => {
+    if (!isBookingFlow || !selectedSlotId) {
+      setIsBookingFlow(false);
+      setSelectedSlotId(null);
+      navigate("/events");
+      return;
+    }
+
+    _setPendingEventId(selectedSlotId);
+    navigate("/finding-matches");
+  };
+
+  const handleProgressLoaderComplete = () => {
+    const targetEventId = _pendingEventId || selectedSlotId;
+    
+    if (targetEventId) {
+      navigate(`/events/${targetEventId}`);
+      _setPendingEventId(null);
+    } else {
+      navigate("/events");
+    }
+    
+    setTimeout(() => {
+      setIsBookingFlow(false);
+      setSelectedSlotId(null);
+    }, 100);
+  };
+
+  useEffect(() => {
+    if (location.pathname === "/finding-matches" && !isBookingFlow) {
+      navigate("/events");
+    }
+  }, [location.pathname, isBookingFlow, navigate]);
+
   const renderPage = () => {
+    if (location.pathname === "/finding-matches") {
+      if (!isBookingFlow) {
+        return null;
+      }
+      return (
+        <ProgressLoader
+          continuous={false}
+          duration={3000}
+          onComplete={handleProgressLoaderComplete}
+        />
+      );
+    }
+
+    if (
+      location.pathname.startsWith("/events/") &&
+      location.pathname !== "/events"
+    ) {
+      return <EventDetailPage key="event-detail" />;
+    }
+
     if (location.pathname === "/location") {
       return (
         <LocationPage
@@ -186,12 +319,16 @@ export const ProtectedPagesLayout = () => {
       return (
         <AreaSelectionPage
           key="area-selection"
-          cityId={tempCity?.id || ""}
-          cityName={tempCity?.name || ""}
+          cityId={tempCity?.id || selectedCity?.id || ""}
+          cityName={tempCity?.name || selectedCity?.name || ""}
           onBack={handleAreaSelectionBack}
           onClose={handleAreaSelectionClose}
           onContinue={handleAreaSelectionComplete}
-          isLoading={updatePreferencesMutation.isPending}
+          isLoading={
+            saveInitialPreferencesMutation.isPending ||
+            updatePreferencesMutation.isPending
+          }
+          savedAreas={savedPreferences?.preferredAreas}
         />
       );
     }
@@ -204,21 +341,69 @@ export const ProtectedPagesLayout = () => {
       return <ProfilePage key="profile" />;
     }
 
+    if (location.pathname === "/quiz") {
+      return (
+        <QuizPage
+          key="quiz"
+          onBack={() => navigate("/events")}
+          onClose={() => navigate("/events")}
+          onComplete={() => navigate("/events")}
+        />
+      );
+    }
+
+    if (location.pathname === "/personality-quiz") {
+      return (
+        <PersonalityQuizPage
+          key="personality-quiz"
+          onBack={() => {
+            if (selectedCity) {
+              setTempCity(selectedCity);
+            }
+            navigate("/area-selection");
+          }}
+          onClose={() => {
+            setIsBookingFlow(false);
+            setSelectedSlotId(null);
+            navigate("/events");
+          }}
+          onComplete={() => {
+            setIsBookingFlow(false);
+            setSelectedSlotId(null);
+            navigate("/events");
+          }}
+          onBookingComplete={handlePersonalityQuizComplete}
+          isBookingFlow={isBookingFlow}
+        />
+      );
+    }
+
     return (
       <EventsPage
         key="events"
-        onOpenLocation={() => navigate("/location")}
+        onOpenLocation={() => {
+          setIsBookingFlow(false);
+          navigate("/location");
+        }}
+        onStartBookingFlow={handleStartBookingFlow}
         selectedCity={selectedCity}
+        hasCompletedSetup={hasCompletedSetup}
       />
     );
   };
 
-  const showBottomNav = location.pathname !== "/location" && location.pathname !== "/area-selection";
+  const showBottomNav =
+    location.pathname !== "/location" &&
+    location.pathname !== "/area-selection" &&
+    location.pathname !== "/quiz" &&
+    location.pathname !== "/personality-quiz" &&
+    location.pathname !== "/finding-matches" &&
+    !location.pathname.startsWith("/events/");
 
   return (
     <div className="flex h-full flex-col bg-background relative">
       <div className="flex-1 overflow-hidden relative">
-        <div className={`h-full ${showBottomNav ? 'pb-[92px]' : ''}`}>
+        <div className={`h-full ${showBottomNav ? "pb-[92px]" : ""}`}>
           {renderPage()}
         </div>
       </div>

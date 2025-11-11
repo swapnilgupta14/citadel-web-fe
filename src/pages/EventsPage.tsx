@@ -13,7 +13,9 @@ import { Button } from "../components/ui/Button";
 import { EventSlotSkeleton } from "../components/ui/Skeleton";
 interface EventsPageProps {
   onOpenLocation: () => void;
+  onStartBookingFlow?: (slotId: string) => void;
   selectedCity?: City;
+  hasCompletedSetup?: boolean;
 }
 
 const defaultCity: City = {
@@ -32,6 +34,7 @@ const getApiCityName = (cityId: string): string => {
 
 export const EventsPage = ({
   onOpenLocation,
+  onStartBookingFlow,
   selectedCity,
 }: EventsPageProps) => {
   const [selectedSlot, setSelectedSlot] = useState<EventSlot | null>(null);
@@ -78,6 +81,11 @@ export const EventsPage = ({
   const handleBookSeat = async () => {
     if (!selectedSlot) return;
 
+    if (onStartBookingFlow) {
+      onStartBookingFlow(selectedSlot.id);
+      return;
+    }
+
     try {
       await bookEventMutation.mutateAsync({
         slotId: selectedSlot.id,
@@ -113,13 +121,22 @@ export const EventsPage = ({
             <h2 className="text-white text-3xl font-bold text-center font-serif pb-1">
               {currentCity.name}
             </h2>
-            <button
-              onClick={onOpenLocation}
-              className="flex items-center gap-1 text-white text-sm active:opacity-70 transition-opacity"
-            >
-              <span className="underline text-[15px]">Change location</span>
-              <RefreshCw className="w-4 h-4" strokeWidth={2} />
-            </button>
+            {/* {hasCompletedSetup && selectedCity ? ( */}
+              <button
+                onClick={onOpenLocation}
+                className="flex items-center gap-1 text-white text-sm active:opacity-70 transition-opacity"
+              >
+                <span className="underline text-[15px]">Change location</span>
+                <RefreshCw className="w-4 h-4" strokeWidth={2} />
+              </button>
+            {/* ) : (
+              <button
+                onClick={onOpenLocation}
+                className="flex items-center gap-1 text-white text-sm active:opacity-70 transition-opacity"
+              >
+                <span className="underline text-[15px]">Please select the location</span>
+              </button>
+            )} */}
           </div>
         </div>
       </div>

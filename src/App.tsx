@@ -75,6 +75,42 @@ function App() {
         />
 
         <Route
+          path="/quiz"
+          element={
+            <ProtectedRoute>
+              <ProtectedPagesLayout />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/personality-quiz"
+          element={
+            <ProtectedRoute>
+              <ProtectedPagesLayout />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/events/:eventId"
+          element={
+            <ProtectedRoute>
+              <ProtectedPagesLayout />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/finding-matches"
+          element={
+            <ProtectedRoute>
+              <ProtectedPagesLayout />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
           path="*"
           element={
             auth.isAuthenticated() ? (

@@ -1,4 +1,4 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient, keepPreviousData } from "@tanstack/react-query";
 import { eventsApi } from "../../services/api";
 import type { BookEventRequest } from "../../types/events";
 
@@ -15,6 +15,7 @@ export const useEvents = (params: UseEventsParams) => {
         queryKey: ["events", "slots", city, date, area],
         queryFn: () => eventsApi.getAvailableSlots(city, date, area),
         enabled: !!city,
+        placeholderData: keepPreviousData,
         staleTime: 1000 * 30,
         gcTime: 1000 * 60 * 5,
     });
@@ -28,6 +29,16 @@ export const useBookEvent = () => {
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["events", "slots"] });
         },
+    });
+};
+
+export const useEventDetail = (eventId: string | undefined) => {
+    return useQuery({
+        queryKey: ["events", "detail", eventId],
+        queryFn: () => eventsApi.getEventDetail(eventId!),
+        enabled: !!eventId,
+        staleTime: 1000 * 60 * 5,
+        gcTime: 1000 * 60 * 10,
     });
 };
 

@@ -18,7 +18,19 @@ import type {
     BookEventResponse,
     DinnerPreferencesResponse,
     UpdatePreferencesRequest,
+    EventDetailResponse,
 } from "../types/events";
+import type {
+    QuizQuestionsResponse,
+    SubmitQuizRequest,
+    SubmitQuizResponse,
+    QuizResultsResponse,
+} from "../types/quiz";
+import type {
+    PersonalityQuizResponse,
+    SubmitPersonalityQuizRequest,
+    SubmitPersonalityQuizResponse,
+} from "../types/personality-quiz";
 
 export const universitiesApi = {
     getUniversities: async (
@@ -53,7 +65,6 @@ export const universitiesApi = {
             }
         );
 
-        // Transform _id to id to match our TypeScript types
         return {
             universities: response.data.universities.map((university) => ({
                 id: university._id,
@@ -184,6 +195,13 @@ export const eventsApi = {
         );
         return response.data;
     },
+
+    getEventDetail: async (eventId: string): Promise<EventDetailResponse> => {
+        const response = await axiosInstance.get<EventDetailResponse>(
+            `/v1/dinner-events/${eventId}`
+        );
+        return response.data;
+    },
 };
 
 export const dinnerPreferencesApi = {
@@ -194,11 +212,66 @@ export const dinnerPreferencesApi = {
         return response.data;
     },
 
+    saveInitialPreferences: async (
+        data: UpdatePreferencesRequest
+    ): Promise<DinnerPreferencesResponse> => {
+        const response = await axiosInstance.post<DinnerPreferencesResponse>(
+            "/v1/dinner-preferences/initial",
+            data
+        );
+        return response.data;
+    },
+
     updatePreferences: async (
         data: UpdatePreferencesRequest
     ): Promise<DinnerPreferencesResponse> => {
         const response = await axiosInstance.patch<DinnerPreferencesResponse>(
             "/v1/dinner-preferences",
+            data
+        );
+        return response.data;
+    },
+};
+
+export const quizApi = {
+    getQuestions: async (): Promise<QuizQuestionsResponse> => {
+        const response = await axiosInstance.get<QuizQuestionsResponse>(
+            "/v1/dinner-preferences/personality-quiz"
+        );
+        return response.data;
+    },
+
+    submitQuiz: async (
+        data: SubmitQuizRequest
+    ): Promise<SubmitQuizResponse> => {
+        const response = await axiosInstance.post<SubmitQuizResponse>(
+            "/v1/quiz/submit",
+            data
+        );
+        return response.data;
+    },
+
+    getResults: async (): Promise<QuizResultsResponse> => {
+        const response = await axiosInstance.get<QuizResultsResponse>(
+            "/v1/quiz/results"
+        );
+        return response.data;
+    },
+};
+
+export const personalityQuizApi = {
+    getQuestions: async (): Promise<PersonalityQuizResponse> => {
+        const response = await axiosInstance.get<PersonalityQuizResponse>(
+            "/v1/dinner-preferences/personality-quiz"
+        );
+        return response.data;
+    },
+
+    submitQuiz: async (
+        data: SubmitPersonalityQuizRequest
+    ): Promise<SubmitPersonalityQuizResponse> => {
+        const response = await axiosInstance.post<SubmitPersonalityQuizResponse>(
+            "/v1/dinner-preferences/personality-quiz",
             data
         );
         return response.data;

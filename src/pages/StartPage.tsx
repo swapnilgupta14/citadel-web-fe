@@ -37,7 +37,7 @@ export const StartPage = ({ onComplete }: StartPageProps) => {
       </div>
 
       <div
-        className="flex flex-col justify-center rounded-t-[45px] p-6 gap-8"
+        className="flex flex-col justify-around rounded-t-[45px] p-6"
         style={{
           minHeight: "38%",
           maxHeight: "48%",
@@ -60,13 +60,13 @@ export const StartPage = ({ onComplete }: StartPageProps) => {
 
         <div
           ref={constraintsRef}
-          className="relative w-full h-16 bg-background-tertiary rounded-full overflow-hidden"
+          className="relative w-full h-[5rem] bg-slider-bg rounded-full overflow-hidden"
         >
           <motion.div
             style={{ opacity: sliderOpacity }}
             className="absolute inset-0 flex items-center justify-center pointer-events-none"
           >
-            <span className="text-base bg-gradient-to-r from-[#CACACA] to-[#9A9A9A] bg-clip-text text-transparent">
+            <span className="text-lg bg-gradient-to-r from-[#CACACA] to-[#9A9A9A] bg-clip-text text-transparent">
               Slide to start
             </span>
           </motion.div>
@@ -78,19 +78,18 @@ export const StartPage = ({ onComplete }: StartPageProps) => {
             dragMomentum={false}
             onDragEnd={handleDragEnd}
             style={{ x }}
-            className="absolute left-2 top-2 w-12 h-12 bg-primary rounded-full flex items-center justify-center cursor-grab active:cursor-grabbing shadow-lg"
+            className="absolute left-2 top-2 w-16 h-16 bg-primary rounded-full flex items-center justify-center cursor-grab active:cursor-grabbing shadow-lg"
           >
             <ChevronRight className="w-7 h-7 text-background" strokeWidth={3} />
           </motion.div>
         </div>
 
-        <p className="text-center text-xs text-text-muted px-4">
+        <div className="text-center text-xs text-text-muted px-4">
           By signing in you accept our{" "}
           <span className="underline">Terms of use</span> and{" "}
           <span className="underline">Privacy policy</span>
-        </p>
+        </div>
       </div>
     </div>
   );
 };
-

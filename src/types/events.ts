@@ -20,6 +20,30 @@ export interface BookEventResponse {
     success: boolean;
     bookingId: string;
     status: string;
+    eventId?: string;
+}
+
+export interface EventDetail {
+    id: string;
+    eventDate: string;
+    eventTime: string;
+    city: string;
+    area: string;
+    venue: string | null;
+    venueAddress: string | null;
+    venueDetails: string | null;
+    maxAttendees: number;
+    currentAttendees: number;
+    availableSeats: number;
+    bookingFee: number;
+    status: string;
+    isBooked: boolean;
+    groupChatId: string | null;
+}
+
+export interface EventDetailResponse {
+    success: boolean;
+    data: EventDetail;
 }
 
 export interface City {
@@ -51,5 +75,8 @@ export interface UpdatePreferencesRequest {
     preferredAreas?: string[];
     language?: string[];
     dietaryRestriction?: string;
+    budget?: string;
+    drinksPreference?: string;
+    relationshipStatus?: string;
 }
 

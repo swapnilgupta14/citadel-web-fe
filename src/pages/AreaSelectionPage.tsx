@@ -11,6 +11,7 @@ interface AreaSelectionPageProps {
   onClose: () => void;
   onContinue: (selectedAreas: string[]) => void;
   isLoading?: boolean;
+  savedAreas?: string[];
 }
 
 export const AreaSelectionPage = ({
@@ -20,8 +21,9 @@ export const AreaSelectionPage = ({
   onClose,
   onContinue,
   isLoading = false,
+  savedAreas = [],
 }: AreaSelectionPageProps) => {
-  const [selectedAreas, setSelectedAreas] = useState<string[]>([]);
+  const [selectedAreas, setSelectedAreas] = useState<string[]>(savedAreas);
   const [isExiting, setIsExiting] = useState(false);
 
   const areas = AREAS_BY_CITY[cityId] || AREAS_BY_CITY[cityName] || [];
