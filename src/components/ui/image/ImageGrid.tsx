@@ -23,9 +23,9 @@ export const ImageGrid = ({
         maxHeight: "70%",
         ...style,
       }}
-      className={`relative w-full ${className}`}
+      className={`relative w-full ${className} max-h-[350px] max-w-[350px] mx-auto`}
     >
-      <motion.div className="absolute top-[2%] left-[14%] w-20 h-[6.5rem] bg-background-secondary border border-border overflow-hidden rounded-[3.75rem]">
+      <motion.div className="absolute top-[4%] left-[14%] w-20 h-[6.5rem] bg-background-secondary border border-border overflow-hidden rounded-[3.75rem]">
         <ImageWithPlaceholder
           src="/Splash/Rectangle1.png"
           alt=""
@@ -33,7 +33,7 @@ export const ImageGrid = ({
         />
       </motion.div>
 
-      <motion.div className="absolute top-0 right-[8%] w-[9.375rem] h-[12.5rem] bg-background-secondary border border-border overflow-hidden rounded-[3.75rem]">
+      <motion.div className="absolute top-[3%] right-[8%] w-[9.375rem] h-[12.5rem] bg-background-secondary border border-border overflow-hidden rounded-[3.75rem]">
         <ImageWithPlaceholder
           src="/Splash/Rectangle2.png"
           alt=""
@@ -49,7 +49,7 @@ export const ImageGrid = ({
         />
       </motion.div>
 
-      <motion.div className="absolute bottom-0 right-[14%] w-20 h-[6.5rem] bg-background-secondary border border-border overflow-hidden rounded-[3.75rem]">
+      <motion.div className="absolute bottom-[7%] right-[14%] w-20 h-[6.5rem] bg-background-secondary border border-border overflow-hidden rounded-[3.75rem]">
         <ImageWithPlaceholder
           src="/Splash/Rectangle4.png"
           alt=""
@@ -65,7 +65,7 @@ export const ImageGrid = ({
         <ImageWithPlaceholder src="/vector1.png" alt="" className="w-4 h-4" />
       </motion.div>
 
-      <motion.div className="absolute bottom-[10%] right-[5%]">
+      <motion.div className="absolute bottom-[16%] right-[5%]">
         <ImageWithPlaceholder src="/vector2.png" alt="" className="w-5 h-5" />
       </motion.div>
     </motion.div>

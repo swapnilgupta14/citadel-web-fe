@@ -15,9 +15,6 @@ interface StartPageProps {
 export const StartPage = ({ onComplete }: StartPageProps) => {
   const constraintsRef = useRef<HTMLDivElement>(null);
   const x = useMotionValue(0);
-
-  const imageScale = useTransform(x, [0, 250], [1, 1.2]);
-  const imageX = useTransform(x, [0, 250], [0, 50]);
   const sliderOpacity = useTransform(x, [0, 250], [1, 0]);
 
   const handleDragEnd = (
@@ -33,14 +30,8 @@ export const StartPage = ({ onComplete }: StartPageProps) => {
 
   return (
     <div className="flex h-full flex-col bg-background">
-      <div className="flex-1 flex items-center justify-center relative px-4 min-h-0 py-4">
-        <ImageGrid
-          style={{
-            scale: imageScale,
-            x: imageX,
-          }}
-          className="max-h-[70%]"
-        />
+      <div className="flex-1 flex items-center justify-center relative min-h-0">
+        <ImageGrid />
       </div>
 
       <div
