@@ -36,7 +36,7 @@ export const StartPage = ({ onComplete }: StartPageProps) => {
       </div>
 
       <div
-        className="flex flex-col justify-between rounded-t-[45px] p-6 gap-6"
+        className="flex flex-col justify-between rounded-t-[45px] p-6 gap-4"
         style={{
           minHeight: "38%",
           maxHeight: "48%",
@@ -52,7 +52,7 @@ export const StartPage = ({ onComplete }: StartPageProps) => {
             />
           </div>
 
-          <h2 className="text-[2rem] leading-tight font-bold text-text-primary text-center font-serif">
+          <h2 className="text-[2rem] leading-tight font-bold text-text-primary text-center font-serif mt-2">
             i'm good, wby?
           </h2>
         </div>
