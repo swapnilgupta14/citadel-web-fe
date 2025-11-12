@@ -31,6 +31,10 @@ import type {
     SubmitPersonalityQuizRequest,
     SubmitPersonalityQuizResponse,
 } from "../types/personality-quiz";
+import type {
+    LegalContentResponse,
+    HelpSupportResponse,
+} from "../types/legal";
 
 export const universitiesApi = {
     getUniversities: async (
@@ -273,6 +277,31 @@ export const personalityQuizApi = {
         const response = await axiosInstance.post<SubmitPersonalityQuizResponse>(
             "/v1/dinner-preferences/personality-quiz",
             data
+        );
+        return response.data;
+    },
+};
+
+export const legalApi = {
+    getPrivacyPolicy: async (): Promise<LegalContentResponse> => {
+        const response = await axiosInstance.get<LegalContentResponse>(
+            "/v1/legal/privacy-policy"
+        );
+        return response.data;
+    },
+
+    getTermsAndConditions: async (): Promise<LegalContentResponse> => {
+        const response = await axiosInstance.get<LegalContentResponse>(
+            "/v1/legal/terms-and-conditions"
+        );
+        return response.data;
+    },
+};
+
+export const helpSupportApi = {
+    getHelpSupport: async (): Promise<HelpSupportResponse> => {
+        const response = await axiosInstance.get<HelpSupportResponse>(
+            "/v1/help-support"
         );
         return response.data;
     },

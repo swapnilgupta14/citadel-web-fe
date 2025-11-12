@@ -10,4 +10,7 @@ export {
     usePersonalityQuizQuestions,
     useSubmitPersonalityQuiz,
 } from "./usePersonalityQuiz";
+export { useProfile } from "./useProfile";
+export { usePrivacyPolicy, useTermsAndConditions } from "./useLegal";
+export { useHelpSupport } from "./useHelpSupport";
 

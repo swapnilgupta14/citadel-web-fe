@@ -5,6 +5,9 @@ import { ConnectPage } from "./pages/ConnectPage";
 import { ExplorePage } from "./pages/ExplorePage";
 import { ProfilePage } from "./pages/profile/ProfilePage";
 import { EventDetailPage } from "./pages/events/EventDetailPage";
+import { GuidelinesPage } from "./pages/events/GuidelinesPage";
+import { PrivacyPolicyTermsPage } from "./pages/legal/PrivacyPolicyTermsPage";
+import { HelpSupportPage } from "./pages/help/HelpSupportPage";
 import { SignupFlow } from "./routes/SignupFlow";
 import { LoginFlow } from "./routes/LoginFlow";
 import {
@@ -51,6 +54,15 @@ function App() {
           <Route path="/profile" element={<ProfilePage />} />
 
           <Route path="/events/:eventId" element={<EventDetailPage />} />
+          <Route
+            path="/events/:eventId/guidelines"
+            element={<GuidelinesPage />}
+          />
+          <Route
+            path="/legal/privacy-terms"
+            element={<PrivacyPolicyTermsPage />}
+          />
+          <Route path="/help-support" element={<HelpSupportPage />} />
 
           <Route path="/location" element={<LocationRoute />} />
           <Route path="/area-selection" element={<AreaSelectionRoute />} />
