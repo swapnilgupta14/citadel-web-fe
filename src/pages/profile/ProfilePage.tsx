@@ -117,43 +117,43 @@ export const ProfilePage = () => {
     primarySlot?.image?.cloudfrontUrl || profile?.images?.[0]?.cloudfrontUrl;
 
   return (
-    <div className="flex h-full flex-col bg-background overflow-y-auto">
-      <div className="flex-1 py-6">
-        <div className="flex flex-col items-center py-6 mb-6">
-          {isLoading ? (
-            <ProfileSkeleton />
-          ) : (
-            <>
-              <button
-                onClick={handleUploadPhoto}
-                className="relative w-[130px] h-[130px] rounded-[5px] border-2 border-dashed border-white bg-background-secondary flex items-center justify-center mb-6 active:scale-95 transition-transform overflow-hidden"
-                aria-label="Upload profile photo"
-              >
-                {profileImage ? (
-                  <ImageWithPlaceholder
-                    src={profileImage}
-                    alt={displayName}
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <Plus className="w-12 h-12 text-primary" strokeWidth={2} />
-                )}
-              </button>
-
-              <h1 className="text-3xl font-bold text-text-primary font-serif mb-2">
-                {displayName}
-              </h1>
-              <p className="text-lg text-primary font-semibold">{userCode}</p>
-              {profile?.university && (
-                <p className="text-sm text-text-secondary mt-1">
-                  {profile.university.name}
-                </p>
+    <div className="flex h-full flex-col bg-background min-h-0">
+      <div className="h-[18.625rem] flex-shrink-0 flex flex-col items-center justify-center py-6">
+        {isLoading ? (
+          <ProfileSkeleton />
+        ) : (
+          <>
+            <button
+              onClick={handleUploadPhoto}
+              className="relative w-[130px] h-[130px] rounded-[5px] border-2 border-dashed border-white bg-background-secondary flex items-center justify-center mb-6 active:scale-95 transition-transform overflow-hidden"
+              aria-label="Upload profile photo"
+            >
+              {profileImage ? (
+                <ImageWithPlaceholder
+                  src={profileImage}
+                  alt={displayName}
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <Plus className="w-12 h-12 text-primary" strokeWidth={2} />
               )}
-            </>
-          )}
-        </div>
+            </button>
 
-        <div className="flex flex-col">
+            <h1 className="text-3xl font-bold text-text-primary font-serif mb-2">
+              {displayName}
+            </h1>
+            <p className="text-lg text-primary font-semibold">{userCode}</p>
+            {profile?.university && (
+              <p className="text-sm text-text-secondary mt-1">
+                {profile.university.name}
+              </p>
+            )}
+          </>
+        )}
+      </div>
+
+      <div className="flex-1 min-h-0 flex flex-col">
+        <div className="flex flex-col mt-auto overflow-y-auto scrollbar-hide">
           {profileMenuItems.map((item, index) => {
             const Icon = item.icon;
             const textColor = item.isDanger
@@ -166,7 +166,7 @@ export const ProfilePage = () => {
               <button
                 key={item.id}
                 onClick={item.onClick}
-                className={`w-full flex items-center gap-4 p-4 bg-background-secondary active:scale-[0.98] transition-transform ${
+                className={`w-full flex items-center gap-4 p-4 bg-background-secondary active:scale-[0.98] transition-transform flex-shrink-0 ${
                   !isLast ? "border-b border-border" : ""
                 }`}
               >

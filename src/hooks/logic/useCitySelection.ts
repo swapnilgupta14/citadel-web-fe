@@ -19,7 +19,13 @@ export const useCitySelection = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const { data: preferencesData } = useDinnerPreferences();
+  const shouldFetchPreferences = 
+    location.pathname === "/events" ||
+    location.pathname === "/location" ||
+    location.pathname === "/area-selection" ||
+    location.pathname.startsWith("/events/");
+
+  const { data: preferencesData } = useDinnerPreferences(shouldFetchPreferences);
   const saveInitialPreferencesMutation = useSaveInitialPreferences();
   const updatePreferencesMutation = useUpdateDinnerPreferences();
 

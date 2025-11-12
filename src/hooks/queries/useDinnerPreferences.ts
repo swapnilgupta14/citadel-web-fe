@@ -2,7 +2,7 @@ import { useQuery, useMutation, useQueryClient, keepPreviousData } from "@tansta
 import { dinnerPreferencesApi } from "../../services/api";
 import type { UpdatePreferencesRequest } from "../../types/events";
 
-export const useDinnerPreferences = () => {
+export const useDinnerPreferences = (enabled: boolean = true) => {
     return useQuery({
         queryKey: ["dinner-preferences"],
         queryFn: () => dinnerPreferencesApi.getPreferences(),
@@ -10,6 +10,7 @@ export const useDinnerPreferences = () => {
         staleTime: 1000 * 60 * 5,
         gcTime: 1000 * 60 * 30,
         retry: false,
+        enabled,
     });
 };
 

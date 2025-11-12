@@ -1,16 +1,45 @@
+import { useState } from "react";
+import { ThumbsUp, ThumbsDown } from "lucide-react";
+
 export const ExplorePage = () => {
+  const [selected, setSelected] = useState<
+    "interested" | "not-interested" | null
+  >(null);
+
   return (
     <div className="flex h-full flex-col bg-background">
-      <div className="flex-1 flex flex-col items-center justify-center px-4">
-        <h1 className="text-3xl sm-phone:text-4xl leading-tight font-bold text-text-primary text-center font-serif mb-4">
+      <div className="flex-1 flex flex-col items-center justify-center">
+        <h1 className="text-2xl font-semibold text-text-primary text-center font-serif mb-4">
           Find university students worldwide with one click!
         </h1>
-        <div className="flex flex-col gap-4 w-full max-w-sm mt-8">
-          <button className="w-full min-h-[3.5rem] bg-primary rounded-full flex items-center justify-center text-background text-lg font-semibold shadow-lg active:scale-95 transition-transform">
-            Interested
+        <div className="flex gap-3 w-full max-w-[23rem] mt-8">
+          <button
+            onClick={() =>
+              setSelected(selected === "interested" ? null : "interested")
+            }
+            className={`flex-1 h-14 rounded-2xl flex items-center justify-center gap-2 text-lg font-semibold text-text-primary bg-background-tertiary active:scale-95 transition-all`}
+          >
+            <ThumbsUp
+              className={`w-5 h-5 text-primary`}
+              strokeWidth={selected === "interested" ? 2.5 : 2}
+              fill={selected === "interested" ? "currentColor" : "none"}
+            />
+            <span>Interested</span>
           </button>
-          <button className="w-full min-h-[3.5rem] border-2 border-red-500 rounded-full flex items-center justify-center text-red-500 text-lg font-semibold active:scale-95 transition-transform">
-            Not Interested
+          <button
+            onClick={() =>
+              setSelected(
+                selected === "not-interested" ? null : "not-interested"
+              )
+            }
+            className="flex-1 h-14 rounded-2xl flex items-center justify-center gap-2 text-lg font-semibold text-text-primary bg-background-tertiary border-2 border-transparent active:scale-95 transition-all"
+          >
+            <ThumbsDown
+              className={`w-5 h-5 text-red-500`}
+              strokeWidth={selected === "not-interested" ? 2.5 : 2}
+              fill={selected === "not-interested" ? "currentColor" : "none"}
+            />
+            <span>Not Interested</span>
           </button>
         </div>
       </div>
