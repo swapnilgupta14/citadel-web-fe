@@ -62,7 +62,7 @@ export const SignupFlow = () => {
   };
 
   const handleEmailContinue = async (email: string) => {
-    const success = await sendOTP(email);
+    const success = await sendOTP(email, false);
     if (success) {
       setCurrentStep("otp");
     }
@@ -86,7 +86,7 @@ export const SignupFlow = () => {
   };
 
   const handleResendOTP = async () => {
-    await resendOTP(userEmail);
+    await resendOTP(userEmail, false);
   };
 
   const handleWhoAreYouBack = () => {

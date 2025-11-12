@@ -29,7 +29,7 @@ export const LoginFlow = () => {
   };
 
   const handleEmailContinue = async (email: string) => {
-    const success = await sendOTP(email);
+    const success = await sendOTP(email, true);
     if (success) {
       setCurrentStep("otp");
     }
@@ -45,7 +45,7 @@ export const LoginFlow = () => {
   };
 
   const handleResendOTP = async () => {
-    await resendOTP(userEmail);
+    await resendOTP(userEmail, true);
   };
 
   if (currentStep === "email") {

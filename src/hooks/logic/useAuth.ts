@@ -21,14 +21,23 @@ export const useAuth = () => {
         }
     }, []);
 
-    const sendOTP = async (email: string) => {
+    const sendOTP = async (email: string, isLogin: boolean) => {
         setIsLoading(true);
         try {
-            await authApi.sendOTP(email);
+            await authApi.sendOTP(email, isLogin);
             setUserEmail(email);
             showToast.success("OTP sent successfully! Check your email.");
             return true;
         } catch (err) {
+            const isConflict = err && typeof err === "object" && "response" in err &&
+                (err as { response?: { status?: number } }).response?.status === 409;
+
+            if (isConflict) {
+                setUserEmail(email);
+                showToast.info("An OTP was already sent. Please check your email or enter the OTP.");
+                return true;
+            }
+
             const errorMessage = handleApiError(err);
             showToast.error(errorMessage);
             return false;
@@ -56,10 +65,10 @@ export const useAuth = () => {
         }
     };
 
-    const resendOTP = async (email: string) => {
+    const resendOTP = async (email: string, isLogin: boolean) => {
         setIsResending(true);
         try {
-            await authApi.sendOTP(email);
+            await authApi.sendOTP(email, isLogin);
             showToast.success("OTP resent successfully!");
         } catch (err) {
             const errorMessage = handleApiError(err);

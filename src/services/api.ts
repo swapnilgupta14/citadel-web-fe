@@ -78,10 +78,10 @@ export const universitiesApi = {
 };
 
 export const authApi = {
-    sendOTP: async (email: string): Promise<SendOTPResponse> => {
+    sendOTP: async (email: string, isLogin: boolean): Promise<SendOTPResponse> => {
         const response = await axiosInstance.post<SendOTPResponse>(
             "/v1/auth/send-otp",
-            { email }
+            { email, isLogin }
         );
         return response.data;
     },
