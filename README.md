@@ -1,45 +1,72 @@
 # Citadel Web Frontend
 
-A fast, performant React application built with modern tools and best practices.
+A React-based web application built with modern tools and best practices.
 
-## 🚀 Tech Stack
+## Tech Stack
 
-- **⚡ Vite** - Lightning-fast dev experience with HMR
-- **⚛️ React 19** - Latest React with TypeScript
-- **🎨 Tailwind CSS** - Utility-first styling with plugins
-- **🔄 React Query** - Powerful server state management
-- **🎭 Framer Motion** - Production-ready animations
-- **📦 PNPM** - Fast, disk-efficient package manager
-- **🔍 ESLint** - Code quality and linting
-- **🧪 Vitest** - Fast unit testing
-- **📝 React Hook Form + Zod** - Type-safe form validation
+- Vite - Build tool and development server
+- React 19 - UI library with TypeScript
+- Tailwind CSS - Utility-first CSS framework
+- React Query - Server state management
+- Framer Motion - Animation library
+- React Router - Client-side routing
+- Axios - HTTP client
+- React Hook Form + Zod - Form handling and validation
+- PNPM - Package manager
+- ESLint - Code linting
+- Vitest - Unit testing framework
 
-## 📁 Project Structure
+## Project Structure
 
-```
+```text
 src/
-├── components/
-│   ├── ui/              # Reusable UI components
-│   ├── layout/          # Layout components
-│   └── features/        # Feature-specific components
-├── hooks/               # Custom React hooks
-├── lib/                 # Utilities and helpers
-├── pages/               # Page components
-├── services/            # API services
-├── types/               # TypeScript types
-├── config/              # Configuration files
-├── test/                # Test utilities
-├── App.tsx
-├── main.tsx
-└── index.css
+├── assets/              # Static assets (images, icons)
+│   └── cities/         # City images for location selection
+├── components/         # React components
+│   ├── layout/         # Layout components (MobileLayout, ProtectedRoute, ProtectedPagesLayout)
+│   ├── navigation/     # Navigation components (BottomNavigation)
+│   ├── skeleton/       # Loading skeleton components
+│   └── ui/             # Reusable UI components (Button, ImageWithPlaceholder, etc.)
+├── config/             # Configuration files (environment variables)
+├── constants/          # Application constants (cities, etc.)
+├── contexts/           # React context providers
+├── hooks/              # Custom React hooks
+│   ├── logic/          # Business logic hooks (useAuth, useBookingFlow, useCitySelection)
+│   └── queries/        # React Query hooks (useProfile, useEvents, etc.)
+├── lib/                # Utility libraries
+│   ├── helpers/        # Helper functions (validations, route helpers, toast, etc.)
+│   └── storage/        # Local storage utilities (auth, navigation persistence, signup persistence)
+├── pages/              # Page components
+│   ├── auth/           # Authentication pages (LoginEmailPage, OTPEntryPage)
+│   ├── events/         # Event-related pages (EventsPage, EventDetailPage, LocationPage, etc.)
+│   ├── profile/        # Profile pages (ProfilePage)
+│   └── signup/         # Signup flow pages (WhoAreYouPage, EmailEntryPage, etc.)
+├── routes/             # Route configuration
+│   ├── protected/      # Protected route wrappers
+│   ├── LoginFlow.tsx   # Login flow routing
+│   └── SignupFlow.tsx  # Signup flow routing
+├── services/           # API services
+│   ├── api.ts          # API endpoint definitions
+│   └── axiosInstance.ts # Axios configuration and interceptors
+├── types/              # TypeScript type definitions
+├── test/               # Test utilities and setup
+├── App.tsx             # Main application component
+├── main.tsx            # Application entry point
+└── index.css           # Global styles
 ```
 
-## 🛠️ Getting Started
+## Getting Started
 
 ### Prerequisites
 
-- Node.js 18+ 
-- PNPM (install globally: `npm install -g pnpm`)
+- Node.js 18 or higher
+- PNPM package manager
+
+Install PNPM globally:
+
+```bash
+npm install -g pnpm
+```
 
 ### Installation
 
@@ -47,129 +74,93 @@ src/
 # Install dependencies
 pnpm install
 
-# Start development server (runs on http://localhost:3000)
+# Start development server
 pnpm dev
 ```
 
-## 📜 Available Scripts
+The development server runs on `http://localhost:5173` by default.
+
+## Building
+
+Build the application for production:
 
 ```bash
-# Development
-pnpm dev              # Start dev server on port 3000
-
-# Building
-pnpm build            # Build for production
-pnpm preview          # Preview production build
-
-# Code Quality
-pnpm lint             # Run ESLint
-pnpm lint:fix         # Auto-fix ESLint errors
-pnpm type-check       # TypeScript type checking
-
-# Testing
-pnpm test             # Run tests in watch mode
-pnpm test:ui          # Run tests with UI
-pnpm test:coverage    # Generate coverage report
+# Build for production
+pnpm build
 ```
 
-## 🎨 Features
+The production build is output to the `dist/` folder.
 
-### Path Aliases
-Import using `@/` prefix:
-```typescript
-import { cn } from '@/lib/utils'
-import { Button } from '@/components/ui/button'
+Preview the production build locally:
+
+```bash
+pnpm preview
 ```
 
-### Utility Functions
-The `cn()` function combines `clsx` and `tailwind-merge` for conflict-free class names:
-```typescript
-import { cn } from '@/lib/utils'
+## Testing
 
-<div className={cn('base-class', isActive && 'active-class')} />
+Run tests:
+
+```bash
+# Run tests in watch mode
+pnpm test
+
+# Run tests with UI
+pnpm test:ui
+
+# Generate coverage report
+pnpm test:coverage
 ```
+
+## Code Quality
+
+Lint and type check the code:
+
+```bash
+# Run ESLint
+pnpm lint
+
+# Auto-fix ESLint errors
+pnpm lint:fix
+
+# TypeScript type checking
+pnpm type-check
+```
+
+## Configuration
 
 ### Environment Variables
-Create a `.env` file based on `.env.example`:
+
+Create a `.env` file in the root directory:
+
 ```bash
 VITE_API_BASE_URL=http://localhost:8000/api
 VITE_APP_NAME=Citadel Web
 VITE_ENABLE_DEVTOOLS=true
 ```
 
-Access validated env vars:
-```typescript
-import { env } from '@/config/env'
+Access validated environment variables:
 
-console.log(env.VITE_API_BASE_URL)
+```typescript
+import { env } from "./config/env";
+
+console.log(env.VITE_API_BASE_URL);
 ```
 
-## 🔧 Configuration
+### Tailwind CSS
 
-### Tailwind
-Custom configuration in `tailwind.config.js` with:
-- Custom primary color palette
-- Forms plugin
-- Typography plugin
+Tailwind configuration is in `tailwind.config.js` with custom color palette, forms plugin, and typography plugin.
 
 ### Vite
-Optimized build configuration with:
-- Code splitting for vendors
-- Path aliases (`@/`)
+
+Vite configuration includes:
+
+- Code splitting for vendor libraries
+- Path aliases
 - Production optimizations
-- Console removal in production
+- Console removal in production builds
 
-### ESLint
-Configured for React and TypeScript with recommended rules.
 
-## 🧪 Testing
-
-Vitest is configured with:
-- React Testing Library
-- jsdom environment
-- Test utilities in `src/test/`
-
-Example test:
-```typescript
-import { render, screen } from '@testing-library/react'
-import App from './App'
-
-test('renders app', () => {
-  render(<App />)
-  expect(screen.getByText(/React/i)).toBeInTheDocument()
-})
-```
-
-## 🚀 Deployment
-
-```bash
-# Build for production
-pnpm build
-
-# The dist/ folder is ready to deploy
-```
-
-Deploy to platforms like:
-- Vercel
-- Netlify
-- Cloudflare Pages
-- AWS Amplify
-
-## 📝 Code Style
-
-This project uses:
-- ESLint for linting
-- Husky for git hooks (when initialized with git)
-- lint-staged for pre-commit checks
-
-## 🤝 Contributing
-
-1. Create a feature branch
-2. Make your changes
-3. Run `pnpm lint:fix`
-4. Run `pnpm type-check` and `pnpm test`
-5. Submit a PR
-
-## 📄 License
+## License
 
 Private project - All rights reserved
