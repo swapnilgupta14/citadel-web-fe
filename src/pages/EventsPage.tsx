@@ -7,10 +7,9 @@ import {
   formatDate,
   formatTime,
 } from "../lib/helpers/eventUtils";
-import { ImageWithPlaceholder } from "../components/ui/ImageWithPlaceholder";
+import { ImageWithPlaceholder, Button } from "../components/ui";
 import { useEvents, useBookEvent } from "../hooks/queries/useEvents";
-import { Button } from "../components/ui/Button";
-import { EventSlotSkeleton } from "../components/ui/Skeleton";
+import { EventSlotSkeleton } from "../components/skeleton";
 interface EventsPageProps {
   onOpenLocation: () => void;
   onStartBookingFlow?: (slotId: string) => void;

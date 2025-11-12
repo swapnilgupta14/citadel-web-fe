@@ -1,8 +1,8 @@
 import { useState, useMemo } from "react";
 import { ArrowLeft, X } from "lucide-react";
 import { motion } from "framer-motion";
-import { Button } from "../components/ui/Button";
-import { PersonalityQuizSkeleton } from "../components/ui/PersonalityQuizSkeleton";
+import { Button } from "../components/ui";
+import { PersonalityQuizSkeleton } from "../components/skeleton";
 import {
   usePersonalityQuizQuestions,
   useSubmitPersonalityQuiz,

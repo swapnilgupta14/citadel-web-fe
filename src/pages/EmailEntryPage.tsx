@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { ArrowLeft } from "lucide-react";
-import { Button } from "../components/ui/Button";
+import { Button } from "../components/ui";
 import type { EmailEntryPageProps } from "../types/pages";
 import { emailSchema } from "../lib/helpers/validations";
 

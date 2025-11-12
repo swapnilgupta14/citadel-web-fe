@@ -1,8 +1,7 @@
 import { useState, useMemo, useEffect } from "react";
 import { ArrowLeft } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { SearchBar } from "../components/ui/SearchBar";
-import { Button } from "../components/ui/Button";
+import { SearchBar, Button } from "../components/ui";
 import type { DegreeSelectionPageProps } from "../types/pages";
 import { degreeSchema, yearSchema } from "../lib/helpers/validations";
 

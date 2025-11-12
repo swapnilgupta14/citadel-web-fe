@@ -9,7 +9,7 @@ import { AreaSelectionPage } from "../../pages/AreaSelectionPage";
 import { QuizPage } from "../../pages/QuizPage";
 import { PersonalityQuizPage } from "../../pages/PersonalityQuizPage";
 import { EventDetailPage } from "../../pages/EventDetailPage";
-import { ProgressLoader } from "../ui/ProgressLoader";
+import { ProgressLoader } from "../skeleton";
 import type { City } from "../../types/events";
 import {
   navigationPersistence,

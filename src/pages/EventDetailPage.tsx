@@ -1,12 +1,11 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { MapPin } from "lucide-react";
 import { motion } from "framer-motion";
-import { Button } from "../components/ui/Button";
+import { Button, ImageWithPlaceholder } from "../components/ui";
 import { useEventDetail } from "../hooks/queries/useEvents";
 import { formatDate, formatTime } from "../lib/helpers/eventUtils";
-import { ImageWithPlaceholder } from "../components/ui/ImageWithPlaceholder";
 import { getLandmarkImage } from "../lib/helpers/eventUtils";
-import { EventSlotSkeleton } from "../components/ui/Skeleton";
+import { EventSlotSkeleton } from "../components/skeleton";
 
 export const EventDetailPage = () => {
   const { eventId } = useParams<{ eventId: string }>();

@@ -1,8 +1,7 @@
 import { useRef } from "react";
 import { motion, useMotionValue, useTransform } from "framer-motion";
 import { ChevronRight } from "lucide-react";
-import { ImageGrid } from "../components/ui/ImageGrid";
-import { ImageWithPlaceholder } from "../components/ui/ImageWithPlaceholder";
+import { ImageGrid, ImageWithPlaceholder } from "../components/ui";
 
 interface StartPageProps {
   onComplete: () => void;

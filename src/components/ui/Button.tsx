@@ -1,4 +1,5 @@
 import { type ButtonHTMLAttributes, type ReactNode } from "react";
+import { BouncingDotsLoader } from "./BouncingDotsLoader";
 
 type ButtonVariant = "primary" | "secondary" | "disabled";
 
@@ -17,38 +18,6 @@ const variantStyles: Record<ButtonVariant, string> = {
   disabled: "bg-background-tertiary text-background cursor-not-allowed",
 };
 
-const getLoaderColorClass = (variant: ButtonVariant): string => {
-  switch (variant) {
-    case "primary":
-      return "bg-primary";
-    case "secondary":
-      return "bg-white";
-    case "disabled":
-      return "bg-white";
-    default:
-      return "bg-white";
-  }
-};
-
-const BouncingDotsLoader = ({ colorClass }: { colorClass: string }) => {
-  return (
-    <div className="flex items-center justify-center gap-1.5">
-      <span
-        className={`w-2 h-2 rounded-full ${colorClass} animate-bounce`}
-        style={{ animationDelay: "0ms", animationDuration: "600ms" }}
-      />
-      <span
-        className={`w-2 h-2 rounded-full ${colorClass} animate-bounce`}
-        style={{ animationDelay: "150ms", animationDuration: "600ms" }}
-      />
-      <span
-        className={`w-2 h-2 rounded-full ${colorClass} animate-bounce`}
-        style={{ animationDelay: "300ms", animationDuration: "600ms" }}
-      />
-    </div>
-  );
-};
-
 export const Button = ({
   variant = "primary",
   children,
@@ -58,7 +27,6 @@ export const Button = ({
   ...props
 }: ButtonProps) => {
   const effectiveVariant = disabled || isLoading ? "disabled" : variant;
-  const loaderColorClass = getLoaderColorClass(variant);
 
   return (
     <button
@@ -66,11 +34,7 @@ export const Button = ({
       disabled={disabled || isLoading}
       {...props}
     >
-      {isLoading ? (
-        <BouncingDotsLoader colorClass={loaderColorClass} />
-      ) : (
-        children
-      )}
+      {isLoading ? <BouncingDotsLoader variant={variant} /> : children}
     </button>
   );
 };

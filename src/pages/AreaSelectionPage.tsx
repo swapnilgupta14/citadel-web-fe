@@ -2,7 +2,7 @@ import { useState } from "react";
 import { ArrowLeft, X } from "lucide-react";
 import { motion } from "framer-motion";
 import { AREAS_BY_CITY } from "../constants/cities";
-import { Button } from "../components/ui/Button";
+import { Button } from "../components/ui";
 
 interface AreaSelectionPageProps {
   cityId: string;

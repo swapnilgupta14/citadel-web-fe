@@ -1,6 +1,5 @@
 import { useEffect } from "react";
-import { ImageGrid } from "../components/ui/ImageGrid";
-import { Button } from "../components/ui/Button";
+import { ImageGrid, Button } from "../components/ui";
 import { signupPersistence } from "../lib/storage/signupPersistence";
 
 interface ConnectPageProps {
