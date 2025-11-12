@@ -43,11 +43,9 @@ export const ProtectedPagesLayout = () => {
   };
 
   return (
-    <div className="flex h-full flex-col bg-background relative">
+    <div className="flex h-full flex-col relative">
       <div className="flex-1 overflow-hidden relative">
-        <div className={`h-full ${showBottomNav ? "pb-[92px]" : ""}`}>
-          <Outlet context={contextValue} />
-        </div>
+        <Outlet context={contextValue} />
       </div>
       {showBottomNav && (
         <BottomNavigation

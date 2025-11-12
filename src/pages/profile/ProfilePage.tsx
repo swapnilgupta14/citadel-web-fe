@@ -117,7 +117,7 @@ export const ProfilePage = () => {
     primarySlot?.image?.cloudfrontUrl || profile?.images?.[0]?.cloudfrontUrl;
 
   return (
-    <div className="flex h-full flex-col bg-background min-h-0">
+    <div className="flex h-full flex-col bg-background min-h-0 justify-around">
       <div className="h-[18.625rem] flex-shrink-0 flex flex-col items-center justify-center py-6">
         {isLoading ? (
           <ProfileSkeleton />
