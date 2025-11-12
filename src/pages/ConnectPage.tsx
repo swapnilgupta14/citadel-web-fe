@@ -12,8 +12,8 @@ export const ConnectPage = ({ onContinue }: ConnectPageProps) => {
   }, []);
   return (
     <div className="relative flex h-full flex-col bg-background overflow-hidden">
-      <div className="flex flex-col flex-1 relative z-10 min-h-0">
-        <div className="flex-1 flex items-center justify-center relative px-4 py-4 min-h-0">
+      <div className="flex flex-col flex-1 relative z-10 min-h-0 pb-4">
+        <div className="flex-1 flex items-center justify-center relative px-4 py-4 min-h-0 bg-red-200">
           <ImageGrid
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -49,7 +49,7 @@ export const ConnectPage = ({ onContinue }: ConnectPageProps) => {
         </div>
       </div>
 
-      <div className="h-[15%] min-h-[80px] max-h-[120px] overflow-visible pointer-events-none relative">
+      <div className="h-[7%] min-h-[75px] max-h-[100px] overflow-visible pointer-events-none relative">
         <img
           src="/Splash/waves.svg"
           alt=""
