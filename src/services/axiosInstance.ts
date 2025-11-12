@@ -59,6 +59,7 @@ export const handleLogout = () => {
     
     if (window.location.pathname !== "/connect") {
         auth.logout();
+        window.location.replace("/connect");
     }
 };
 

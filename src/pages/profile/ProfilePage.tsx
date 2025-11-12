@@ -8,6 +8,7 @@ import {
   Plus,
   type LucideIcon,
 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { auth } from "../../lib/storage/auth";
 import { showToast } from "../../lib/helpers/toast";
 import { useProfile } from "../../hooks/queries/useProfile";
@@ -23,12 +24,13 @@ interface ProfileMenuItem {
 }
 
 export const ProfilePage = () => {
+  const navigate = useNavigate();
   const { data: profileResponse, isLoading } = useProfile();
   const profile = profileResponse?.data;
 
   const handleLogout = () => {
-    showToast.success("Logged out successfully");
     auth.logout();
+    navigate("/connect", { replace: true });
   };
 
   const handleEventBookings = () => {
