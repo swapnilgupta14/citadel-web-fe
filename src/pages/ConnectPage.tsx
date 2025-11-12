@@ -13,7 +13,7 @@ export const ConnectPage = ({ onContinue }: ConnectPageProps) => {
   return (
     <div className="relative flex h-full flex-col bg-background overflow-hidden">
       <div className="flex flex-col flex-1 relative z-10 min-h-0 pb-4">
-        <div className="flex-1 flex items-center justify-center relative px-4 py-4 min-h-0 bg-red-200">
+        <div className="flex-1 flex items-center justify-center relative px-4 py-4 min-h-0">
           <ImageGrid
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
