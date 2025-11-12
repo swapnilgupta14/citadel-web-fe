@@ -2,9 +2,18 @@ import { useState } from "react";
 import { ArrowLeft, X } from "lucide-react";
 import { motion } from "framer-motion";
 import type { City } from "../../types/events";
-import { getLandmarkImage } from "../../lib/helpers/eventUtils";
 import { CITIES } from "../../constants/cities";
 import { ImageWithPlaceholder } from "../../components/ui";
+
+const getCityImage = (cityId: string): string => {
+  const cityImageMap: Record<string, string> = {
+    "new-delhi": "/Cities/newdelhi.png",
+    delhi: "/Cities/newdelhi.png",
+    bangalore: "/Cities/bangalore.png",
+    mumbai: "/Cities/mumbai.png",
+  };
+  return cityImageMap[cityId] || "/Cities/newdelhi.png";
+};
 
 interface LocationPageProps {
   onBack: () => void;
@@ -91,23 +100,11 @@ export const LocationPage = ({
                 } transition-all active:scale-95`}
               >
                 <ImageWithPlaceholder
-                  src={city.landmarkImage || getLandmarkImage(city.id)}
+                  src={getCityImage(city.id)}
                   alt={city.name}
                   className="w-full h-full object-cover"
                   loading="lazy"
                 />
-
-                <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-background/40 to-transparent" />
-                <div className="absolute bottom-0 left-0 right-0 p-4">
-                  <p className="text-lg font-semibold text-text-primary font-serif">
-                    {city.name}
-                  </p>
-                  {city.comingSoon && (
-                    <p className="text-xs text-text-secondary mt-1">
-                      (Coming soon)
-                    </p>
-                  )}
-                </div>
               </button>
             );
           })}
