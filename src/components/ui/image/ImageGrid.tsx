@@ -25,7 +25,10 @@ export const ImageGrid = ({
       }}
       className={`relative w-full ${className} max-h-[350px] max-w-[350px] mx-auto`}
     >
-      <motion.div className="absolute top-[4%] left-[14%] w-[23%] h-[30%] bg-background-secondary border border-border overflow-hidden rounded-[3.75rem]">
+      <motion.div
+        className="absolute top-[4%] left-[14%] w-[23%] bg-background-secondary border border-border overflow-hidden rounded-[3.75rem]"
+        style={{ aspectRatio: "10 / 13" }}
+      >
         <ImageWithPlaceholder
           src="/Splash/Rectangle1.png"
           alt=""
@@ -33,7 +36,10 @@ export const ImageGrid = ({
         />
       </motion.div>
 
-      <motion.div className="absolute top-[3%] right-[8%] w-[43%] h-[57%] bg-background-secondary border border-border overflow-hidden rounded-[3.75rem]">
+      <motion.div
+        className="absolute top-[3%] right-[8%] w-[43%] bg-background-secondary border border-border overflow-hidden rounded-[3.75rem]"
+        style={{ aspectRatio: "3 / 4" }}
+      >
         <ImageWithPlaceholder
           src="/Splash/Rectangle2.png"
           alt=""
@@ -41,7 +47,10 @@ export const ImageGrid = ({
         />
       </motion.div>
 
-      <motion.div className="absolute bottom-[2%] left-[4%] w-[43%] h-[57%] bg-background-secondary border border-border overflow-hidden rounded-[3.75rem]">
+      <motion.div
+        className="absolute bottom-[2%] left-[4%] w-[43%] bg-background-secondary border border-border overflow-hidden rounded-[3.75rem]"
+        style={{ aspectRatio: "3 / 4" }}
+      >
         <ImageWithPlaceholder
           src="/Splash/Rectangle3.png"
           alt=""
@@ -49,7 +58,10 @@ export const ImageGrid = ({
         />
       </motion.div>
 
-      <motion.div className="absolute bottom-[7%] right-[14%] w-[23%] h-[30%] bg-background-secondary border border-border overflow-hidden rounded-[3.75rem]">
+      <motion.div
+        className="absolute bottom-[7%] right-[14%] w-[23%] bg-background-secondary border border-border overflow-hidden rounded-[3.75rem]"
+        style={{ aspectRatio: "10 / 13" }}
+      >
         <ImageWithPlaceholder
           src="/Splash/Rectangle4.png"
           alt=""
