@@ -1,4 +1,4 @@
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route, Navigate, useNavigate } from "react-router-dom";
 import { MobileLayout } from "./components/layout/MobileLayout";
 import { HomePage } from "./pages/HomePage";
 import { ConnectPage } from "./pages/ConnectPage";
@@ -21,9 +21,11 @@ import { auth } from "./lib/storage/auth";
 import { signupPersistence } from "./lib/storage/signupPersistence";
 
 function App() {
+  const navigate = useNavigate();
+
   const handleConnectSignup = () => {
     signupPersistence.clearSignupData();
-    window.location.href = "/signup";
+    navigate("/signup");
   };
 
   return (

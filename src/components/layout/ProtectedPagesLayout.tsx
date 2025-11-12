@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useLocation, Outlet } from "react-router-dom";
+import { useLocation, Outlet, useNavigate } from "react-router-dom";
 import { BottomNavigation } from "../navigation/BottomNavigation";
 import {
   navigationPersistence,
@@ -15,6 +15,7 @@ import type { ProtectedLayoutContextType } from "../../types/layout";
 
 export const ProtectedPagesLayout = () => {
   const location = useLocation();
+  const navigate = useNavigate();
 
   const bookingFlow = useBookingFlow();
   const { isLoading: isCitySelectionLoading, ...citySelection } =
@@ -38,7 +39,7 @@ export const ProtectedPagesLayout = () => {
 
   const handleNavigate = (page: ProtectedPage) => {
     const path = `/${page === "events" ? "events" : page === "profile" ? "profile" : "explore"}`;
-    window.location.href = path;
+    navigate(path);
   };
 
   return (

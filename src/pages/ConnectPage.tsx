@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { ImageGrid, Button } from "../components/ui";
 import { signupPersistence } from "../lib/storage/signupPersistence";
 
@@ -11,6 +12,7 @@ interface ConnectPageProps {
 }
 
 export const ConnectPage = ({ onContinue }: ConnectPageProps) => {
+  const navigate = useNavigate();
   const [imageGridHeight, setImageGridHeight] = useState(350);
 
   useEffect(() => {
@@ -60,7 +62,7 @@ export const ConnectPage = ({ onContinue }: ConnectPageProps) => {
 
           <button
             onClick={() => {
-              window.location.href = "/login";
+              navigate("/login");
             }}
             className="text-center text-sm text-text-secondary active:opacity-70 transition-opacity"
           >
