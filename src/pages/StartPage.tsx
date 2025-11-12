@@ -19,20 +19,37 @@ export const StartPage = ({ onComplete }: StartPageProps) => {
 
   const handleDragEnd = (
     _event: MouseEvent | TouchEvent | PointerEvent,
-    info: PanInfo
+    _info: PanInfo
   ) => {
-    const threshold = window.innerWidth * 0.75;
-    if (info.point.x > threshold) {
+    // Get the actual container width to calculate max draggable distance
+    const container = constraintsRef.current;
+    if (!container) return;
+
+    const containerWidth = container.offsetWidth;
+    const buttonWidth = 72; // Approximate button width (w-16 or smaller)
+    const maxDragDistance = containerWidth - buttonWidth - 8; // 8px for left/right padding
+
+    // Check if dragged to 95% of max distance
+    const draggedDistance = x.get();
+    const threshold = maxDragDistance * 0.95;
+
+    if (draggedDistance >= threshold) {
       onComplete();
     } else {
       x.set(0);
     }
   };
 
+  // Calculate max drag distance for animation (use container width dynamically)
+  const container = constraintsRef.current;
+  const containerWidth = container?.offsetWidth || 350;
+  const maxDragDistance = containerWidth - 72 - 8;
+  const dragProgress = useTransform(x, [0, maxDragDistance], [0, 1]);
+
   return (
     <div className="flex h-full flex-col bg-background">
       <div className="flex-1 flex items-center justify-center relative min-h-0">
-        <ImageGrid />
+        <ImageGrid dragProgress={dragProgress} />
       </div>
 
       <div
