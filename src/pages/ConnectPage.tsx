@@ -13,7 +13,7 @@ export const ConnectPage = ({ onContinue }: ConnectPageProps) => {
   return (
     <div className="relative flex h-full flex-col bg-background overflow-hidden">
       <div className="flex flex-col flex-1 relative z-10 min-h-0 pb-4">
-        <div className="flex-1 flex items-center justify-center relative px-4 py-4 min-h-0">
+        <div className="min-h-[22rem] flex items-center justify-center relative px-4 py-4">
           <ImageGrid
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -22,7 +22,7 @@ export const ConnectPage = ({ onContinue }: ConnectPageProps) => {
           />
         </div>
 
-        <div className="flex flex-col justify-between px-6 py-4 pb-10 items-center gap-6 min-h-fit">
+        <div className="flex-1 flex flex-col justify-between px-6 py-4 pb-10 items-center gap-6 min-h-0">
           <div className="flex flex-col items-center">
             <h1 className="text-3xl sm:text-4xl leading-tight font-bold text-text-primary text-center font-serif">
               Connect with students across universities
