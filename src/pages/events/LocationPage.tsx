@@ -4,15 +4,18 @@ import { motion } from "framer-motion";
 import type { City } from "../../types/events";
 import { CITIES } from "../../constants/cities";
 import { ImageWithPlaceholder } from "../../components/ui";
+import NewDelhiImage from "../../assets/cities/newdelhi.png";
+import BangaloreImage from "../../assets/cities/bangalore.png";
+import MumbaiImage from "../../assets/cities/mumbai.png";
 
 const getCityImage = (cityId: string): string => {
   const cityImageMap: Record<string, string> = {
-    "new-delhi": "/Cities/newdelhi.png",
-    delhi: "/Cities/newdelhi.png",
-    bangalore: "/Cities/bangalore.png",
-    mumbai: "/Cities/mumbai.png",
+    "new-delhi": NewDelhiImage,
+    delhi: NewDelhiImage,
+    bangalore: BangaloreImage,
+    mumbai: MumbaiImage,
   };
-  return cityImageMap[cityId] || "/Cities/newdelhi.png";
+  return cityImageMap[cityId] || NewDelhiImage;
 };
 
 interface LocationPageProps {
