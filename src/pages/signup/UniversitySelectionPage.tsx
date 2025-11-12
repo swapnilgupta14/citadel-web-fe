@@ -1,11 +1,11 @@
 import { useState, useMemo, useEffect } from "react";
 import { ArrowLeft } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { SearchBar, Button } from "../components/ui";
-import { Skeleton } from "../components/skeleton";
-import { useUniversities } from "../hooks/queries/useUniversities";
-import type { University } from "../types/universities";
-import type { UniversitySelectionPageProps } from "../types/pages";
+import { SearchBar, Button } from "../../components/ui";
+import { Skeleton } from "../../components/skeleton";
+import { useUniversities } from "../../hooks/queries/useUniversities";
+import type { University } from "../../types/universities";
+import type { UniversitySelectionPageProps } from "../../types/pages";
 
 export const UniversitySelectionPage = ({
   onBack,

@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { LoginEmailPage } from "../pages/LoginEmailPage";
-import { OTPEntryPage } from "../pages/OTPEntryPage";
+import { LoginEmailPage } from "../pages/auth/LoginEmailPage";
+import { OTPEntryPage } from "../pages/auth/OTPEntryPage";
 import { useAuth } from "../hooks/logic/useAuth";
 import { signupPersistence } from "../lib/storage/signupPersistence";
 

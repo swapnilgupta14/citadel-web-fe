@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { ArrowLeft } from "lucide-react";
-import { Button } from "../components/ui";
-import type { EmailEntryPageProps } from "../types/pages";
-import { emailSchema } from "../lib/helpers/validations";
+import { Button } from "../../components/ui";
+import type { EmailEntryPageProps } from "../../types/pages";
+import { emailSchema } from "../../lib/helpers/validations";
 
 export const EmailEntryPage = ({ onBack, onContinue, initialEmail = "", isLoading = false }: EmailEntryPageProps) => {
   const [email, setEmail] = useState(initialEmail);

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import type { SuccessPageProps } from "../types/pages";
-import { ImageWithPlaceholder } from "../components/ui";
+import type { SuccessPageProps } from "../../types/pages";
+import { ImageWithPlaceholder } from "../../components/ui";
 
 export const SuccessPage = ({ onComplete }: SuccessPageProps) => {
   const [isExiting, setIsExiting] = useState(false);

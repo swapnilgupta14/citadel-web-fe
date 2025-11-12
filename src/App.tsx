@@ -2,8 +2,19 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import { MobileLayout } from "./components/layout/MobileLayout";
 import { HomePage } from "./pages/HomePage";
 import { ConnectPage } from "./pages/ConnectPage";
+import { ExplorePage } from "./pages/ExplorePage";
+import { ProfilePage } from "./pages/profile/ProfilePage";
+import { EventDetailPage } from "./pages/events/EventDetailPage";
 import { SignupFlow } from "./routes/SignupFlow";
 import { LoginFlow } from "./routes/LoginFlow";
+import {
+  EventsRoute,
+  LocationRoute,
+  AreaSelectionRoute,
+  QuizRoute,
+  PersonalityQuizRoute,
+  FindingMatchesRoute,
+} from "./routes/protected";
 import { ProtectedRoute } from "./components/layout/ProtectedRoute";
 import { ProtectedPagesLayout } from "./components/layout/ProtectedPagesLayout";
 import { auth } from "./lib/storage/auth";
@@ -19,96 +30,32 @@ function App() {
     <MobileLayout>
       <Routes>
         <Route path="/" element={<HomePage />} />
-
         <Route
           path="/connect"
           element={<ConnectPage onContinue={handleConnectSignup} />}
         />
-
         <Route path="/signup" element={<SignupFlow />} />
-
         <Route path="/login" element={<LoginFlow />} />
 
         <Route
-          path="/events"
           element={
             <ProtectedRoute>
               <ProtectedPagesLayout />
             </ProtectedRoute>
           }
-        />
+        >
+          <Route path="/events" element={<EventsRoute />} />
+          <Route path="/explore" element={<ExplorePage />} />
+          <Route path="/profile" element={<ProfilePage />} />
 
-        <Route
-          path="/explore"
-          element={
-            <ProtectedRoute>
-              <ProtectedPagesLayout />
-            </ProtectedRoute>
-          }
-        />
+          <Route path="/events/:eventId" element={<EventDetailPage />} />
 
-        <Route
-          path="/profile"
-          element={
-            <ProtectedRoute>
-              <ProtectedPagesLayout />
-            </ProtectedRoute>
-          }
-        />
-
-        <Route
-          path="/location"
-          element={
-            <ProtectedRoute>
-              <ProtectedPagesLayout />
-            </ProtectedRoute>
-          }
-        />
-
-        <Route
-          path="/area-selection"
-          element={
-            <ProtectedRoute>
-              <ProtectedPagesLayout />
-            </ProtectedRoute>
-          }
-        />
-
-        <Route
-          path="/quiz"
-          element={
-            <ProtectedRoute>
-              <ProtectedPagesLayout />
-            </ProtectedRoute>
-          }
-        />
-
-        <Route
-          path="/personality-quiz"
-          element={
-            <ProtectedRoute>
-              <ProtectedPagesLayout />
-            </ProtectedRoute>
-          }
-        />
-
-        <Route
-          path="/events/:eventId"
-          element={
-            <ProtectedRoute>
-              <ProtectedPagesLayout />
-            </ProtectedRoute>
-          }
-        />
-
-        <Route
-          path="/finding-matches"
-          element={
-            <ProtectedRoute>
-              <ProtectedPagesLayout />
-            </ProtectedRoute>
-          }
-        />
+          <Route path="/location" element={<LocationRoute />} />
+          <Route path="/area-selection" element={<AreaSelectionRoute />} />
+          <Route path="/quiz" element={<QuizRoute />} />
+          <Route path="/personality-quiz" element={<PersonalityQuizRoute />} />
+          <Route path="/finding-matches" element={<FindingMatchesRoute />} />
+        </Route>
 
         <Route
           path="*"

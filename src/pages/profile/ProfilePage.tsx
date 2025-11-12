@@ -8,11 +8,11 @@ import {
   Plus,
   type LucideIcon,
 } from "lucide-react";
-import { auth } from "../lib/storage/auth";
-import { showToast } from "../lib/helpers/toast";
-import { useProfile } from "../hooks/queries/useProfile";
-import { ImageWithPlaceholder } from "../components/ui";
-import { ProfileSkeleton } from "../components/skeleton";
+import { auth } from "../../lib/storage/auth";
+import { showToast } from "../../lib/helpers/toast";
+import { useProfile } from "../../hooks/queries/useProfile";
+import { ImageWithPlaceholder } from "../../components/ui";
+import { ProfileSkeleton } from "../../components/skeleton";
 
 interface ProfileMenuItem {
   id: string;

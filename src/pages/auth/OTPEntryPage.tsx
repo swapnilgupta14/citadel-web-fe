@@ -1,8 +1,8 @@
 import { useState, useEffect, useRef } from "react";
 import { ArrowLeft } from "lucide-react";
-import { Button } from "../components/ui";
-import type { OTPEntryPageProps } from "../types/pages";
-import { otpSchema } from "../lib/helpers/validations";
+import { Button } from "../../components/ui";
+import type { OTPEntryPageProps } from "../../types/pages";
+import { otpSchema } from "../../lib/helpers/validations";
 
 export const OTPEntryPage = ({
   email,

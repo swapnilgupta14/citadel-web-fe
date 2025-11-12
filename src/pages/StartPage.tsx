@@ -1,5 +1,10 @@
 import { useRef } from "react";
-import { motion, useMotionValue, useTransform } from "framer-motion";
+import {
+  motion,
+  useMotionValue,
+  useTransform,
+  type PanInfo,
+} from "framer-motion";
 import { ChevronRight } from "lucide-react";
 import { ImageGrid, ImageWithPlaceholder } from "../components/ui";
 
@@ -15,7 +20,10 @@ export const StartPage = ({ onComplete }: StartPageProps) => {
   const imageX = useTransform(x, [0, 250], [0, 50]);
   const sliderOpacity = useTransform(x, [0, 250], [1, 0]);
 
-  const handleDragEnd = (_event: any, info: any) => {
+  const handleDragEnd = (
+    _event: MouseEvent | TouchEvent | PointerEvent,
+    info: PanInfo
+  ) => {
     if (info.point.x > 280) {
       onComplete();
     } else {

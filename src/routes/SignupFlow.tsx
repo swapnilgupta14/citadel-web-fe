@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { UniversitySelectionPage } from "../pages/UniversitySelectionPage";
-import { EmailEntryPage } from "../pages/EmailEntryPage";
-import { OTPEntryPage } from "../pages/OTPEntryPage";
-import { WhoAreYouPage } from "../pages/WhoAreYouPage";
-import { DateOfBirthPage } from "../pages/DateOfBirthPage";
-import { DegreeSelectionPage } from "../pages/DegreeSelectionPage";
-import { SuccessPage } from "../pages/SuccessPage";
+import { UniversitySelectionPage } from "../pages/signup/UniversitySelectionPage";
+import { EmailEntryPage } from "../pages/signup/EmailEntryPage";
+import { OTPEntryPage } from "../pages/auth/OTPEntryPage";
+import { WhoAreYouPage } from "../pages/signup/WhoAreYouPage";
+import { DateOfBirthPage } from "../pages/signup/DateOfBirthPage";
+import { DegreeSelectionPage } from "../pages/signup/DegreeSelectionPage";
+import { SuccessPage } from "../pages/signup/SuccessPage";
 import { useAuth } from "../hooks/logic/useAuth";
 import { useSignupFlow } from "../hooks/logic/useSignupFlow";
 

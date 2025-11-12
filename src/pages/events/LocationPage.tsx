@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { ArrowLeft, X } from "lucide-react";
 import { motion } from "framer-motion";
-import type { City } from "../types/events";
-import { getLandmarkImage } from "../lib/helpers/eventUtils";
-import { CITIES } from "../constants/cities";
-import { ImageWithPlaceholder } from "../components/ui";
+import type { City } from "../../types/events";
+import { getLandmarkImage } from "../../lib/helpers/eventUtils";
+import { CITIES } from "../../constants/cities";
+import { ImageWithPlaceholder } from "../../components/ui";
 
 interface LocationPageProps {
   onBack: () => void;

@@ -1,14 +1,14 @@
 import { useState, useMemo } from "react";
 import { ArrowLeft, X } from "lucide-react";
 import { motion } from "framer-motion";
-import { Button } from "../components/ui";
-import { PersonalityQuizSkeleton } from "../components/skeleton";
+import { Button } from "../../components/ui";
+import { PersonalityQuizSkeleton } from "../../components/skeleton";
 import {
   usePersonalityQuizQuestions,
   useSubmitPersonalityQuiz,
-} from "../hooks/queries/usePersonalityQuiz";
-import type { PersonalityQuizAnswer } from "../types/personality-quiz";
-import { showToast } from "../lib/helpers/toast";
+} from "../../hooks/queries/usePersonalityQuiz";
+import type { PersonalityQuizAnswer } from "../../types/personality-quiz";
+import { showToast } from "../../lib/helpers/toast";
 
 interface PersonalityQuizPageProps {
   onBack?: () => void;
