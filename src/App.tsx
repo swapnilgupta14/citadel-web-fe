@@ -1,4 +1,5 @@
 import { Routes, Route, Navigate, useNavigate } from "react-router-dom";
+import { lazy, Suspense } from "react";
 import { MobileLayout } from "./components/layout/MobileLayout";
 import { HomePage } from "./pages/HomePage";
 import { ConnectPage } from "./pages/ConnectPage";
@@ -10,6 +11,12 @@ import { PrivacyPolicyTermsPage } from "./pages/legal/PrivacyPolicyTermsPage";
 import { HelpSupportPage } from "./pages/help/HelpSupportPage";
 import { SignupFlow } from "./routes/SignupFlow";
 import { LoginFlow } from "./routes/LoginFlow";
+
+const WriteToUsPage = lazy(() =>
+  import("./pages/help/WriteToUsPage").then((module) => ({
+    default: module.WriteToUsPage,
+  }))
+);
 import {
   EventsRoute,
   LocationRoute,
@@ -63,6 +70,14 @@ function App() {
             element={<PrivacyPolicyTermsPage />}
           />
           <Route path="/help-support" element={<HelpSupportPage />} />
+          <Route
+            path="/help-support/write-to-us"
+            element={
+              <Suspense fallback={null}>
+                <WriteToUsPage />
+              </Suspense>
+            }
+          />
 
           <Route path="/location" element={<LocationRoute />} />
           <Route path="/area-selection" element={<AreaSelectionRoute />} />

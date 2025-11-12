@@ -58,7 +58,7 @@ export const HelpSupportPage = () => {
   };
 
   const handleWriteToUs = () => {
-    console.log("Write to us clicked");
+    navigate("/help-support/write-to-us");
   };
 
   const handleCallUs = () => {
