@@ -21,7 +21,8 @@ export const StartPage = ({ onComplete }: StartPageProps) => {
     _event: MouseEvent | TouchEvent | PointerEvent,
     info: PanInfo
   ) => {
-    if (info.point.x > 280) {
+    const threshold = window.innerWidth * 0.75;
+    if (info.point.x > threshold) {
       onComplete();
     } else {
       x.set(0);
@@ -35,14 +36,14 @@ export const StartPage = ({ onComplete }: StartPageProps) => {
       </div>
 
       <div
-        className="flex flex-col justify-around rounded-t-[45px] p-6"
+        className="flex flex-col justify-between rounded-t-[45px] p-6 gap-6"
         style={{
           minHeight: "38%",
           maxHeight: "48%",
           background: "linear-gradient(180deg, #111111 0%, #040404 100%)",
         }}
       >
-        <div className="flex flex-col items-center gap-3">
+        <div className="flex flex-col items-center gap-2">
           <div className="w-10 h-10">
             <ImageWithPlaceholder
               src="/logo.svg"
@@ -58,7 +59,7 @@ export const StartPage = ({ onComplete }: StartPageProps) => {
 
         <div
           ref={constraintsRef}
-          className="relative w-full h-[5rem] bg-slider-bg rounded-full overflow-hidden"
+          className="relative w-full h-20 min-h-[3.5rem] bg-slider-bg rounded-full overflow-hidden"
         >
           <motion.div
             style={{ opacity: sliderOpacity }}
@@ -76,9 +77,12 @@ export const StartPage = ({ onComplete }: StartPageProps) => {
             dragMomentum={false}
             onDragEnd={handleDragEnd}
             style={{ x }}
-            className="absolute left-2 top-2 w-16 h-16 bg-primary rounded-full flex items-center justify-center cursor-grab active:cursor-grabbing shadow-lg"
+            className="absolute left-1 top-1 bottom-1 aspect-square max-w-[4.5rem] bg-primary rounded-full flex items-center justify-center cursor-grab active:cursor-grabbing shadow-lg"
           >
-            <ChevronRight className="w-7 h-7 text-background" strokeWidth={3} />
+            <ChevronRight
+              className="w-[30%] h-[30%] text-background"
+              strokeWidth={3}
+            />
           </motion.div>
         </div>
 
