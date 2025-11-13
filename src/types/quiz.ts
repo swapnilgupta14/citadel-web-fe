@@ -10,6 +10,28 @@ export interface QuizQuestion {
   required?: boolean;
 }
 
+export interface Quiz {
+  id: string;
+  title: string;
+  questions: Array<{
+    question: string;
+    type: "yes-no" | "multiple-choice" | "scale";
+    options: string[];
+  }>;
+  totalQuestions: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface QuizApiResponse {
+  success: boolean;
+  message: string;
+  data: {
+    quizzes: Quiz[];
+    totalQuizzes: number;
+  };
+}
+
 export interface QuizQuestionsResponse {
   success: boolean;
   data: {
@@ -35,6 +57,7 @@ export interface QuizResultsResponse {
   success: boolean;
   data: {
     results: unknown;
+    hasCompletedQuiz?: boolean;
   };
 }
 

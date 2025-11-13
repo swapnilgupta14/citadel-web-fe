@@ -7,7 +7,7 @@
     "rewrites": [
         {
             "source": "/api/:path*",
-            "destination": "https://citadelbackend-3.onrender.com/api/:path*"
+            "destination": "https://citadelbackend-2.onrender.com/api/:path*"
         },
         {
             "source": "/(.*)",

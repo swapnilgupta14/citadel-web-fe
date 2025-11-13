@@ -23,8 +23,7 @@ import type {
     UserBookingsResponse,
 } from "../types/events";
 import type {
-    QuizQuestionsResponse,
-    SubmitQuizRequest,
+    QuizApiResponse, SubmitQuizRequest,
     SubmitQuizResponse,
     QuizResultsResponse,
 } from "../types/quiz";
@@ -260,9 +259,9 @@ export const dinnerPreferencesApi = {
 };
 
 export const quizApi = {
-    getQuestions: async (): Promise<QuizQuestionsResponse> => {
-        const response = await axiosInstance.get<QuizQuestionsResponse>(
-            "/v1/quiz/questions"
+    getQuestions: async (): Promise<QuizApiResponse> => {
+        const response = await axiosInstance.get<QuizApiResponse>(
+            "/quiz"
         );
         return response.data;
     },

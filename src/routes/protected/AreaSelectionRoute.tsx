@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { AreaSelectionPage } from "../../pages/events/AreaSelectionPage";
 import { useProtectedLayout } from "../../hooks/logic";
+import { useQuizResults } from "../../hooks/queries/useQuiz";
 
 export const AreaSelectionRoute = () => {
   const navigate = useNavigate();
@@ -13,6 +14,7 @@ export const AreaSelectionRoute = () => {
     isCitySelectionLoading,
     isBookingFlow,
   } = useProtectedLayout();
+  const { refetch: refetchQuizResults } = useQuizResults();
 
   const handleComplete = async (selectedAreas: string[]) => {
     if (!tempCity) return;
@@ -21,7 +23,13 @@ export const AreaSelectionRoute = () => {
       await confirmCitySelection(selectedAreas, isBookingFlow);
 
       if (isBookingFlow) {
-        navigate("/personality-quiz");
+        const { data: updatedQuizResults } = await refetchQuizResults();
+        const hasCompletedQuiz = updatedQuizResults?.data?.hasCompletedQuiz ?? false;
+        if (!hasCompletedQuiz) {
+          navigate("/quiz");
+        } else {
+          navigate("/personality-quiz");
+        }
       } else {
         navigate("/events");
       }

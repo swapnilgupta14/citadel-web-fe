@@ -1,15 +1,12 @@
 import axios, { type AxiosError, type InternalAxiosRequestConfig } from "axios";
 import { auth } from "../lib/storage/auth";
-import { env } from "../config/env";
 
 const isDevelopment = import.meta.env.DEV;
 
 const getBaseURL = (): string => {
-    if (isDevelopment && env.VITE_API_BASE_URL) {
-        const url = env.VITE_API_BASE_URL.endsWith('/api')
-            ? env.VITE_API_BASE_URL
-            : `${env.VITE_API_BASE_URL}/api`;
-        return url;
+
+    if (isDevelopment) {
+        return "/api";
     }
     return "/api";
 };
@@ -55,8 +52,6 @@ const processQueue = (error: unknown = null, token: string | null = null) => {
 };
 
 export const handleLogout = () => {
-    console.log("Session expired. Logging out...");
-
     if (window.location.pathname !== "/connect") {
         auth.logout();
         window.location.replace("/connect");
@@ -89,7 +84,6 @@ const refreshAccessToken = async (): Promise<string | null> => {
 
         return null;
     } catch (error) {
-        console.error("Token refresh failed:", error);
         return null;
     }
 };
@@ -107,12 +101,6 @@ axiosInstance.interceptors.response.use(
                 error.message?.includes('Network Error');
 
             if (isCorsError) {
-                console.error('CORS or Network Error:', {
-                    message: error.message,
-                    code: error.code,
-                    url: error.config?.url,
-                    baseURL: error.config?.baseURL,
-                });
                 return Promise.reject(
                     new Error(
                         "CORS error: Unable to connect to the API. " +
@@ -121,12 +109,6 @@ axiosInstance.interceptors.response.use(
                     )
                 );
             }
-            console.error('Request Error:', {
-                message: error.message,
-                code: error.code,
-                url: error.config?.url,
-                baseURL: error.config?.baseURL,
-            });
             return Promise.reject(new Error("Timeout error. Please try again."));
         }
 

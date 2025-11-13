@@ -1,11 +1,9 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { ArrowLeft, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "../components/ui";
-import {
-  useQuizQuestions,
-  useSubmitQuiz,
-} from "../hooks/queries/useQuiz";
+import { QuizSkeleton } from "../components/skeleton";
+import { useQuizQuestions, useSubmitQuiz } from "../hooks/queries/useQuiz";
 import type { QuizAnswer } from "../types/quiz";
 import { showToast } from "../lib/helpers/toast";
 
@@ -23,19 +21,19 @@ export const QuizPage = ({ onBack, onClose, onComplete }: QuizPageProps) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<string, QuizAnswer>>({});
   const [isExiting, setIsExiting] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [hasLoadedOnce, setHasLoadedOnce] = useState(false);
 
   const currentQuestion = questions[currentIndex];
   const currentAnswer = currentQuestion ? answers[currentQuestion.id] : null;
 
   useEffect(() => {
-    if (currentQuestion?.type === "slider" && !currentAnswer) {
-      const min = currentQuestion.min || 1;
-      handleAnswerChange(min);
+    if (!isLoading && questions.length > 0 && !hasLoadedOnce) {
+      setHasLoadedOnce(true);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentQuestion?.id, currentQuestion?.type]);
+  }, [isLoading, questions.length, hasLoadedOnce]);
 
-  const handleAnswerChange = (value: string | number | string[]) => {
+  const handleAnswerChange = useCallback((value: string | number | string[]) => {
     if (!currentQuestion) return;
 
     setAnswers((prev) => ({
@@ -45,7 +43,14 @@ export const QuizPage = ({ onBack, onClose, onComplete }: QuizPageProps) => {
         answer: value,
       },
     }));
-  };
+  }, [currentQuestion]);
+
+  useEffect(() => {
+    if (currentQuestion?.type === "slider" && !currentAnswer) {
+      const min = currentQuestion.min || 1;
+      handleAnswerChange(min);
+    }
+  }, [currentQuestion?.id, currentQuestion?.type, currentAnswer, currentQuestion?.min, handleAnswerChange]);
 
   const handleYesNoAnswer = (value: "Yes" | "No") => {
     handleAnswerChange(value);
@@ -115,14 +120,27 @@ export const QuizPage = ({ onBack, onClose, onComplete }: QuizPageProps) => {
     try {
       const answersArray = Object.values(answers);
       await submitQuizMutation.mutateAsync({ answers: answersArray });
-      showToast.success("Quiz completed successfully!");
-      if (onComplete) {
-        onComplete();
-      }
+      setShowSuccess(true);
     } catch {
       showToast.error("Failed to submit quiz. Please try again.");
     }
   };
+
+  useEffect(() => {
+    if (showSuccess) {
+      const timer = setTimeout(() => {
+        setIsExiting(true);
+        setTimeout(() => {
+          if (onComplete) {
+            onComplete();
+          } else if (onClose) {
+            onClose();
+          }
+        }, 300);
+      }, 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [showSuccess, onComplete, onClose]);
 
   const renderQuestion = () => {
     if (!currentQuestion) return null;
@@ -211,7 +229,7 @@ export const QuizPage = ({ onBack, onClose, onComplete }: QuizPageProps) => {
             : min;
 
         return (
-          <div className="px-2">
+          <div>
             <div className="mb-6">
               <input
                 type="range"
@@ -227,12 +245,12 @@ export const QuizPage = ({ onBack, onClose, onComplete }: QuizPageProps) => {
                 }}
               />
             </div>
-            <div className="flex justify-between text-sm text-text-secondary">
-              <span>{min}</span>
-              <span className="text-primary font-semibold text-lg">
-                {sliderValue}
-              </span>
-              <span>{max}</span>
+            <div className="flex justify-center">
+              <div className="bg-background-tertiary rounded-full w-10 h-10 flex items-center justify-center">
+                <span className="text-primary text-sm leading-none font-bold">
+                  {sliderValue}
+                </span>
+              </div>
             </div>
           </div>
         );
@@ -325,41 +343,64 @@ export const QuizPage = ({ onBack, onClose, onComplete }: QuizPageProps) => {
       transition={{ duration: 0.3, ease: "easeInOut" }}
       className="flex h-full flex-col bg-background"
     >
-      <div className="flex items-center justify-between px-4 pt-4 pb-2">
-        <button
-          onClick={handleBack}
-          className="p-2 -ml-2 active:opacity-70 transition-opacity"
-          aria-label="Go back"
-        >
-          <ArrowLeft className="w-6 h-6 text-text-primary" strokeWidth={2} />
-        </button>
-        <h1 className="text-base font-semibold text-text-primary">Quiz</h1>
-        <button
-          onClick={handleClose}
-          className="p-2 -mr-2 active:opacity-70 transition-opacity"
-          aria-label="Close"
-        >
-          <X className="w-6 h-6 text-text-primary" strokeWidth={2} />
-        </button>
-      </div>
+      {!showSuccess && (
+        <div className="flex items-center justify-between px-4 pt-4 pb-2">
+          <button
+            onClick={handleBack}
+            className="p-2 -ml-2 active:opacity-70 transition-opacity"
+            aria-label="Go back"
+          >
+            <ArrowLeft className="w-6 h-6 text-text-primary" strokeWidth={2} />
+          </button>
+          <div className="flex flex-col items-center">
+            <h1 className="text-base font-semibold text-text-primary">
+              Quiz{" "}
+              {questions.length > 0 && (
+                <span>
+                  ({Math.round((currentIndex / questions.length) * 100)}%)
+                </span>
+              )}
+            </h1>
+          </div>
+          <button
+            onClick={handleClose}
+            className="p-2 -mr-2 active:opacity-70 transition-opacity"
+            aria-label="Close"
+          >
+            <X className="w-6 h-6 text-text-primary" strokeWidth={2} />
+          </button>
+        </div>
+      )}
 
-      {isLoading ? (
-        <div className="flex-1 flex flex-col items-center justify-center px-4">
-          <div className="text-text-secondary">Loading quiz questions...</div>
+      {isLoading && !hasLoadedOnce ? (
+        <QuizSkeleton />
+      ) : showSuccess ? (
+        <div className="flex-1 flex flex-col items-center justify-center px-6 py-6">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.3 }}
+            className="flex flex-col items-center text-center"
+          >
+            <img src="/success.svg" alt="Success" className="w-20 h-20 mb-6" />
+            <h2 className="text-2xl font-bold text-text-primary font-serif">
+              Quiz submitted successfully
+            </h2>
+          </motion.div>
         </div>
       ) : questions.length === 0 ? (
         <div className="flex-1 flex flex-col items-center justify-center px-4">
           <div className="text-text-secondary">No questions found</div>
         </div>
       ) : (
-        <div className="flex-1 flex flex-col px-4 py-6 min-h-0 overflow-hidden">
-          <div className="mb-8 flex-shrink-0">
-            <h2 className="text-2xl sm-phone:text-3xl font-bold text-text-primary font-serif mb-6">
+        <div className="flex-1 flex flex-col px-6 py-6 min-h-0 overflow-hidden">
+          <div className="mb-4 flex-shrink-0">
+            <h2 className="text-[24px] font-bold text-text-primary">
               {currentQuestion?.question}
             </h2>
           </div>
 
-          <div className="flex-1 overflow-y-auto min-h-0">
+          <div className="flex-1 overflow-y-auto min-h-0 border-b-0">
             <AnimatePresence mode="wait">
               <motion.div
                 key={currentIndex}
