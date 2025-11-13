@@ -54,7 +54,7 @@ export const SplashPage = ({
       <motion.img
         src="/Citedel_branding.png"
         alt="Citadel"
-        className="h-auto w-48"
+        className="h-auto w-[150px]"
         initial={{ scale: 0.8, opacity: 0 }}
         animate={{
           scale: isExiting ? 0.9 : 1,

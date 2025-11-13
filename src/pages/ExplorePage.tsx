@@ -12,7 +12,7 @@ export const ExplorePage = () => {
         <h1 className="text-2xl font-semibold text-text-primary text-center font-serif mb-4">
           Find university students worldwide with one click!
         </h1>
-        <div className="flex gap-3 w-full max-w-[23rem] mt-8">
+        <div className="flex gap-3 w-full max-w-[23rem] mt-1">
           <button
             onClick={() =>
               setSelected(selected === "interested" ? null : "interested")
