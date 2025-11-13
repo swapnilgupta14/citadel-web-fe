@@ -1,4 +1,5 @@
 import { useState, useMemo, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Calendar, RefreshCw } from "lucide-react";
 import type { EventSlot, City } from "../../types/events";
 import { showToast, handleApiError } from "../../lib/helpers/toast";
@@ -29,6 +30,7 @@ export const EventsPage = ({
   onStartBookingFlow,
   selectedCity,
 }: EventsPageProps) => {
+  const navigate = useNavigate();
   const [selectedSlot, setSelectedSlot] = useState<EventSlot | null>(null);
 
   const currentCity = useMemo(
@@ -100,6 +102,7 @@ export const EventsPage = ({
         />
         <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 px-6">
           <button
+            onClick={() => navigate("/event-bookings?tab=upcoming")}
             className="flex items-center gap-2 px-5 py-2 rounded-full border border-white text-white text-[15px] font-medium bg-transparent active:opacity-70 transition-opacity"
             aria-label="View bookings"
           >
