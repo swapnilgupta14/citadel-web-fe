@@ -1,21 +1,33 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { MapPin } from "lucide-react";
 import { motion } from "framer-motion";
 import { Button, ImageWithPlaceholder } from "../../components/ui";
 import { EventDetailCardSkeleton } from "../../components/skeleton";
 import { useEventDetail } from "../../hooks/queries/useEvents";
+import { useCreatePaymentOrder, useVerifyPayment } from "../../hooks/queries";
+import { useProfile } from "../../hooks/queries/useProfile";
 import { formatDate, formatTime } from "../../lib/helpers/eventUtils";
 import { getLandmarkImage } from "../../lib/helpers/eventUtils";
 import { useProtectedLayout } from "../../hooks/logic/useProtectedLayout";
+import { loadRazorpayScript } from "../../lib/helpers/razorpay";
+import { env } from "../../config/env";
+import { auth } from "../../lib/storage/auth";
+import { showToast, handleApiError } from "../../lib/helpers/toast";
 
 export const EventDetailPage = () => {
   const { eventId } = useParams<{ eventId: string }>();
   const navigate = useNavigate();
   const { data: eventData, isLoading, error } = useEventDetail(eventId);
   const { resetBookingFlow } = useProtectedLayout();
+  const { data: profileData } = useProfile();
+  const createOrderMutation = useCreatePaymentOrder();
+  const verifyPaymentMutation = useVerifyPayment();
+  const [isProcessingPayment, setIsProcessingPayment] = useState(false);
 
   const event = eventData?.data;
+  const profile = profileData?.data;
+  const userData = auth.getUserData();
 
   useEffect(() => {
     resetBookingFlow();
@@ -26,8 +38,96 @@ export const EventDetailPage = () => {
     navigate("/events", { replace: true });
   };
 
-  const handlePayAmount = () => {
-    navigate(`/events/${eventId}/success`, { replace: true });
+  const handlePayAmount = async () => {
+    if (!event || !eventId || !userData?.id) {
+      showToast.error("Missing required information");
+      return;
+    }
+
+    setIsProcessingPayment(true);
+
+    try {
+      await loadRazorpayScript();
+
+      if (!window.Razorpay) {
+        throw new Error("Razorpay SDK failed to load");
+      }
+
+      const razorpayKeyId = env.VITE_RAZORPAY_KEY_ID;
+      if (!razorpayKeyId) {
+        throw new Error("Razorpay key not configured");
+      }
+
+      const dateStr = event.eventDate.includes("T")
+        ? event.eventDate.split("T")[0]
+        : event.eventDate;
+
+      const orderData = await createOrderMutation.mutateAsync({
+        userId: userData.id,
+        eventId: eventId,
+        eventType: "dinner",
+        amount: event.bookingFee,
+        currency: "INR",
+        bookingDate: dateStr || event.eventDate,
+        bookingTime: event.eventTime,
+        location: `${event.area}, ${event.city}`,
+        guests: 1,
+      });
+
+      const bookingId = orderData.data.booking.id;
+
+      const options = {
+        key: razorpayKeyId,
+        amount: orderData.data.order.amount,
+        currency: orderData.data.order.currency,
+        name: "Citadel Dinners",
+        description: `Dinner on ${dateStr || event.eventDate} at ${event.eventTime}`,
+        order_id: orderData.data.order.id,
+        handler: async (response: {
+          razorpay_order_id: string;
+          razorpay_payment_id: string;
+          razorpay_signature: string;
+        }) => {
+          try {
+            const verifyData = await verifyPaymentMutation.mutateAsync({
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_signature: response.razorpay_signature,
+            });
+
+            if (verifyData.success) {
+              showToast.success("Payment successful!");
+              navigate(`/events/${eventId}/success`, { replace: true });
+            } else {
+              showToast.error("Payment verification failed");
+            }
+          } catch (err) {
+            const errorMessage = handleApiError(err);
+            showToast.error(errorMessage || "Payment verification failed");
+          }
+        },
+        prefill: {
+          name: profile?.name || "",
+          email: userData.email || "",
+          contact: "",
+        },
+        theme: {
+          color: "#1BEA7B",
+        },
+        modal: {
+          ondismiss: () => {
+            setIsProcessingPayment(false);
+          },
+        },
+      };
+
+      const razorpay = new window.Razorpay(options);
+      razorpay.open();
+    } catch (err) {
+      setIsProcessingPayment(false);
+      const errorMessage = handleApiError(err);
+      showToast.error(errorMessage || "Failed to initiate payment");
+    }
   };
 
   const hasError = !!error || (!isLoading && !event);
@@ -163,7 +263,8 @@ export const EventDetailPage = () => {
           onClick={handlePayAmount}
           variant="primary"
           className="flex-1"
-          disabled={isLoading || hasError}
+          disabled={isLoading || hasError || isProcessingPayment}
+          isLoading={isProcessingPayment || createOrderMutation.isPending}
         >
           Pay amount
         </Button>

@@ -14,4 +14,5 @@ export {
 export { useProfile } from "./useProfile";
 export { usePrivacyPolicy, useTermsAndConditions } from "./useLegal";
 export { useHelpSupport } from "./useHelpSupport";
+export { useCreatePaymentOrder, useVerifyPayment } from "./usePayment";
 

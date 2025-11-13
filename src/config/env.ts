@@ -16,6 +16,7 @@ const envSchema = z.object({
         .optional()
         .default('true')
         .transform((val) => val === 'true'),
+    VITE_RAZORPAY_KEY_ID: z.string().optional(),
 })
 
 export const env = envSchema.parse(import.meta.env)

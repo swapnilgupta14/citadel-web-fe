@@ -37,6 +37,12 @@ import type {
     LegalContentResponse,
     HelpSupportResponse,
 } from "../types/legal";
+import type {
+    CreatePaymentOrderRequest,
+    CreatePaymentOrderResponse,
+    VerifyPaymentRequest,
+    VerifyPaymentResponse,
+} from "../types/payment";
 
 export const universitiesApi = {
     getUniversities: async (
@@ -318,6 +324,28 @@ export const helpSupportApi = {
     getHelpSupport: async (): Promise<HelpSupportResponse> => {
         const response = await axiosInstance.get<HelpSupportResponse>(
             "/v1/help-support"
+        );
+        return response.data;
+    },
+};
+
+export const paymentApi = {
+    createOrder: async (
+        data: CreatePaymentOrderRequest
+    ): Promise<CreatePaymentOrderResponse> => {
+        const response = await axiosInstance.post<CreatePaymentOrderResponse>(
+            "/v1/payments/create-order",
+            data
+        );
+        return response.data;
+    },
+
+    verifyPayment: async (
+        data: VerifyPaymentRequest
+    ): Promise<VerifyPaymentResponse> => {
+        const response = await axiosInstance.post<VerifyPaymentResponse>(
+            "/v1/payments/verify",
+            data
         );
         return response.data;
     },
