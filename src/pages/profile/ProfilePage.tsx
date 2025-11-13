@@ -59,7 +59,7 @@ export const ProfilePage = () => {
   };
 
   const handleEventBookings = () => {
-    showToast.info("Event Bookings - Coming soon");
+    navigate("/event-bookings");
   };
 
   const handleHelpSupport = () => {

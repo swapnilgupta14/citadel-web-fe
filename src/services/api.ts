@@ -20,6 +20,7 @@ import type {
     DinnerPreferencesResponse,
     UpdatePreferencesRequest,
     EventDetailResponse,
+    UserBookingsResponse,
 } from "../types/events";
 import type {
     QuizQuestionsResponse,
@@ -204,6 +205,20 @@ export const eventsApi = {
     getEventDetail: async (eventId: string): Promise<EventDetailResponse> => {
         const response = await axiosInstance.get<EventDetailResponse>(
             `/v1/dinner-events/${eventId}`
+        );
+        return response.data;
+    },
+
+    getUserBookings: async (
+        type?: "upcoming" | "past"
+    ): Promise<UserBookingsResponse> => {
+        const params: Record<string, string> = {};
+        if (type) {
+            params.type = type;
+        }
+        const response = await axiosInstance.get<UserBookingsResponse>(
+            "/v1/dinner-events/bookings/my",
+            { params }
         );
         return response.data;
     },

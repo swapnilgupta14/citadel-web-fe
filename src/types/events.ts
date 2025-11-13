@@ -80,3 +80,27 @@ export interface UpdatePreferencesRequest {
     relationshipStatus?: string;
 }
 
+export interface UserBooking {
+    bookingId: string;
+    eventId: string;
+    eventDate: string;
+    eventTime: string;
+    city: string;
+    area: string;
+    venue: string | null;
+    venueAddress: string | null;
+    bookingStatus: string;
+    paymentAmount: number;
+    paymentMethod: string;
+    isPast: boolean;
+    groupChatId: string | null;
+}
+
+export interface UserBookingsResponse {
+    success: boolean;
+    data: {
+        bookings: UserBooking[];
+        totalBookings: number;
+    };
+}
+

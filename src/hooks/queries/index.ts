@@ -1,4 +1,5 @@
 export { useEvents, useBookEvent } from "./useEvents";
+export { useBookings } from "./useBookings";
 export { useUniversities } from "./useUniversities";
 export {
     useDinnerPreferences,

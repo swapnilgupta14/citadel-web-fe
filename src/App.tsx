@@ -5,6 +5,7 @@ import { HomePage } from "./pages/HomePage";
 import { ConnectPage } from "./pages/ConnectPage";
 import { ExplorePage } from "./pages/ExplorePage";
 import { ProfilePage } from "./pages/profile/ProfilePage";
+import { EventBookingsPage } from "./pages/profile/EventBookingsPage";
 import { EventDetailPage } from "./pages/events/EventDetailPage";
 import { GuidelinesPage } from "./pages/events/GuidelinesPage";
 import { DinnerBookedSuccessPage } from "./pages/events/DinnerBookedSuccessPage";
@@ -60,6 +61,7 @@ function App() {
           <Route path="/events" element={<EventsRoute />} />
           <Route path="/explore" element={<ExplorePage />} />
           <Route path="/profile" element={<ProfilePage />} />
+          <Route path="/event-bookings" element={<EventBookingsPage />} />
 
           <Route path="/events/:eventId" element={<EventDetailPage />} />
           <Route
