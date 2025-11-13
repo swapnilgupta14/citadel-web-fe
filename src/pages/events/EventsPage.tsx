@@ -100,7 +100,7 @@ export const EventsPage = ({
           className="w-full h-full object-cover"
           loading="lazy"
         />
-        <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 px-6">
+        <div className="absolute inset-0 flex flex-col items-center justify-start gap-4 px-6 pt-8">
           <button
             onClick={() => navigate("/event-bookings?tab=upcoming")}
             className="flex items-center gap-2 px-5 py-2 rounded-full border border-white text-white text-[15px] font-medium bg-transparent active:opacity-70 transition-opacity"

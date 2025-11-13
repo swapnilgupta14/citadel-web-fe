@@ -74,8 +74,6 @@ export const EventDetailPage = () => {
         guests: 1,
       });
 
-      const bookingId = orderData.data.booking.id;
-
       const options = {
         key: razorpayKeyId,
         amount: orderData.data.order.amount,

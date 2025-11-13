@@ -237,14 +237,14 @@ export const PersonalityQuizPage = ({
                               </span>
                               {isMultiSelect ? (
                                 <div
-                                  className={`w-5 h-5 rounded-md border-2 p-1 ${
+                                  className={`w-5 h-5 rounded-md border-2 p-[2px] ${
                                     isSelected
                                       ? "border-primary"
                                       : "border-white"
                                   }`}
                                 >
                                   {isSelected && (
-                                    <div className="w-full h-full bg-primary" />
+                                    <div className="rounded-sm w-full h-full bg-primary" />
                                   )}
                                 </div>
                               ) : (
