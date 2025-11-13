@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { MapPin } from "lucide-react";
+import { MapPin, ChevronRight } from "lucide-react";
 import { motion } from "framer-motion";
 import { Button, ImageWithPlaceholder } from "../../components/ui";
 import { EventDetailCardSkeleton } from "../../components/skeleton";
 import { useEventDetail } from "../../hooks/queries/useEvents";
 import { useCreatePaymentOrder, useVerifyPayment } from "../../hooks/queries";
-import { useProfile } from "../../hooks/queries/useProfile";
+import { profileApi } from "../../services/api";
 import { formatDate, formatTime } from "../../lib/helpers/eventUtils";
 import { getLandmarkImage } from "../../lib/helpers/eventUtils";
 import { useProtectedLayout } from "../../hooks/logic/useProtectedLayout";
@@ -20,22 +20,34 @@ export const EventDetailPage = () => {
   const navigate = useNavigate();
   const { data: eventData, isLoading, error } = useEventDetail(eventId);
   const { resetBookingFlow } = useProtectedLayout();
-  const { data: profileData } = useProfile();
   const createOrderMutation = useCreatePaymentOrder();
   const verifyPaymentMutation = useVerifyPayment();
   const [isProcessingPayment, setIsProcessingPayment] = useState(false);
 
   const event = eventData?.data;
-  const profile = profileData?.data;
   const userData = auth.getUserData();
 
   useEffect(() => {
     resetBookingFlow();
   }, [resetBookingFlow]);
 
+  useEffect(() => {
+    window.history.pushState(null, "", window.location.pathname);
+
+    const handlePopState = () => {
+      navigate("/personality-quiz", { replace: true });
+    };
+
+    window.addEventListener("popstate", handlePopState);
+
+    return () => {
+      window.removeEventListener("popstate", handlePopState);
+    };
+  }, [navigate]);
+
   const handleBack = () => {
     resetBookingFlow();
-    navigate("/events", { replace: true });
+    navigate("/personality-quiz", { replace: true });
   };
 
   const handlePayAmount = async () => {
@@ -47,6 +59,9 @@ export const EventDetailPage = () => {
     setIsProcessingPayment(true);
 
     try {
+      const profileResponse = await profileApi.getProfile();
+      const profileName = profileResponse?.data?.name || "";
+
       await loadRazorpayScript();
 
       if (!window.Razorpay) {
@@ -105,8 +120,8 @@ export const EventDetailPage = () => {
           }
         },
         prefill: {
-          name: profile?.name || "",
-          email: userData.email || "",
+          name: profileName,
+          email: userData.email ?? "",
           contact: "",
         },
         theme: {
@@ -223,7 +238,7 @@ export const EventDetailPage = () => {
                       className="text-text-primary text-base font-medium active:opacity-70 transition-opacity flex items-center gap-1"
                     >
                       Guidelines{" "}
-                      <span className="text-base font-semibold">&gt;</span>
+                      <ChevronRight className="w-5 h-5" strokeWidth={2} />
                     </button>
                   </div>
                 </div>

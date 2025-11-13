@@ -10,6 +10,8 @@ const mapQuestionType = (type: string): QuizQuestion["type"] => {
             return "multiple_choice";
         case "scale":
             return "slider";
+        case "input":
+            return "input";
         default:
             return "multiple_choice";
     }

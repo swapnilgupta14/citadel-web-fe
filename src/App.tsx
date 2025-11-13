@@ -62,6 +62,10 @@ function App() {
           <Route path="/explore" element={<ExplorePage />} />
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/event-bookings" element={<EventBookingsPage />} />
+          <Route
+            path="/profile/event-bookings"
+            element={<EventBookingsPage />}
+          />
 
           <Route path="/events/:eventId" element={<EventDetailPage />} />
           <Route
@@ -73,12 +77,12 @@ function App() {
             element={<DinnerBookedSuccessPage />}
           />
           <Route
-            path="/legal/privacy-terms"
+            path="/profile/legal/privacy-terms"
             element={<PrivacyPolicyTermsPage />}
           />
-          <Route path="/help-support" element={<HelpSupportPage />} />
+          <Route path="/profile/help-support" element={<HelpSupportPage />} />
           <Route
-            path="/help-support/write-to-us"
+            path="/profile/help-support/write-to-us"
             element={
               <Suspense fallback={null}>
                 <WriteToUsPage />

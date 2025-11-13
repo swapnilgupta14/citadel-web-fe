@@ -12,7 +12,7 @@ export const getCurrentPageFromPath = (path: string): ProtectedPage => {
         return "events";
     }
 
-    if (path === "/profile") {
+    if (path === "/profile" || path.startsWith("/profile/")) {
         return "profile";
     }
 
@@ -30,7 +30,8 @@ export const shouldShowBottomNav = (pathname: string): boolean => {
         pathname !== "/quiz" &&
         pathname !== "/personality-quiz" &&
         pathname !== "/finding-matches" &&
-        !pathname.startsWith("/events/")
+        !pathname.startsWith("/events/") &&
+        (pathname === "/profile" || !pathname.startsWith("/profile/"))
     );
 };
 

@@ -62,7 +62,7 @@ export const HelpSupportPage = () => {
   };
 
   const handleWriteToUs = () => {
-    navigate("/help-support/write-to-us");
+    navigate("/profile/help-support/write-to-us");
   };
 
   const handleCallUs = () => {

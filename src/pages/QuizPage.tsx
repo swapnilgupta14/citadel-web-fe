@@ -23,6 +23,7 @@ export const QuizPage = ({ onBack, onClose, onComplete }: QuizPageProps) => {
   const [isExiting, setIsExiting] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   const [hasLoadedOnce, setHasLoadedOnce] = useState(false);
+  const [direction, setDirection] = useState<"forward" | "backward">("forward");
 
   const currentQuestion = questions[currentIndex];
   const currentAnswer = currentQuestion ? answers[currentQuestion.id] : null;
@@ -33,48 +34,99 @@ export const QuizPage = ({ onBack, onClose, onComplete }: QuizPageProps) => {
     }
   }, [isLoading, questions.length, hasLoadedOnce]);
 
-  const handleAnswerChange = useCallback((value: string | number | string[]) => {
-    if (!currentQuestion) return;
+  const questionsLength = questions.length;
 
-    setAnswers((prev) => ({
-      ...prev,
-      [currentQuestion.id]: {
-        questionId: currentQuestion.id,
-        answer: value,
-      },
-    }));
-  }, [currentQuestion]);
+  const handleAnswerChange = useCallback(
+    (value: string | number | string[], shouldAutoAdvance: boolean = false) => {
+      if (!currentQuestion) return;
+
+      setAnswers((prev) => ({
+        ...prev,
+        [currentQuestion.id]: {
+          questionId: currentQuestion.id,
+          answer: value,
+        },
+      }));
+
+      if (shouldAutoAdvance && currentIndex < questionsLength - 1) {
+        setTimeout(() => {
+          setDirection("forward");
+          setCurrentIndex((prev) => prev + 1);
+        }, 300);
+      }
+    },
+    [currentQuestion, currentIndex, questionsLength]
+  );
 
   useEffect(() => {
     if (currentQuestion?.type === "slider" && !currentAnswer) {
       const min = currentQuestion.min || 1;
       handleAnswerChange(min);
     }
-  }, [currentQuestion?.id, currentQuestion?.type, currentAnswer, currentQuestion?.min, handleAnswerChange]);
+    if (currentQuestion?.type === "input" && !currentAnswer) {
+      handleAnswerChange("");
+    }
+  }, [
+    currentQuestion?.id,
+    currentQuestion?.type,
+    currentAnswer,
+    currentQuestion?.min,
+    handleAnswerChange,
+  ]);
 
   const handleYesNoAnswer = (value: "Yes" | "No") => {
-    handleAnswerChange(value);
+    handleAnswerChange(value, true);
   };
 
   const handleMultipleChoiceAnswer = (value: string) => {
-    handleAnswerChange(value);
+    handleAnswerChange(value, true);
   };
 
   const handleSliderChange = (value: number) => {
-    handleAnswerChange(value);
+    handleAnswerChange(value, false);
+  };
+
+  const handleSliderEnd = () => {
+    if (currentIndex < questionsLength - 1 && currentAnswer) {
+      setTimeout(() => {
+        setDirection("forward");
+        setCurrentIndex((prev) => prev + 1);
+      }, 300);
+    }
   };
 
   const handleMultiSelectToggle = (value: string) => {
     if (!currentQuestion) return;
     const currentValues = (currentAnswer?.answer as string[]) || [];
-    const newValues = currentValues.includes(value)
-      ? currentValues.filter((v) => v !== value)
-      : [...currentValues, value];
-    handleAnswerChange(newValues);
+    const isSelecting = !currentValues.includes(value);
+    const newValues = isSelecting
+      ? [...currentValues, value]
+      : currentValues.filter((v) => v !== value);
+    const shouldAdvance =
+      isSelecting && newValues.length > 0 && currentIndex < questionsLength - 1;
+    handleAnswerChange(newValues, shouldAdvance);
   };
 
   const handleSingleSelectAnswer = (value: string) => {
-    handleAnswerChange(value);
+    handleAnswerChange(value, true);
+  };
+
+  const handleInputChange = (value: string) => {
+    handleAnswerChange(value, false);
+  };
+
+  const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (
+      e.key === "Enter" &&
+      canContinue &&
+      currentIndex < questionsLength - 1
+    ) {
+      e.preventDefault();
+      setTimeout(() => {
+        setDirection("forward");
+        setCurrentIndex((prev) => prev + 1);
+      }, 100);
+    }
   };
 
   const canContinue = useMemo(() => {
@@ -86,6 +138,11 @@ export const QuizPage = ({ onBack, onClose, onComplete }: QuizPageProps) => {
       return values.length > 0;
     }
 
+    if (currentQuestion.type === "input") {
+      const inputValue = currentAnswer.answer as string;
+      return inputValue.trim().length > 0;
+    }
+
     return true;
   }, [currentQuestion, currentAnswer]);
 
@@ -93,6 +150,7 @@ export const QuizPage = ({ onBack, onClose, onComplete }: QuizPageProps) => {
     if (!canContinue) return;
 
     if (currentIndex < questions.length - 1) {
+      setDirection("forward");
       setCurrentIndex((prev) => prev + 1);
     } else {
       await handleSubmit();
@@ -101,6 +159,7 @@ export const QuizPage = ({ onBack, onClose, onComplete }: QuizPageProps) => {
 
   const handleBack = () => {
     if (currentIndex > 0) {
+      setDirection("backward");
       setCurrentIndex((prev) => prev - 1);
     } else if (onBack) {
       onBack();
@@ -144,6 +203,12 @@ export const QuizPage = ({ onBack, onClose, onComplete }: QuizPageProps) => {
 
   const renderQuestion = () => {
     if (!currentQuestion) return null;
+
+    if (import.meta.env.DEV) {
+      console.log("Current question:", currentQuestion);
+      console.log("Current question type:", currentQuestion.type);
+      console.log("Type check - is 'input'?", currentQuestion.type === "input");
+    }
 
     switch (currentQuestion.type) {
       case "yes_no":
@@ -228,29 +293,47 @@ export const QuizPage = ({ onBack, onClose, onComplete }: QuizPageProps) => {
             ? currentAnswer.answer
             : min;
 
+        const percentage = ((sliderValue - min) / (max - min)) * 100;
+
         return (
           <div>
-            <div className="mb-6">
+            <div className="mb-6 relative">
               <input
                 type="range"
                 min={min}
                 max={max}
                 value={sliderValue}
                 onChange={(e) => handleSliderChange(Number(e.target.value))}
-                className="w-full h-2 bg-background-tertiary rounded-lg appearance-none cursor-pointer accent-primary"
+                onMouseUp={handleSliderEnd}
+                onTouchEnd={handleSliderEnd}
+                className="w-full h-2 bg-background-tertiary rounded-lg appearance-none cursor-pointer slider-custom"
                 style={{
-                  background: `linear-gradient(to right, #1BEA7B 0%, #1BEA7B ${
-                    ((sliderValue - min) / (max - min)) * 100
-                  }%, #2C2C2C ${((sliderValue - min) / (max - min)) * 100}%, #2C2C2C 100%)`,
+                  background: `linear-gradient(to right, #1BEA7B 0%, #1BEA7B ${percentage}%, #2C2C2C ${percentage}%, #2C2C2C 100%)`,
                 }}
               />
+              <style>{`
+                .slider-custom::-webkit-slider-thumb {
+                  appearance: none;
+                  width: 24px;
+                  height: 24px;
+                  border-radius: 50%;
+                  background: radial-gradient(circle, #000000 0%, #000000 40%, #1BEA7B 40%, #1BEA7B 100%);
+                  border: none;
+                  cursor: pointer;
+                }
+                .slider-custom::-moz-range-thumb {
+                  width: 24px;
+                  height: 24px;
+                  border-radius: 50%;
+                  background: radial-gradient(circle, #000000 0%, #000000 40%, #1BEA7B 40%, #1BEA7B 100%);
+                  border: none;
+                  cursor: pointer;
+                }
+              `}</style>
             </div>
-            <div className="flex justify-center">
-              <div className="bg-background-tertiary rounded-full w-10 h-10 flex items-center justify-center">
-                <span className="text-primary text-sm leading-none font-bold">
-                  {sliderValue}
-                </span>
-              </div>
+            <div className="flex justify-between items-center px-1">
+              <span className="text-text-secondary text-base">No</span>
+              <span className="text-text-secondary text-base">Yes</span>
             </div>
           </div>
         );
@@ -331,8 +414,32 @@ export const QuizPage = ({ onBack, onClose, onComplete }: QuizPageProps) => {
         );
       }
 
+      case "input": {
+        const inputValue = (currentAnswer?.answer as string) || "";
+        return (
+          <div className="flex flex-col gap-4">
+            <input
+              type="text"
+              value={inputValue}
+              onChange={(e) => handleInputChange(e.target.value)}
+              onKeyDown={handleInputKeyDown}
+              placeholder="Enter your response"
+              className="w-full p-4 rounded-xl bg-background-secondary border-2 border-border text-lg font-medium text-text-primary placeholder:text-text-secondary/60 focus:outline-none focus:border-primary focus:bg-primary/5 transition-all"
+              autoFocus
+            />
+          </div>
+        );
+      }
+
       default:
-        return null;
+        console.warn("Unknown question type:", currentQuestion.type);
+        return (
+          <div className="flex flex-col gap-4">
+            <div className="text-text-secondary">
+              Unknown question type: {currentQuestion.type}
+            </div>
+          </div>
+        );
     }
   };
 
@@ -404,26 +511,34 @@ export const QuizPage = ({ onBack, onClose, onComplete }: QuizPageProps) => {
             <AnimatePresence mode="wait">
               <motion.div
                 key={currentIndex}
-                initial={{ opacity: 0, x: 20 }}
+                initial={{
+                  opacity: 0,
+                  x: direction === "forward" ? 20 : -20,
+                }}
                 animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -20 }}
-                transition={{ duration: 0.3 }}
+                exit={{
+                  opacity: 0,
+                  x: direction === "forward" ? -20 : 20,
+                }}
+                transition={{ duration: 0.3, ease: "easeInOut" }}
               >
                 {renderQuestion()}
               </motion.div>
             </AnimatePresence>
           </div>
 
-          <div className="mt-6 flex-shrink-0">
-            <Button
-              onClick={handleContinue}
-              disabled={!canContinue}
-              isLoading={submitQuizMutation.isPending}
-              variant="primary"
-            >
-              {currentIndex < questions.length - 1 ? "Continue" : "Submit"}
-            </Button>
-          </div>
+          {currentIndex === questions.length - 1 && (
+            <div className="mt-6 flex-shrink-0">
+              <Button
+                onClick={handleContinue}
+                disabled={!canContinue}
+                isLoading={submitQuizMutation.isPending}
+                variant="primary"
+              >
+                Submit
+              </Button>
+            </div>
+          )}
         </div>
       )}
     </motion.div>

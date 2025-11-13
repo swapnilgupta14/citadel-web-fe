@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { ChevronLeft } from "lucide-react";
 import { motion } from "framer-motion";
@@ -45,6 +45,7 @@ export const PrivacyPolicyTermsPage = () => {
   };
 
   const [activeTab, setActiveTab] = useState<TabType>(getInitialTab());
+  const swipeStartRef = useRef<{ x: number; y: number } | null>(null);
 
   useEffect(() => {
     const tabParam = searchParams.get("tab");
@@ -52,6 +53,36 @@ export const PrivacyPolicyTermsPage = () => {
       setActiveTab(tabParam);
     }
   }, [searchParams]);
+
+  const handleTabChange = (tab: TabType) => {
+    setActiveTab(tab);
+  };
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    const touch = e.touches[0];
+    swipeStartRef.current = { x: touch.clientX, y: touch.clientY };
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (!swipeStartRef.current) return;
+
+    const touch = e.changedTouches[0];
+    const deltaX = touch.clientX - swipeStartRef.current.x;
+    const deltaY = touch.clientY - swipeStartRef.current.y;
+    const swipeThreshold = 50;
+    const isHorizontalSwipe =
+      Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > swipeThreshold;
+
+    if (isHorizontalSwipe) {
+      if (deltaX > 0 && activeTab === "privacy") {
+        handleTabChange("terms");
+      } else if (deltaX < 0 && activeTab === "terms") {
+        handleTabChange("privacy");
+      }
+    }
+
+    swipeStartRef.current = null;
+  };
 
   const content =
     activeTab === "privacy" ? privacyPolicyContent : termsAndConditionsContent;
@@ -73,7 +104,7 @@ export const PrivacyPolicyTermsPage = () => {
 
       <div className="flex border-b border-border flex-shrink-0">
         <button
-          onClick={() => setActiveTab("privacy")}
+          onClick={() => handleTabChange("privacy")}
           className={`flex-1 py-4 px-2 text-base font-medium transition-colors relative ${
             activeTab === "privacy"
               ? "text-text-primary"
@@ -90,7 +121,7 @@ export const PrivacyPolicyTermsPage = () => {
           )}
         </button>
         <button
-          onClick={() => setActiveTab("terms")}
+          onClick={() => handleTabChange("terms")}
           className={`flex-1 py-4 px-2 text-base font-medium transition-colors relative ${
             activeTab === "terms" ? "text-text-primary" : "text-text-secondary"
           }`}
@@ -106,17 +137,23 @@ export const PrivacyPolicyTermsPage = () => {
         </button>
       </div>
 
-      <div className="flex-1 min-h-0 overflow-y-auto px-6 py-6 [&::-webkit-scrollbar]:hidden [scrollbar-width:none]">
-        <div className="text-sm text-text-primary leading-tight space-y-4">
-          <p>{content.intro}</p>
-          <p>{content.paragraph}</p>
-          <p>{content.importance}</p>
-          <p>{content.examplesTitle}</p>
-          <ul className="space-y-3 list-disc list-inside pl-2">
-            {content.bullets.map((bullet, index) => (
-              <li key={index}>{bullet}</li>
-            ))}
-          </ul>
+      <div className="flex-1 min-h-0 overflow-hidden relative">
+        <div
+          onTouchStart={handleTouchStart}
+          onTouchEnd={handleTouchEnd}
+          className="flex-1 min-h-0 overflow-y-auto px-6 py-6 [&::-webkit-scrollbar]:hidden [scrollbar-width:none]"
+        >
+          <div className="text-sm text-text-primary leading-tight space-y-4">
+            <p>{content.intro}</p>
+            <p>{content.paragraph}</p>
+            <p>{content.importance}</p>
+            <p>{content.examplesTitle}</p>
+            <ul className="space-y-3 list-disc list-inside pl-2">
+              {content.bullets.map((bullet, index) => (
+                <li key={index}>{bullet}</li>
+              ))}
+            </ul>
+          </div>
         </div>
       </div>
     </div>

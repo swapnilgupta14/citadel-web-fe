@@ -1,4 +1,4 @@
-export type QuestionType = "yes_no" | "multiple_choice" | "slider" | "multi_select" | "single_select";
+export type QuestionType = "yes_no" | "multiple_choice" | "slider" | "multi_select" | "single_select" | "input";
 
 export interface QuizQuestion {
   id: string;

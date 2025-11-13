@@ -59,19 +59,19 @@ export const ProfilePage = () => {
   };
 
   const handleEventBookings = () => {
-    navigate("/event-bookings");
+    navigate("/profile/event-bookings");
   };
 
   const handleHelpSupport = () => {
-    navigate("/help-support");
+    navigate("/profile/help-support");
   };
 
   const handlePrivacyPolicy = () => {
-    navigate("/legal/privacy-terms?tab=privacy");
+    navigate("/profile/legal/privacy-terms?tab=privacy");
   };
 
   const handleTermsConditions = () => {
-    navigate("/legal/privacy-terms?tab=terms");
+    navigate("/profile/legal/privacy-terms?tab=terms");
   };
 
   const primarySlot = profile?.slots?.find((slot) => slot.slot === 0);
@@ -99,9 +99,7 @@ export const ProfilePage = () => {
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
-      // Handle file upload here
       showToast.info("Upload Photo - Coming soon");
-      // Reset input so same file can be selected again
       if (fileInputRef.current) {
         fileInputRef.current.value = "";
       }
