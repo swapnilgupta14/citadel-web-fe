@@ -12,6 +12,7 @@ export const ProgressLoader = ({
   continuous = true,
 }: ProgressLoaderProps) => {
   const [progress, setProgress] = useState(1);
+  const [animationTime, setAnimationTime] = useState(0);
 
   useEffect(() => {
     let animationFrame: number;
@@ -52,20 +53,73 @@ export const ProgressLoader = ({
     };
   }, [duration, onComplete, continuous]);
 
+  useEffect(() => {
+    let animationFrame: number;
+    const startTime = Date.now();
+    const pulseDuration = 10200;
+
+    const animatePulse = () => {
+      const now = Date.now();
+      const elapsed = (now - startTime) % pulseDuration;
+      const normalizedTime = elapsed / pulseDuration;
+      setAnimationTime(normalizedTime);
+      animationFrame = requestAnimationFrame(animatePulse);
+    };
+
+    animationFrame = requestAnimationFrame(animatePulse);
+
+    return () => {
+      if (animationFrame) {
+        cancelAnimationFrame(animationFrame);
+      }
+    };
+  }, []);
+
+  const pulseScale =
+    1 - (Math.sin(animationTime * Math.PI * 2) * 0.5 + 0.5) * 0.15;
+
+  const circle1 = {
+    originalSize: 50.6,
+    originalCx: 23.8,
+    originalCy: 23.8,
+    originalR: 23.6,
+  };
+  const circle2 = {
+    originalSize: 39.6,
+    originalCx: 18.3,
+    originalCy: 18.3,
+    originalR: 18.1,
+  };
+  const circle3 = {
+    originalSize: 30.6,
+    originalCx: 14.3,
+    originalCy: 14.3,
+    originalR: 14.1,
+  };
+  const circle4 = {
+    originalSize: 20.6,
+    originalCx: 10.3,
+    originalCy: 10.3,
+    originalR: 10.1,
+  };
+
   return (
     <div className="flex h-full flex-col bg-background px-6 overflow-hidden relative">
       <div className="flex-1 flex items-center justify-center">
         <div className="relative flex items-center justify-center">
           <svg
             className="absolute"
-            width="47.6rem"
-            height="47.6rem"
-            style={{ width: "50.6rem", height: "50.6rem" }}
+            width={`${circle1.originalSize * pulseScale}rem`}
+            height={`${circle1.originalSize * pulseScale}rem`}
+            style={{
+              width: `${circle1.originalSize * pulseScale}rem`,
+              height: `${circle1.originalSize * pulseScale}rem`,
+            }}
           >
             <circle
-              cx="23.8rem"
-              cy="23.8rem"
-              r="23.6rem"
+              cx={`${circle1.originalCx * pulseScale}rem`}
+              cy={`${circle1.originalCy * pulseScale}rem`}
+              r={`${circle1.originalR * pulseScale}rem`}
               fill="none"
               stroke="#1F1F1F"
               strokeWidth="1"
@@ -75,14 +129,17 @@ export const ProgressLoader = ({
 
           <svg
             className="absolute"
-            width="36.6rem"
-            height="36.6rem"
-            style={{ width: "39.6rem", height: "39.6rem" }}
+            width={`${circle2.originalSize * pulseScale}rem`}
+            height={`${circle2.originalSize * pulseScale}rem`}
+            style={{
+              width: `${circle2.originalSize * pulseScale}rem`,
+              height: `${circle2.originalSize * pulseScale}rem`,
+            }}
           >
             <circle
-              cx="18.3rem"
-              cy="18.3rem"
-              r="18.1rem"
+              cx={`${circle2.originalCx * pulseScale}rem`}
+              cy={`${circle2.originalCy * pulseScale}rem`}
+              r={`${circle2.originalR * pulseScale}rem`}
               fill="none"
               stroke="#1F1F1F"
               strokeWidth="1"
@@ -92,14 +149,17 @@ export const ProgressLoader = ({
 
           <svg
             className="absolute"
-            width="28.6rem"
-            height="28.6rem"
-            style={{ width: "30.6rem", height: "30.6rem" }}
+            width={`${circle3.originalSize * pulseScale}rem`}
+            height={`${circle3.originalSize * pulseScale}rem`}
+            style={{
+              width: `${circle3.originalSize * pulseScale}rem`,
+              height: `${circle3.originalSize * pulseScale}rem`,
+            }}
           >
             <circle
-              cx="14.3rem"
-              cy="14.3rem"
-              r="14.1rem"
+              cx={`${circle3.originalCx * pulseScale}rem`}
+              cy={`${circle3.originalCy * pulseScale}rem`}
+              r={`${circle3.originalR * pulseScale}rem`}
               fill="none"
               stroke="#1F1F1F"
               strokeWidth="1"
@@ -109,14 +169,17 @@ export const ProgressLoader = ({
 
           <svg
             className="absolute"
-            width="20.6rem"
-            height="20.6rem"
-            style={{ width: "20.6rem", height: "20.6rem" }}
+            width={`${circle4.originalSize * pulseScale}rem`}
+            height={`${circle4.originalSize * pulseScale}rem`}
+            style={{
+              width: `${circle4.originalSize * pulseScale}rem`,
+              height: `${circle4.originalSize * pulseScale}rem`,
+            }}
           >
             <circle
-              cx="10.3rem"
-              cy="10.3rem"
-              r="10.1rem"
+              cx={`${circle4.originalCx * pulseScale}rem`}
+              cy={`${circle4.originalCy * pulseScale}rem`}
+              r={`${circle4.originalR * pulseScale}rem`}
               fill="none"
               stroke="#1F1F1F"
               strokeWidth="1"

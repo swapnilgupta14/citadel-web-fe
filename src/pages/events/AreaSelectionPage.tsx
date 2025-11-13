@@ -23,20 +23,20 @@ export const AreaSelectionPage = ({
   isLoading = false,
   savedAreas = [],
 }: AreaSelectionPageProps) => {
-  const [selectedAreas, setSelectedAreas] = useState<string[]>(savedAreas);
+  const [selectedArea, setSelectedArea] = useState<string>(
+    savedAreas.length > 0 ? savedAreas[0] : ""
+  );
   const [isExiting, setIsExiting] = useState(false);
 
   const areas = AREAS_BY_CITY[cityId] || AREAS_BY_CITY[cityName] || [];
 
-  const toggleArea = (area: string) => {
-    setSelectedAreas((prev) =>
-      prev.includes(area) ? prev.filter((a) => a !== area) : [...prev, area]
-    );
+  const selectArea = (area: string) => {
+    setSelectedArea(area);
   };
 
   const handleContinue = () => {
-    if (selectedAreas.length > 0) {
-      onContinue(selectedAreas);
+    if (selectedArea) {
+      onContinue([selectedArea]);
     }
   };
 
@@ -79,18 +79,18 @@ export const AreaSelectionPage = ({
             <span className="text-primary font-serif italic">DINNER?</span>
           </h2>
           <p className="text-sm sm-phone:text-base text-white font-medium mt-2">
-            Select preferred areas in {cityName}
+            Select preferred area in {cityName}
           </p>
         </div>
 
         <div className="p-2 grid grid-cols-2 auto-rows-min gap-x-4 gap-y-4 overflow-y-auto flex-1 min-h-0">
           {areas.map((area) => {
-            const isSelected = selectedAreas.includes(area);
+            const isSelected = selectedArea === area;
 
             return (
               <button
                 key={area}
-                onClick={() => toggleArea(area)}
+                onClick={() => selectArea(area)}
                 className={`relative w-full aspect-[6/3] overflow-hidden transition-all duration-300 bg-background-secondary rounded-2xl ${
                   isSelected
                     ? "ring-4 ring-primary"
@@ -126,7 +126,7 @@ export const AreaSelectionPage = ({
         <div className="mt-6 flex-shrink-0">
           <Button
             onClick={handleContinue}
-            disabled={selectedAreas.length === 0}
+            disabled={!selectedArea}
             isLoading={isLoading}
             variant="primary"
           >

@@ -11,7 +11,7 @@ export const FindingMatchesRoute = () => {
 
   return (
     <ProgressLoader
-      continuous={false}
+      continuous={true}
       duration={2000}
       onComplete={completeProgressLoader}
     />
