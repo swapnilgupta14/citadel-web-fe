@@ -7,6 +7,7 @@ import { ExplorePage } from "./pages/ExplorePage";
 import { ProfilePage } from "./pages/profile/ProfilePage";
 import { EventDetailPage } from "./pages/events/EventDetailPage";
 import { GuidelinesPage } from "./pages/events/GuidelinesPage";
+import { DinnerBookedSuccessPage } from "./pages/events/DinnerBookedSuccessPage";
 import { PrivacyPolicyTermsPage } from "./pages/legal/PrivacyPolicyTermsPage";
 import { HelpSupportPage } from "./pages/help/HelpSupportPage";
 import { SignupFlow } from "./routes/SignupFlow";
@@ -64,6 +65,10 @@ function App() {
           <Route
             path="/events/:eventId/guidelines"
             element={<GuidelinesPage />}
+          />
+          <Route
+            path="/events/:eventId/success"
+            element={<DinnerBookedSuccessPage />}
           />
           <Route
             path="/legal/privacy-terms"

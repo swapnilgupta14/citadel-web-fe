@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { MapPin } from "lucide-react";
 import { motion } from "framer-motion";
@@ -6,20 +7,27 @@ import { EventDetailCardSkeleton } from "../../components/skeleton";
 import { useEventDetail } from "../../hooks/queries/useEvents";
 import { formatDate, formatTime } from "../../lib/helpers/eventUtils";
 import { getLandmarkImage } from "../../lib/helpers/eventUtils";
+import { useProtectedLayout } from "../../hooks/logic/useProtectedLayout";
 
 export const EventDetailPage = () => {
   const { eventId } = useParams<{ eventId: string }>();
   const navigate = useNavigate();
   const { data: eventData, isLoading, error } = useEventDetail(eventId);
+  const { resetBookingFlow } = useProtectedLayout();
 
   const event = eventData?.data;
 
+  useEffect(() => {
+    resetBookingFlow();
+  }, [resetBookingFlow]);
+
   const handleBack = () => {
-    navigate("/events");
+    resetBookingFlow();
+    navigate("/events", { replace: true });
   };
 
   const handlePayAmount = () => {
-    console.log("Pay amount clicked");
+    navigate(`/events/${eventId}/success`, { replace: true });
   };
 
   const hasError = !!error || (!isLoading && !event);
