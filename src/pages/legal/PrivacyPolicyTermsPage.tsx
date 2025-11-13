@@ -1,37 +1,88 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { ChevronLeft } from "lucide-react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 
 type TabType = "privacy" | "terms";
 
 const privacyPolicyContent = {
   intro:
-    "Unlike Privacy Policies, which are required by laws such as the GDPR, CalOPPA and many others, there's no law or regulation on Terms and Conditions.",
-  paragraph:
-    "However, having a Terms and Conditions gives you the right to terminate the access of abusive users or to terminate the access to users who do not follow your rules and guidelines, as well as other desirable business benefits.",
-  importance:
-    "It's extremely important to have this agreement if you operate a SaaS app.",
-  examplesTitle: "Here are a few examples of how this agreement can help you:",
-  bullets: [
-    'If users abuse your website or mobile app in any way, you can terminate their account. Your "Termination" clause can inform users that their account would be terminated if they abuse your service.',
-    "If users can post content on your website or mobile app (create content and share it on your platform), you can remove any content they created if it infringes copyright. Your Terms and Conditions will inform users that they can only create and/or share content they own rights to. Similarly, if users can register for an account and choose a username, you can inform users that they are not allowed to choose usernames that may infringe trademarks, i.e. usernames like Google, Facebook, and so on.",
-    "If you sell products or services, you could cancel specific orders if a product price is incorrect. Your Terms and Conditions can include a clause to inform users that certain orders, at your sole discretion, can be cancelled if the products ordered have incorrect prices due to various errors.",
+    "Your privacy is important to us. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our service.",
+  lastUpdated: "Last updated: January 2024",
+  sections: [
+    {
+      title: "Information We Collect",
+      content:
+        "We collect information that you provide directly to us, including your name, email address, profile information, and any other information you choose to provide. We also automatically collect certain information about your device and how you interact with our service.",
+    },
+    {
+      title: "How We Use Your Information",
+      content:
+        "We use the information we collect to provide, maintain, and improve our services, process your requests, communicate with you, and personalize your experience. We may also use your information to detect and prevent fraud or abuse.",
+    },
+    {
+      title: "Data Sharing and Disclosure",
+      content:
+        "We do not sell your personal information. We may share your information with service providers who assist us in operating our service, conducting our business, or serving our users, as long as those parties agree to keep this information confidential.",
+    },
+    {
+      title: "Your Rights",
+      content:
+        "You have the right to access, update, or delete your personal information at any time. You may also opt out of certain communications from us. If you are located in the European Economic Area, you have additional rights under the GDPR.",
+    },
+    {
+      title: "Data Security",
+      content:
+        "We implement appropriate technical and organizational measures to protect your personal information against unauthorized access, alteration, disclosure, or destruction. However, no method of transmission over the internet is 100% secure.",
+    },
+    {
+      title: "Contact Us",
+      content:
+        "If you have any questions about this Privacy Policy, please contact us through the app or at privacy@citadel.com.",
+    },
   ],
 };
 
 const termsAndConditionsContent = {
   intro:
-    "Unlike Privacy Policies, which are required by laws such as the GDPR, CalOPPA and many others, there's no law or regulation on Terms and Conditions.",
-  paragraph:
-    "However, having a Terms and Conditions gives you the right to terminate the access of abusive users or to terminate the access to users who do not follow your rules and guidelines, as well as other desirable business benefits.",
-  importance:
-    "It's extremely important to have this agreement if you operate a SaaS app.",
-  examplesTitle: "Here are a few examples of how this agreement can help you:",
-  bullets: [
-    'If users abuse your website or mobile app in any way, you can terminate their account. Your "Termination" clause can inform users that their account would be terminated if they abuse your service.',
-    "If users can post content on your website or mobile app (create content and share it on your platform), you can remove any content they created if it infringes copyright. Your Terms and Conditions will inform users that they can only create and/or share content they own rights to. Similarly, if users can register for an account and choose a username, you can inform users that they are not allowed to choose usernames that may infringe trademarks, i.e. usernames like Google, Facebook, and so on.",
-    "If you sell products or services, you could cancel specific orders if a product price is incorrect. Your Terms and Conditions can include a clause to inform users that certain orders, at your sole discretion, can be cancelled if the products ordered have incorrect prices due to various errors.",
+    "Please read these Terms and Conditions carefully before using our service. By accessing or using our service, you agree to be bound by these terms.",
+  lastUpdated: "Last updated: January 2024",
+  sections: [
+    {
+      title: "Acceptance of Terms",
+      content:
+        "By creating an account or using our service, you acknowledge that you have read, understood, and agree to be bound by these Terms and Conditions. If you do not agree with any part of these terms, you may not use our service.",
+    },
+    {
+      title: "User Accounts",
+      content:
+        "You are responsible for maintaining the confidentiality of your account credentials and for all activities that occur under your account. You agree to notify us immediately of any unauthorized use of your account or any other breach of security.",
+    },
+    {
+      title: "User Conduct",
+      content:
+        "You agree not to use the service to violate any laws, infringe upon the rights of others, or transmit any harmful, offensive, or inappropriate content. You may not impersonate others, spam other users, or engage in any activity that disrupts or interferes with the service.",
+    },
+    {
+      title: "Intellectual Property",
+      content:
+        "All content, features, and functionality of the service are owned by us and are protected by copyright, trademark, and other intellectual property laws. You may not copy, modify, distribute, or create derivative works based on our service without our express written permission.",
+    },
+    {
+      title: "Termination",
+      content:
+        "We reserve the right to suspend or terminate your account at any time, with or without cause or notice, for any reason including violation of these Terms. You may also terminate your account at any time by contacting us.",
+    },
+    {
+      title: "Limitation of Liability",
+      content:
+        "To the fullest extent permitted by law, we shall not be liable for any indirect, incidental, special, consequential, or punitive damages resulting from your use or inability to use the service.",
+    },
+    {
+      title: "Changes to Terms",
+      content:
+        "We reserve the right to modify these Terms at any time. We will notify users of any material changes. Your continued use of the service after such modifications constitutes acceptance of the updated Terms.",
+    },
   ],
 };
 
@@ -45,16 +96,20 @@ export const PrivacyPolicyTermsPage = () => {
   };
 
   const [activeTab, setActiveTab] = useState<TabType>(getInitialTab());
+  const [direction, setDirection] = useState<number>(1);
   const swipeStartRef = useRef<{ x: number; y: number } | null>(null);
 
   useEffect(() => {
     const tabParam = searchParams.get("tab");
     if (tabParam === "terms" || tabParam === "privacy") {
+      setDirection(tabParam === "terms" ? -1 : 1);
       setActiveTab(tabParam);
     }
   }, [searchParams]);
 
   const handleTabChange = (tab: TabType) => {
+    // Determine animation direction: -1 for left (privacy -> terms), 1 for right (terms -> privacy)
+    setDirection(tab === "terms" ? -1 : 1);
     setActiveTab(tab);
   };
 
@@ -74,9 +129,9 @@ export const PrivacyPolicyTermsPage = () => {
       Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > swipeThreshold;
 
     if (isHorizontalSwipe) {
-      if (deltaX > 0 && activeTab === "privacy") {
+      if (deltaX < 0 && activeTab === "privacy") {
         handleTabChange("terms");
-      } else if (deltaX < 0 && activeTab === "terms") {
+      } else if (deltaX > 0 && activeTab === "terms") {
         handleTabChange("privacy");
       }
     }
@@ -84,8 +139,37 @@ export const PrivacyPolicyTermsPage = () => {
     swipeStartRef.current = null;
   };
 
-  const content =
-    activeTab === "privacy" ? privacyPolicyContent : termsAndConditionsContent;
+  const getContent = (tab: TabType) => {
+    return tab === "privacy" ? privacyPolicyContent : termsAndConditionsContent;
+  };
+
+  const ContentPane = ({ tab }: { tab: TabType }) => {
+    const content = getContent(tab);
+    return (
+      <div className="text-sm text-text-primary leading-tight space-y-6">
+        <div className="space-y-4">
+          <p>{content.intro}</p>
+          {content.lastUpdated && (
+            <p className="text-text-secondary text-xs">{content.lastUpdated}</p>
+          )}
+        </div>
+        {content.sections && (
+          <div className="space-y-6">
+            {content.sections.map((section, index) => (
+              <div key={index} className="space-y-2">
+                <h2 className="text-base font-semibold text-text-primary">
+                  {section.title}
+                </h2>
+                <p className="text-text-secondary leading-relaxed">
+                  {section.content}
+                </p>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    );
+  };
 
   return (
     <div className="flex h-full flex-col bg-background">
@@ -97,7 +181,7 @@ export const PrivacyPolicyTermsPage = () => {
         >
           <ChevronLeft className="w-6 h-6 text-text-primary" strokeWidth={2} />
         </button>
-        <h1 className="text-2xl font-semibold text-text-primary font-serif flex-1">
+        <h1 className="text-2xl font-semibold text-text-primary font-serif flex-1 truncate">
           Privacy policy and T&C
         </h1>
       </div>
@@ -138,23 +222,21 @@ export const PrivacyPolicyTermsPage = () => {
       </div>
 
       <div className="flex-1 min-h-0 overflow-hidden relative">
-        <div
-          onTouchStart={handleTouchStart}
-          onTouchEnd={handleTouchEnd}
-          className="flex-1 min-h-0 overflow-y-auto px-6 py-6 [&::-webkit-scrollbar]:hidden [scrollbar-width:none]"
-        >
-          <div className="text-sm text-text-primary leading-tight space-y-4">
-            <p>{content.intro}</p>
-            <p>{content.paragraph}</p>
-            <p>{content.importance}</p>
-            <p>{content.examplesTitle}</p>
-            <ul className="space-y-3 list-disc list-inside pl-2">
-              {content.bullets.map((bullet, index) => (
-                <li key={index}>{bullet}</li>
-              ))}
-            </ul>
-          </div>
-        </div>
+        <AnimatePresence initial={false} custom={direction}>
+          <motion.div
+            key={activeTab}
+            custom={direction}
+            initial={{ opacity: 0, x: direction * 100 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: direction * -100 }}
+            transition={{ duration: 0.3, ease: "easeInOut" }}
+            onTouchStart={handleTouchStart}
+            onTouchEnd={handleTouchEnd}
+            className="h-full overflow-y-auto px-6 py-6 [&::-webkit-scrollbar]:hidden [scrollbar-width:none] absolute inset-0"
+          >
+            <ContentPane tab={activeTab} />
+          </motion.div>
+        </AnimatePresence>
       </div>
     </div>
   );
