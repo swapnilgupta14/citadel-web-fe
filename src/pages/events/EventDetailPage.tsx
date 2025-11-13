@@ -45,7 +45,7 @@ export const EventDetailPage = () => {
         </div>
 
         {hasError ? (
-          <div className="bg-background-secondary rounded-2xl p-4 mb-4 relative overflow-hidden">
+          <div className="bg-background-secondary rounded-2xl p-4 mb-4 relative z-10 overflow-hidden">
             <div className="flex items-center justify-center py-8">
               <p className="text-text-secondary text-center text-base">
                 Failed to load the event detail
@@ -53,12 +53,12 @@ export const EventDetailPage = () => {
             </div>
           </div>
         ) : (
-          <div className="bg-background-secondary rounded-2xl p-4 mb-4 relative overflow-hidden">
+          <div className="bg-background-secondary rounded-2xl p-4 mb-4 relative z-10 overflow-hidden">
             {isLoading ? (
               <EventDetailCardSkeleton />
             ) : (
               <>
-                <div className="relative z-10 flex flex-col gap-4">
+                <div className="relative flex flex-col gap-4">
                   <div className="pr-24">
                     <h2 className="text-sm font-bold text-text-primary mb-1">
                       To be revealed
@@ -90,7 +90,7 @@ export const EventDetailPage = () => {
                     </div>
                   </div>
 
-                  <div className="my-2">
+                  <div className="my-1">
                     <svg
                       width="100%"
                       height="2"
@@ -109,14 +109,15 @@ export const EventDetailPage = () => {
                   </div>
 
                   <div className="flex items-center justify-between">
-                    <div className="px-6 py-3 bg-primary/20 text-primary rounded-full text-lg font-bold">
+                    <div className="px-4 py-2 bg-primary/20 text-primary rounded-xl text-lg font-bold">
                       Rs {event?.bookingFee}
                     </div>
                     <button
                       onClick={() => navigate(`/events/${eventId}/guidelines`)}
                       className="text-text-primary text-base font-medium active:opacity-70 transition-opacity flex items-center gap-1"
                     >
-                      Guidelines <span className="text-lg">&gt;</span>
+                      Guidelines{" "}
+                      <span className="text-base font-semibold">&gt;</span>
                     </button>
                   </div>
                 </div>
