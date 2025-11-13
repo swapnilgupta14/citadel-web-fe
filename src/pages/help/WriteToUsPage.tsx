@@ -24,7 +24,7 @@ export const WriteToUsPage = () => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      transition={{ duration: 0.3 }}
+      transition={{ duration: 0.15 }}
       className="flex h-full flex-col bg-background"
     >
       <div className="flex items-center justify-between px-4 pt-4 pb-2 flex-shrink-0">

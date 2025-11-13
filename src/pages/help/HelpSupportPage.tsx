@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { ChevronLeft, Plus, Minus, Search, PhoneIncoming } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -44,6 +44,10 @@ const faqItems = [
 export const HelpSupportPage = () => {
   const navigate = useNavigate();
   const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
+
+  useEffect(() => {
+    import("../../pages/help/WriteToUsPage").catch(() => {});
+  }, []);
 
   const toggleItem = (id: string) => {
     setExpandedItems((prev) => {
