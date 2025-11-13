@@ -54,15 +54,6 @@ export const ProgressLoader = ({
 
   return (
     <div className="flex h-full flex-col bg-background px-6 overflow-hidden relative">
-      <div className="text-center absolute top-[20%] left-1/2 -translate-x-1/2 z-20 w-full">
-        <h2 className="text-[28px] font-semibold text-text-primary font-serif">
-          Finding compatible{" "}
-          <span className="block text-primary font-serif italic">
-            PROFILES!
-          </span>
-        </h2>
-      </div>
-
       <div className="flex-1 flex items-center justify-center">
         <div className="relative flex items-center justify-center">
           <svg
@@ -132,24 +123,33 @@ export const ProgressLoader = ({
               strokeDasharray="12 8"
             />
           </svg>
-
-          <div
-            className="relative h-[15.6rem] w-[15.6rem] rounded-full bg-black flex flex-col items-center justify-center z-10 animate-spin"
-            style={{
-              boxShadow:
-                "0 0 8px rgba(27, 234, 123, 0.3), 0 10px 16px rgba(27, 234, 123, 0.5)",
-              animationDuration: "2s",
-            }}
-          >
-            <span
-              className="text-white font-black text-6xl animate-spin"
+          <div className="relative w-full">
+            <div className="absolute -top-32 -left-5 w-screen text-center z-20 flex items-center">
+              <h2 className="text-[28px] font-semibold text-text-primary font-serif">
+                Finding compatible{" "}
+                <span className="block text-primary font-serif italic">
+                  PROFILES!
+                </span>
+              </h2>
+            </div>
+            <div
+              className="relative h-[15.6rem] w-[15.6rem] rounded-full bg-black flex flex-col items-center justify-center z-10 animate-spin"
               style={{
+                boxShadow:
+                  "0 0 8px rgba(27, 234, 123, 0.3), 0 10px 16px rgba(27, 234, 123, 0.5)",
                 animationDuration: "2s",
-                animationDirection: "reverse",
               }}
             >
-              {progress}%
-            </span>
+              <span
+                className="text-white font-black text-6xl animate-spin"
+                style={{
+                  animationDuration: "2s",
+                  animationDirection: "reverse",
+                }}
+              >
+                {progress}%
+              </span>
+            </div>
           </div>
         </div>
       </div>
