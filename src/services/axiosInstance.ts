@@ -56,7 +56,7 @@ const processQueue = (error: unknown = null, token: string | null = null) => {
 
 export const handleLogout = () => {
     console.log("Session expired. Logging out...");
-    
+
     if (window.location.pathname !== "/connect") {
         auth.logout();
         window.location.replace("/connect");
@@ -127,7 +127,7 @@ axiosInstance.interceptors.response.use(
                 url: error.config?.url,
                 baseURL: error.config?.baseURL,
             });
-            return Promise.reject(new Error("Network error. Please check your connection."));
+            return Promise.reject(new Error("Timeout error. Please try again."));
         }
 
         if (error.response && (error.response.status === 401 || error.response.status === 403)) {

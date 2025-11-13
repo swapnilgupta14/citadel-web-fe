@@ -1,4 +1,5 @@
 import { axiosInstance } from "./axiosInstance";
+import { getApiAreaName } from "../constants/cities";
 import type {
     UniversitiesResponse,
     UniversitiesParams,
@@ -145,7 +146,7 @@ export const eventsApi = {
         }
 
         if (area) {
-            params.area = area;
+            params.area = getApiAreaName(area);
         }
 
         const response = await axiosInstance.get<{
@@ -240,7 +241,7 @@ export const dinnerPreferencesApi = {
 export const quizApi = {
     getQuestions: async (): Promise<QuizQuestionsResponse> => {
         const response = await axiosInstance.get<QuizQuestionsResponse>(
-            "/v1/dinner-preferences/personality-quiz"
+            "/v1/quiz/questions"
         );
         return response.data;
     },

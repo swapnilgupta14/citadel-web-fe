@@ -24,13 +24,6 @@ const defaultCity: City = {
   isAvailable: true,
 };
 
-const getApiCityName = (cityId: string): string => {
-  if (cityId === "new-delhi") {
-    return "Delhi";
-  }
-  return cityId;
-};
-
 export const EventsPage = ({
   onOpenLocation,
   onStartBookingFlow,
@@ -43,10 +36,7 @@ export const EventsPage = ({
     [selectedCity]
   );
 
-  const apiCityName = useMemo(
-    () => getApiCityName(currentCity.id),
-    [currentCity.id]
-  );
+  const apiCityName = useMemo(() => currentCity.name, [currentCity.name]);
 
   const {
     data: eventsData,
@@ -121,13 +111,13 @@ export const EventsPage = ({
               {currentCity.name}
             </h2>
             {/* {hasCompletedSetup && selectedCity ? ( */}
-              <button
-                onClick={onOpenLocation}
-                className="flex items-center gap-1 text-white text-sm active:opacity-70 transition-opacity"
-              >
-                <span className="underline text-[15px]">Change location</span>
-                <RefreshCw className="w-4 h-4" strokeWidth={2} />
-              </button>
+            <button
+              onClick={onOpenLocation}
+              className="flex items-center gap-1 text-white text-sm active:opacity-70 transition-opacity"
+            >
+              <span className="underline text-[15px]">Change location</span>
+              <RefreshCw className="w-4 h-4" strokeWidth={2} />
+            </button>
             {/* ) : (
               <button
                 onClick={onOpenLocation}

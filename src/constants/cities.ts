@@ -33,3 +33,11 @@ export const AREAS_BY_CITY: Record<string, string[]> = {
   "Mumbai": ["Bandra", "Andheri", "Powai", "Lower Parel", "Colaba"],
 };
 
+export const AREA_API_MAPPING: Record<string, string> = {
+  CP: "Connaught Place",
+};
+
+export const getApiAreaName = (area: string): string => {
+  return AREA_API_MAPPING[area] || area;
+};
+
