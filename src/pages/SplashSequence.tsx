@@ -56,7 +56,7 @@ export const SplashSequence = ({ onComplete }: SplashSequenceProps) => {
   }, []);
 
   useEffect(() => {
-    const startChatDelay = 4000;
+    const startChatDelay = 3500;
 
     chatMessages.forEach((_, index) => {
       setTimeout(
