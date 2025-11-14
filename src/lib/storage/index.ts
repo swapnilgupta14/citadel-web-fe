@@ -4,4 +4,5 @@ export { navigationPersistence } from "./navigationPersistence";
 export type { ProtectedPage, PersistedCity } from "./navigationPersistence";
 export { signupPersistence } from "./signupPersistence";
 export type { PersistedSignupData } from "./signupPersistence";
+export { firstVisit } from "./firstVisit";
 
