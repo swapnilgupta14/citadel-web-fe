@@ -38,9 +38,8 @@ export const ConnectPage = ({ onContinue }: ConnectPageProps) => {
         <div
           className="flex items-center justify-center relative"
           style={{ height: `${imageGridHeight}px`, minHeight: "200px" }}
-
         >
-          <div className="w-full h-[350px] flex items-center justify-center">
+          <div className="w-full h-full flex items-center justify-center">
             <ImageGrid2 className="w-3/4 max-w-[280px]" />
           </div>
         </div>
