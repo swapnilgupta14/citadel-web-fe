@@ -528,7 +528,7 @@ export const QuizPage = ({ onBack, onClose, onComplete }: QuizPageProps) => {
           </div>
 
           {currentIndex === questions.length - 1 && (
-            <div className="mt-6 flex-shrink-0 px-6 keyboard-safe-bottom">
+            <div className="mt-6 flex-shrink-0">
               <Button
                 onClick={handleContinue}
                 disabled={!canContinue}

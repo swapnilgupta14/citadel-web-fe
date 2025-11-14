@@ -82,7 +82,7 @@ export const EmailEntryPage = ({ onBack, onContinue, initialEmail = "", isLoadin
         )}
       </div>
 
-      <div className="px-6 py-4 keyboard-safe-bottom">
+      <div className="px-6 py-4 pb-6">
         <Button
           onClick={handleContinue}
           disabled={!isEmailValid()}
