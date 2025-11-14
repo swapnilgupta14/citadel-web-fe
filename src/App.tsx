@@ -1,5 +1,5 @@
 import { Routes, Route, Navigate, useNavigate } from "react-router-dom";
-import { lazy, Suspense } from "react";
+import { lazy, Suspense, useEffect } from "react";
 import { MobileLayout } from "./components/layout/MobileLayout";
 import { HomePage } from "./pages/HomePage";
 import { ConnectPage } from "./pages/ConnectPage";
@@ -34,6 +34,11 @@ import { signupPersistence } from "./lib/storage/signupPersistence";
 
 function App() {
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const img = new Image();
+    img.src = "/Splash/waves.svg";
+  }, []);
 
   const handleConnectSignup = () => {
     signupPersistence.clearSignupData();

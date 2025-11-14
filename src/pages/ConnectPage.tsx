@@ -20,11 +20,6 @@ export const ConnectPage = ({ onContinue }: ConnectPageProps) => {
   }, []);
 
   useEffect(() => {
-    const img = new Image();
-    img.src = "/Splash/waves.svg";
-  }, []);
-
-  useEffect(() => {
     const updateDimensions = () => {
       const viewportHeight = window.innerHeight;
       const scale = viewportHeight / BASE_SCREEN_HEIGHT;
