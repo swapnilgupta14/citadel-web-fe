@@ -40,7 +40,7 @@ export const ConnectPage = ({ onContinue }: ConnectPageProps) => {
           style={{ height: `${imageGridHeight}px`, minHeight: "200px" }}
         >
           <div className="w-full h-full flex items-center justify-center">
-            <ImageGrid2 className="w-3/4 max-w-[280px]" />
+            <ImageGrid2 className="w-3/5" />
           </div>
         </div>
 
