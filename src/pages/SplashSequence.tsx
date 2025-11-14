@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { VolumeX, Volume2 } from "lucide-react";
 import { firstVisit } from "../lib/storage/firstVisit";
 import { cn } from "../lib/helpers/utils";
 
@@ -24,53 +25,40 @@ const chatMessages: ChatMessage[] = [
 export const SplashSequence = ({ onComplete }: SplashSequenceProps) => {
   const [visibleMessages, setVisibleMessages] = useState<number[]>([]);
   const [canContinue, setCanContinue] = useState(false);
+  const [isMuted, setIsMuted] = useState(true);
   const videoRef = useRef<HTMLVideoElement>(null);
   const chatContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const video = document.createElement("video");
-    video.src = "/Sequence.mp4";
-    video.preload = "auto";
-    video.load();
-
     const currentVideo = videoRef.current;
+    if (!currentVideo) return;
 
     const handleCanPlay = () => {
-      if (currentVideo) {
-        currentVideo.play().catch((error) => {
-          console.error("Video autoplay failed:", error);
-        });
-      }
+      currentVideo.play().catch(() => {});
     };
 
-    if (currentVideo) {
-      currentVideo.addEventListener("canplaythrough", handleCanPlay);
-      currentVideo.load();
-    }
+    currentVideo.addEventListener("canplaythrough", handleCanPlay);
+    currentVideo.load();
 
     return () => {
-      if (currentVideo) {
-        currentVideo.removeEventListener("canplaythrough", handleCanPlay);
-      }
+      currentVideo.removeEventListener("canplaythrough", handleCanPlay);
     };
   }, []);
 
   useEffect(() => {
-    const startChatDelay = 3500;
+    const videoDuration = 8000;
+    const messageInterval = videoDuration / (chatMessages.length - 1);
 
     chatMessages.forEach((_, index) => {
-      setTimeout(
-        () => {
-          setVisibleMessages((prev) => [...prev, index + 1]);
-        },
-        startChatDelay + index * 600
-      );
+      const delay = index * messageInterval;
+      setTimeout(() => {
+        setVisibleMessages((prev) => [...prev, index + 1]);
+      }, delay);
     });
 
-    const lastMessageDelay = startChatDelay + (chatMessages.length - 1) * 600;
     setTimeout(() => {
       setCanContinue(true);
-    }, lastMessageDelay + 100);
+    }, videoDuration + 100);
   }, []);
 
   useEffect(() => {
@@ -82,6 +70,15 @@ export const SplashSequence = ({ onComplete }: SplashSequenceProps) => {
       setTimeout(scrollToBottom, 50);
     }
   }, [visibleMessages]);
+
+  const handleToggleMute = () => {
+    const video = videoRef.current;
+    if (video) {
+      const newMutedState = !video.muted;
+      video.muted = newMutedState;
+      setIsMuted(newMutedState);
+    }
+  };
 
   const handleContinue = () => {
     if (canContinue) {
@@ -105,21 +102,25 @@ export const SplashSequence = ({ onComplete }: SplashSequenceProps) => {
           ref={videoRef}
           src="/Sequence.mp4"
           autoPlay
-          loop
           muted
           playsInline
           className="w-full h-full object-cover"
-          onLoadedData={() => {
-            if (videoRef.current) {
-              videoRef.current.play().catch((error) => {
-                console.error("Video play failed:", error);
-              });
-            }
-          }}
-          onError={(e) => {
-            console.error("Video error:", e);
-          }}
         />
+
+        <motion.button
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.3, delay: 0.5 }}
+          onClick={handleToggleMute}
+          className="absolute top-4 right-4 w-12 h-12 bg-background/80 backdrop-blur-sm rounded-full flex items-center justify-center active:scale-90 transition-transform border border-primary/30 z-10"
+          whileTap={{ scale: 0.9 }}
+        >
+          {isMuted ? (
+            <VolumeX className="w-5 h-5 text-primary" strokeWidth={2} />
+          ) : (
+            <Volume2 className="w-5 h-5 text-primary" strokeWidth={2} />
+          )}
+        </motion.button>
       </motion.div>
 
       <motion.div
