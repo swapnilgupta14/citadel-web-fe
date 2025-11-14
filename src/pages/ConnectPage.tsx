@@ -34,7 +34,7 @@ export const ConnectPage = ({ onContinue }: ConnectPageProps) => {
 
   return (
     <div className="relative flex h-full flex-col bg-background overflow-hidden">
-      <div className="flex flex-col flex-1 relative z-10 min-h-0 pb-4 justify-center gap-14">
+      <div className="flex flex-col flex-1 relative z-10 min-h-0 pb-4 justify-center gap-6">
         <div
           className="flex items-center justify-center relative"
           style={{ height: `${imageGridHeight}px`, minHeight: "200px" }}
