@@ -1,13 +1,17 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "../../components/ui";
 import type { LoginEmailPageProps } from "../../types/pages";
 import { emailSchema } from "../../lib/helpers/validations";
+import { useKeyboardHeight } from "../../hooks/logic";
 
 export const LoginEmailPage = ({ onBack, onContinue, initialEmail = "", isLoading = false }: LoginEmailPageProps) => {
   const [email, setEmail] = useState(initialEmail);
   const [error, setError] = useState<string | null>(null);
   const [touched, setTouched] = useState(false);
+  const keyboardHeight = useKeyboardHeight();
+  const buttonRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (initialEmail) {
@@ -49,9 +53,25 @@ export const LoginEmailPage = ({ onBack, onContinue, initialEmail = "", isLoadin
     }
   };
 
+  useEffect(() => {
+    if (keyboardHeight > 0 && buttonRef.current) {
+      setTimeout(() => {
+        buttonRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
+      }, 100);
+    }
+  }, [keyboardHeight]);
+
+  const handleInputFocus = () => {
+    if (buttonRef.current) {
+      setTimeout(() => {
+        buttonRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
+      }, 300);
+    }
+  };
+
   return (
-    <div className="flex h-full flex-col bg-background">
-      <div className="flex flex-col pt-4 px-4 pb-2">
+    <div className="flex h-full flex-col bg-background overflow-y-auto">
+      <div className="flex flex-col pt-4 px-4 pb-2 flex-shrink-0">
         <button
           onClick={onBack}
           className="self-start mb-4 p-2 -ml-2 active:opacity-70 transition-opacity"
@@ -64,11 +84,13 @@ export const LoginEmailPage = ({ onBack, onContinue, initialEmail = "", isLoadin
         </h1>
       </div>
 
-      <div className="flex-1 flex flex-col px-4 py-4 min-h-0 gap-2">
+      <div className="flex-1 flex flex-col px-4 py-4 min-h-0 gap-2 flex-shrink-0">
         <input
+          ref={inputRef}
           type="email"
           value={email}
           onChange={(e) => handleEmailChange(e.target.value)}
+          onFocus={handleInputFocus}
           onBlur={handleBlur}
           placeholder="Enter your email address"
           className={`w-full h-11 px-4 py-2.5 bg-button-search rounded-lg border text-text-secondary placeholder:text-text-secondary focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent ${
@@ -82,7 +104,13 @@ export const LoginEmailPage = ({ onBack, onContinue, initialEmail = "", isLoadin
         )}
       </div>
 
-      <div className="px-6 py-4 pb-6">
+      <div 
+        ref={buttonRef}
+        className="px-6 py-4 pb-6 flex-shrink-0"
+        style={{ 
+          paddingBottom: keyboardHeight > 0 ? `${Math.max(24, keyboardHeight + 16)}px` : '24px'
+        }}
+      >
         <Button
           onClick={handleContinue}
           disabled={!isEmailValid()}

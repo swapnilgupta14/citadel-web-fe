@@ -3,6 +3,7 @@ import { ArrowLeft } from "lucide-react";
 import { Button } from "../../components/ui";
 import type { DateOfBirthPageProps } from "../../types/pages";
 import { dateOfBirthSchema } from "../../lib/helpers/validations";
+import { useKeyboardHeight } from "../../hooks/logic";
 
 export const DateOfBirthPage = ({
   onBack,
@@ -32,6 +33,8 @@ export const DateOfBirthPage = ({
   const [error, setError] = useState<string | null>(null);
   const [touched, setTouched] = useState(false);
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
+  const keyboardHeight = useKeyboardHeight();
+  const buttonRef = useRef<HTMLDivElement>(null);
 
   const handleDayChange = (value: string) => {
     if (!/^\d*$/.test(value)) return;
@@ -135,9 +138,25 @@ export const DateOfBirthPage = ({
   
   const isValid = isDateValid();
 
+  useEffect(() => {
+    if (keyboardHeight > 0 && buttonRef.current) {
+      setTimeout(() => {
+        buttonRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
+      }, 100);
+    }
+  }, [keyboardHeight]);
+
+  const handleInputFocus = () => {
+    if (buttonRef.current) {
+      setTimeout(() => {
+        buttonRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
+      }, 300);
+    }
+  };
+  
   return (
-    <div className="flex h-full flex-col bg-background">
-      <div className="flex flex-col pt-4 px-4 pb-2">
+    <div className="flex h-full flex-col bg-background overflow-y-auto">
+      <div className="flex flex-col pt-4 px-4 pb-2 flex-shrink-0">
         <button
           onClick={onBack}
           className="self-start mb-4 p-2 -ml-2 active:opacity-70 transition-opacity"
@@ -150,7 +169,7 @@ export const DateOfBirthPage = ({
         </h1>
       </div>
 
-      <div className="flex-1 flex flex-col px-4 py-4 min-h-0 gap-2">
+      <div className="flex-1 flex flex-col px-4 py-4 min-h-0 gap-2 flex-shrink-0">
         <div className="flex gap-3">
           {dateInputs.map((input) => (
             <input
@@ -169,6 +188,7 @@ export const DateOfBirthPage = ({
                   validateDateOfBirth();
                 }
               }}
+              onFocus={handleInputFocus}
               onKeyDown={(e) => handleKeyDown(input.index, e)}
               onBlur={() => {
                 if (isComplete) {
@@ -192,7 +212,13 @@ export const DateOfBirthPage = ({
         )}
       </div>
 
-      <div className="px-6 py-4 pb-6">
+      <div 
+        ref={buttonRef}
+        className="px-6 py-4 pb-6 flex-shrink-0"
+        style={{ 
+          paddingBottom: keyboardHeight > 0 ? `${Math.max(24, keyboardHeight + 16)}px` : '24px'
+        }}
+      >
         <Button
           onClick={handleContinue}
           disabled={!isValid}

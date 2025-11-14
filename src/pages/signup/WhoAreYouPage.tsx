@@ -1,8 +1,9 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "../../components/ui";
 import type { WhoAreYouPageProps } from "../../types/pages";
 import { nameSchema, genderSchema } from "../../lib/helpers/validations";
+import { useKeyboardHeight } from "../../hooks/logic";
 
 type Gender = "male" | "female" | "other";
 
@@ -23,6 +24,9 @@ export const WhoAreYouPage = ({
   const [genderError, setGenderError] = useState<string | null>(null);
   const [nameTouched, setNameTouched] = useState(false);
   const [genderTouched, setGenderTouched] = useState(false);
+  const keyboardHeight = useKeyboardHeight();
+  const buttonRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const validateName = (value: string) => {
     const result = nameSchema.safeParse(value);
@@ -79,9 +83,25 @@ export const WhoAreYouPage = ({
     return nameResult.success && genderResult.success;
   };
 
+  useEffect(() => {
+    if (keyboardHeight > 0 && buttonRef.current) {
+      setTimeout(() => {
+        buttonRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
+      }, 100);
+    }
+  }, [keyboardHeight]);
+
+  const handleInputFocus = () => {
+    if (buttonRef.current) {
+      setTimeout(() => {
+        buttonRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
+      }, 300);
+    }
+  };
+
   return (
-    <div className="flex h-full flex-col bg-background">
-      <div className="flex flex-col pt-4 px-4 pb-2">
+    <div className="flex h-full flex-col bg-background overflow-y-auto">
+      <div className="flex flex-col pt-4 px-4 pb-2 flex-shrink-0">
         <button
           onClick={onBack}
           className="self-start mb-4 p-2 -ml-2 active:opacity-70 transition-opacity"
@@ -94,12 +114,14 @@ export const WhoAreYouPage = ({
         </h1>
       </div>
 
-      <div className="flex-1 flex flex-col px-4 py-4 min-h-0 gap-6">
+      <div className="flex-1 flex flex-col px-4 py-4 min-h-0 gap-6 flex-shrink-0">
         <div className="flex flex-col gap-2">
           <input
+            ref={inputRef}
             type="text"
             value={name}
             onChange={(e) => handleNameChange(e.target.value)}
+            onFocus={handleInputFocus}
             onBlur={() => {
               setNameTouched(true);
               validateName(name);
@@ -141,7 +163,13 @@ export const WhoAreYouPage = ({
         </div>
       </div>
 
-      <div className="px-6 py-4 pb-6">
+      <div 
+        ref={buttonRef}
+        className="px-6 py-4 pb-6 flex-shrink-0"
+        style={{ 
+          paddingBottom: keyboardHeight > 0 ? `${Math.max(24, keyboardHeight + 16)}px` : '24px'
+        }}
+      >
         <Button
           onClick={handleContinue}
           disabled={!isValid()}
