@@ -1,5 +1,6 @@
-import { Routes, Route, Navigate, useNavigate } from "react-router-dom";
+import { Routes, Route, Navigate, useNavigate, useLocation } from "react-router-dom";
 import { lazy, Suspense, useEffect } from "react";
+import { AnimatePresence } from "framer-motion";
 import { MobileLayout } from "./components/layout/MobileLayout";
 import { HomePage } from "./pages/HomePage";
 import { ConnectPage } from "./pages/ConnectPage";
@@ -34,6 +35,7 @@ import { signupPersistence } from "./lib/storage/signupPersistence";
 
 function App() {
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     const img = new Image();
@@ -47,7 +49,8 @@ function App() {
 
   return (
     <MobileLayout>
-      <Routes>
+      <AnimatePresence mode="wait" initial={false}>
+        <Routes location={location} key={location.pathname}>
         <Route path="/" element={<HomePage />} />
         <Route
           path="/connect"
@@ -112,7 +115,8 @@ function App() {
             )
           }
         />
-      </Routes>
+        </Routes>
+      </AnimatePresence>
     </MobileLayout>
   );
 }

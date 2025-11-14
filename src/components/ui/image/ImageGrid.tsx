@@ -93,9 +93,13 @@ export const ImageGrid = ({
 
   return (
     <motion.div
+      layoutId="main-image-grid"
       initial={initial}
       animate={animate}
-      transition={transition}
+      transition={{
+        layout: { duration: 0.6, ease: [0.43, 0.13, 0.23, 0.96] },
+        ...transition
+      }}
       style={{
         aspectRatio: "1 / 1.3",
         maxHeight: scaledHeightRem,

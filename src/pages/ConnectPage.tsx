@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
 import { Button } from "../components/ui";
 import { ImageGrid2 } from "../components/ui/image/ImageGrid2";
 import { signupPersistence } from "../lib/storage/signupPersistence";
+import { useImageGrid } from "../contexts/ImageGridContext";
 
 const BASE_SCREEN_HEIGHT = 852;
 const BASE_IMAGE_GRID_HEIGHT = 350;
@@ -14,6 +16,7 @@ interface ConnectPageProps {
 export const ConnectPage = ({ onContinue }: ConnectPageProps) => {
   const navigate = useNavigate();
   const [imageGridHeight, setImageGridHeight] = useState(350);
+  const { isTransitioning, setIsTransitioning } = useImageGrid();
 
   useEffect(() => {
     signupPersistence.clearSignupData();
@@ -32,8 +35,23 @@ export const ConnectPage = ({ onContinue }: ConnectPageProps) => {
     return () => window.removeEventListener("resize", updateDimensions);
   }, []);
 
+  useEffect(() => {
+    if (isTransitioning) {
+      const timer = setTimeout(() => {
+        setIsTransitioning(false);
+      }, 700);
+      return () => clearTimeout(timer);
+    }
+  }, [isTransitioning, setIsTransitioning]);
+
   return (
-    <div className="relative flex h-full flex-col bg-background overflow-hidden">
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.2, ease: "easeInOut" }}
+      className="relative flex h-full flex-col bg-background overflow-hidden"
+    >
       <div className="flex flex-col flex-1 relative z-10 min-h-0 pb-4 justify-center gap-6">
         <div
           className="flex items-center justify-center relative"
@@ -44,7 +62,12 @@ export const ConnectPage = ({ onContinue }: ConnectPageProps) => {
           </div>
         </div>
 
-        <div className="flex flex-col px-6 py-4 pb-6 items-center gap-6 min-h-0 justify-center">
+        <motion.div
+          initial={isTransitioning ? { opacity: 0, y: 30 } : { opacity: 1, y: 0 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, ease: [0.43, 0.13, 0.23, 0.96], delay: 0.2 }}
+          className="flex flex-col px-6 py-4 pb-6 items-center gap-6 min-h-0 justify-center"
+        >
           <div className="flex flex-col items-center">
             <h1 className="text-3xl sm:text-4xl leading-tight font-bold text-text-primary text-center font-serif">
               Connect with students across universities
@@ -68,7 +91,7 @@ export const ConnectPage = ({ onContinue }: ConnectPageProps) => {
               Login
             </span>
           </button>
-        </div>
+        </motion.div>
       </div>
 
       <div className="h-[7%] min-h-[75px] max-h-[100px] overflow-visible pointer-events-none relative">
@@ -78,6 +101,6 @@ export const ConnectPage = ({ onContinue }: ConnectPageProps) => {
           className="absolute inset-0 h-full object-none w-full overflow-visible"
         />
       </div>
-    </div>
+    </motion.div>
   );
 };

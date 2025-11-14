@@ -7,6 +7,7 @@ import {
 } from "framer-motion";
 import { ChevronRight } from "lucide-react";
 import { ImageGrid, ImageWithPlaceholder } from "../components/ui";
+import { useImageGrid } from "../contexts/ImageGridContext";
 
 interface StartPageProps {
   onComplete: () => void;
@@ -16,24 +17,24 @@ export const StartPage = ({ onComplete }: StartPageProps) => {
   const constraintsRef = useRef<HTMLDivElement>(null);
   const x = useMotionValue(0);
   const sliderOpacity = useTransform(x, [0, 250], [1, 0]);
+  const { setIsTransitioning } = useImageGrid();
 
   const handleDragEnd = (
     _event: MouseEvent | TouchEvent | PointerEvent,
     _info: PanInfo
   ) => {
-    // Get the actual container width to calculate max draggable distance
     const container = constraintsRef.current;
     if (!container) return;
 
     const containerWidth = container.offsetWidth;
-    const buttonWidth = 72; // Approximate button width (w-16 or smaller)
-    const maxDragDistance = containerWidth - buttonWidth - 8; // 8px for left/right padding
+    const buttonWidth = 72;
+    const maxDragDistance = containerWidth - buttonWidth - 8;
 
-    // Check if dragged to 95% of max distance
     const draggedDistance = x.get();
     const threshold = maxDragDistance * 0.95;
 
     if (draggedDistance >= threshold) {
+      setIsTransitioning(true);
       onComplete();
     } else {
       x.set(0);
@@ -47,7 +48,12 @@ export const StartPage = ({ onComplete }: StartPageProps) => {
   const dragProgress = useTransform(x, [0, maxDragDistance], [0, 1]);
 
   return (
-    <div className="flex h-full flex-col bg-background">
+    <motion.div
+      initial={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.2, ease: "easeInOut" }}
+      className="flex h-full flex-col bg-background"
+    >
       <div className="flex-1 flex items-center justify-center relative min-h-0">
         <ImageGrid dragProgress={dragProgress} />
       </div>
@@ -109,6 +115,6 @@ export const StartPage = ({ onComplete }: StartPageProps) => {
           <span className="underline">Privacy policy</span>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 };

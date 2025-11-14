@@ -1,3 +1,4 @@
+import { motion } from "framer-motion";
 import { cn } from "@/lib/helpers/utils";
 
 type ImageGrid2Props = {
@@ -6,7 +7,11 @@ type ImageGrid2Props = {
 
 export const ImageGrid2 = ({ className = "" }: ImageGrid2Props) => {
   return (
-    <div className={cn("relative w-full mx-auto", className)}>
+    <motion.div
+      layoutId="main-image-grid"
+      transition={{ layout: { duration: 0.6, ease: [0.43, 0.13, 0.23, 0.96] } }}
+      className={cn("relative w-full mx-auto", className)}
+    >
       <div
         className="relative w-full flex items-center justify-center"
         style={{ aspectRatio: "1 / 1" }}
@@ -82,6 +87,6 @@ export const ImageGrid2 = ({ className = "" }: ImageGrid2Props) => {
           </div>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 };

@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { keepPreviousData } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { Toaster } from "react-hot-toast";
+import { ImageGridProvider } from "./contexts/ImageGridContext";
 import "./index.css";
 import App from "./App.tsx";
 
@@ -13,10 +14,9 @@ const preloadSplashVideo = () => {
   video.src = "/Sequence.mp4";
   video.preload = "auto";
   video.load();
-  
-  video.addEventListener("canplaythrough", () => {
-  });
-  
+
+  video.addEventListener("canplaythrough", () => {});
+
   (window as any).__splashVideoPreload = video;
 };
 
@@ -36,17 +36,19 @@ createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <BrowserRouter>
       <QueryClientProvider client={queryClient}>
-        <App />
-        <Toaster
-          position="top-center"
-          toastOptions={{
-            duration: 3000,
-          }}
-          containerStyle={{
-            top: 20,
-          }}
-        />
-        <ReactQueryDevtools initialIsOpen={false} />
+        <ImageGridProvider>
+          <App />
+          <Toaster
+            position="top-center"
+            toastOptions={{
+              duration: 3000,
+            }}
+            containerStyle={{
+              top: 20,
+            }}
+          />
+          <ReactQueryDevtools initialIsOpen={false} />
+        </ImageGridProvider>
       </QueryClientProvider>
     </BrowserRouter>
   </StrictMode>
