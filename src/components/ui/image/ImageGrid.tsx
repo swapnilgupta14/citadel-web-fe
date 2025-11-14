@@ -45,14 +45,21 @@ export const ImageGrid = ({
   const defaultProgress = useMotionValue(0);
   const progress = dragProgress || defaultProgress;
 
-  const img1Top = useTransform(progress, [0, 1], ["4%", "12.2%"]);
-  const img1Left = useTransform(progress, [0, 1], ["14%", "28%"]);
-  const img2Top = useTransform(progress, [0, 1], ["3%", "-15.5%"]);
-  const img2Right = useTransform(progress, [0, 1], ["8%", "3.6%"]);
-  const img3Bottom = useTransform(progress, [0, 1], ["2%", "-2%"]);
-  const img3Left = useTransform(progress, [0, 1], ["4%", "8%"]);
-  const img4Bottom = useTransform(progress, [0, 1], ["7%", "26.0%"]);
-  const img4Right = useTransform(progress, [0, 1], ["14%", "23.6%"]);
+  const img1Top = useTransform(progress, [0, 1], ["4%", "12.7%"]);
+  const img1Left = useTransform(progress, [0, 1], ["14%", "29%"]);
+
+  const img2Top = useTransform(progress, [0, 1], ["3%", "-10.5%"]);
+  const img2Right = useTransform(progress, [0, 1], ["8%", "7.6%"]);
+
+  const img3Bottom = useTransform(progress, [0, 1], ["2%", "4.5%"]);
+  const img3Left = useTransform(progress, [0, 1], ["4%", "12%"]);
+
+  const img4Bottom = useTransform(progress, [0, 1], ["7%", "28.0%"]);
+  const img4Right = useTransform(progress, [0, 1], ["14%", "24.6%"]);
+
+  const scale1 = useTransform(progress, [0, 1], [1, 0.8]);
+  const scale2 = useTransform(progress, [0, 1], [1, 0.9]);
+
   const scaledBorderRadius = BASE_BORDER_RADIUS * scaleFactor;
   const cornerRadius = useTransform(progress, (latest) => {
     const value = scaledBorderRadius * (1 - latest);
@@ -102,6 +109,7 @@ export const ImageGrid = ({
           aspectRatio: "10 / 13",
           top: img1Top,
           left: img1Left,
+          scale: scale2,
           borderTopLeftRadius: `${scaledBorderRadius}px`,
           borderTopRightRadius: `${scaledBorderRadius}px`,
           borderBottomLeftRadius: `${scaledBorderRadius}px`,
@@ -122,6 +130,7 @@ export const ImageGrid = ({
           aspectRatio: "3 / 4",
           top: img2Top,
           right: img2Right,
+          scale: scale1,
           borderTopLeftRadius: `${scaledBorderRadius}px`,
           borderTopRightRadius: `${scaledBorderRadius}px`,
           borderBottomLeftRadius: `${scaledBorderRadius}px`,
@@ -142,6 +151,7 @@ export const ImageGrid = ({
           aspectRatio: "3 / 4",
           bottom: img3Bottom,
           left: img3Left,
+          scale: scale1,
           borderTopLeftRadius: `${scaledBorderRadius}px`,
           borderTopRightRadius: `${scaledBorderRadius}px`,
           borderBottomLeftRadius: `${scaledBorderRadius}px`,
@@ -162,6 +172,7 @@ export const ImageGrid = ({
           aspectRatio: "10 / 13",
           bottom: img4Bottom,
           right: img4Right,
+          scale: scale2,
           borderTopLeftRadius: `${scaledBorderRadius}px`,
           borderTopRightRadius: `${scaledBorderRadius}px`,
           borderBottomLeftRadius: `${scaledBorderRadius}px`,
