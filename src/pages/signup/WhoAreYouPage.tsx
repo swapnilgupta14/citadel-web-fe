@@ -7,11 +7,11 @@ import { useKeyboardHeight } from "../../hooks/logic";
 
 type Gender = "male" | "female" | "other";
 
-export const WhoAreYouPage = ({ 
-  onBack, 
-  onContinue, 
-  initialName = "", 
-  initialGender 
+export const WhoAreYouPage = ({
+  onBack,
+  onContinue,
+  initialName = "",
+  initialGender,
 }: WhoAreYouPageProps) => {
   const [name, setName] = useState(initialName);
   const [gender, setGender] = useState<Gender | null>(initialGender || null);
@@ -79,24 +79,9 @@ export const WhoAreYouPage = ({
   const isValid = () => {
     if (!name.trim() || !gender) return false;
     const nameResult = nameSchema.safeParse(name.trim());
-    const genderResult = gender !== null ? genderSchema.safeParse(gender) : { success: false };
+    const genderResult =
+      gender !== null ? genderSchema.safeParse(gender) : { success: false };
     return nameResult.success && genderResult.success;
-  };
-
-  useEffect(() => {
-    if (keyboardHeight > 0 && buttonRef.current) {
-      setTimeout(() => {
-        buttonRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
-      }, 100);
-    }
-  }, [keyboardHeight]);
-
-  const handleInputFocus = () => {
-    if (buttonRef.current) {
-      setTimeout(() => {
-        buttonRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
-      }, 300);
-    }
   };
 
   return (
@@ -121,7 +106,6 @@ export const WhoAreYouPage = ({
             type="text"
             value={name}
             onChange={(e) => handleNameChange(e.target.value)}
-            onFocus={handleInputFocus}
             onBlur={() => {
               setNameTouched(true);
               validateName(name);
@@ -149,8 +133,8 @@ export const WhoAreYouPage = ({
                   gender === option
                     ? "bg-primary text-background border-transparent"
                     : genderError && genderTouched
-                    ? "bg-background-tertiary text-text-primary border-red-500"
-                    : "bg-background-tertiary text-text-primary border-border"
+                      ? "bg-background-tertiary text-text-primary border-red-500"
+                      : "bg-background-tertiary text-text-primary border-border"
                 }`}
               >
                 {option.charAt(0).toUpperCase() + option.slice(1)}
@@ -163,11 +147,14 @@ export const WhoAreYouPage = ({
         </div>
       </div>
 
-      <div 
+      <div
         ref={buttonRef}
         className="px-6 py-4 pb-6 flex-shrink-0"
-        style={{ 
-          paddingBottom: keyboardHeight > 0 ? `${Math.max(24, keyboardHeight + 16)}px` : '24px'
+        style={{
+          paddingBottom:
+            keyboardHeight > 0
+              ? `${Math.max(24, keyboardHeight + 16)}px`
+              : "24px",
         }}
       >
         <Button

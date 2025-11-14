@@ -118,22 +118,6 @@ export const OTPEntryPage = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [otp.join(""), isOTPComplete, touched]);
 
-  useEffect(() => {
-    if (keyboardHeight > 0 && buttonRef.current) {
-      setTimeout(() => {
-        buttonRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
-      }, 100);
-    }
-  }, [keyboardHeight]);
-
-  const handleInputFocus = () => {
-    if (buttonRef.current) {
-      setTimeout(() => {
-        buttonRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
-      }, 300);
-    }
-  };
-
   return (
     <div className="flex h-full flex-col bg-background overflow-y-auto">
       <div className="flex flex-col pt-4 px-4 pb-2 flex-shrink-0">
@@ -172,7 +156,6 @@ export const OTPEntryPage = ({
                   setTouched(true);
                 }
               }}
-              onFocus={handleInputFocus}
               onKeyDown={(e) => handleKeyDown(index, e)}
               onPaste={handlePaste}
               onBlur={() => {
@@ -206,9 +189,27 @@ export const OTPEntryPage = ({
             {isResending ? (
               <>
                 <span className="flex gap-1">
-                  <span className="w-1 h-1 rounded-full bg-text-secondary animate-bounce" style={{ animationDelay: "0ms", animationDuration: "600ms" }} />
-                  <span className="w-1 h-1 rounded-full bg-text-secondary animate-bounce" style={{ animationDelay: "150ms", animationDuration: "600ms" }} />
-                  <span className="w-1 h-1 rounded-full bg-text-secondary animate-bounce" style={{ animationDelay: "300ms", animationDuration: "600ms" }} />
+                  <span
+                    className="w-1 h-1 rounded-full bg-text-secondary animate-bounce"
+                    style={{
+                      animationDelay: "0ms",
+                      animationDuration: "600ms",
+                    }}
+                  />
+                  <span
+                    className="w-1 h-1 rounded-full bg-text-secondary animate-bounce"
+                    style={{
+                      animationDelay: "150ms",
+                      animationDuration: "600ms",
+                    }}
+                  />
+                  <span
+                    className="w-1 h-1 rounded-full bg-text-secondary animate-bounce"
+                    style={{
+                      animationDelay: "300ms",
+                      animationDuration: "600ms",
+                    }}
+                  />
                 </span>
                 Resending...
               </>
@@ -221,11 +222,14 @@ export const OTPEntryPage = ({
         </div>
       </div>
 
-      <div 
+      <div
         ref={buttonRef}
         className="px-6 py-4 pb-6 flex-shrink-0"
-        style={{ 
-          paddingBottom: keyboardHeight > 0 ? `${Math.max(24, keyboardHeight + 16)}px` : '24px'
+        style={{
+          paddingBottom:
+            keyboardHeight > 0
+              ? `${Math.max(24, keyboardHeight + 16)}px`
+              : "24px",
         }}
       >
         <Button

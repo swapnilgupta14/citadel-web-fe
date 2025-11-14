@@ -128,32 +128,17 @@ export const DateOfBirthPage = ({
     }
   };
 
-  const isComplete = day.length === 2 && month.length === 2 && year.length === 4;
-  
+  const isComplete =
+    day.length === 2 && month.length === 2 && year.length === 4;
+
   const isDateValid = () => {
     if (!isComplete) return false;
     const result = dateOfBirthSchema.safeParse({ day, month, year });
     return result.success;
   };
-  
+
   const isValid = isDateValid();
 
-  useEffect(() => {
-    if (keyboardHeight > 0 && buttonRef.current) {
-      setTimeout(() => {
-        buttonRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
-      }, 100);
-    }
-  }, [keyboardHeight]);
-
-  const handleInputFocus = () => {
-    if (buttonRef.current) {
-      setTimeout(() => {
-        buttonRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
-      }, 300);
-    }
-  };
-  
   return (
     <div className="flex h-full flex-col bg-background overflow-y-auto">
       <div className="flex flex-col pt-4 px-4 pb-2 flex-shrink-0">
@@ -188,7 +173,6 @@ export const DateOfBirthPage = ({
                   validateDateOfBirth();
                 }
               }}
-              onFocus={handleInputFocus}
               onKeyDown={(e) => handleKeyDown(input.index, e)}
               onBlur={() => {
                 if (isComplete) {
@@ -212,11 +196,14 @@ export const DateOfBirthPage = ({
         )}
       </div>
 
-      <div 
+      <div
         ref={buttonRef}
         className="px-6 py-4 pb-6 flex-shrink-0"
-        style={{ 
-          paddingBottom: keyboardHeight > 0 ? `${Math.max(24, keyboardHeight + 16)}px` : '24px'
+        style={{
+          paddingBottom:
+            keyboardHeight > 0
+              ? `${Math.max(24, keyboardHeight + 16)}px`
+              : "24px",
         }}
       >
         <Button
