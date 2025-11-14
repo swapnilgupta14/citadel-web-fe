@@ -192,7 +192,7 @@ export const DateOfBirthPage = ({
         )}
       </div>
 
-      <div className="px-6 py-4 pb-6">
+      <div className="px-6 py-4 keyboard-safe-bottom">
         <Button
           onClick={handleContinue}
           disabled={!isValid}

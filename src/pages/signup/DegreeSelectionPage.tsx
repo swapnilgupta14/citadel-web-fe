@@ -243,7 +243,7 @@ export const DegreeSelectionPage = ({
       </div>
 
       {!shouldShowResults && (
-        <div className="px-6 py-4 pb-6">
+        <div className="px-6 py-4 keyboard-safe-bottom">
           {degreeError && touched && (
             <p className="text-sm text-red-500 mb-2 px-1">{degreeError}</p>
           )}
