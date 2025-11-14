@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 import { ArrowLeft } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { SearchBar, Button } from "../../components/ui";
@@ -6,6 +6,7 @@ import { Skeleton } from "../../components/skeleton";
 import { useUniversities } from "../../hooks/queries/useUniversities";
 import type { University } from "../../types/universities";
 import type { UniversitySelectionPageProps } from "../../types/pages";
+import { useKeyboardHeight } from "../../hooks/logic";
 
 export const UniversitySelectionPage = ({
   onBack,
@@ -16,6 +17,8 @@ export const UniversitySelectionPage = ({
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
   const [selectedUniversity, setSelectedUniversity] =
     useState<University | null>(null);
+  const keyboardHeight = useKeyboardHeight();
+  const buttonRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -90,8 +93,8 @@ export const UniversitySelectionPage = ({
   };
 
   return (
-    <div className="flex h-full flex-col">
-      <div className="flex flex-col pt-4 px-4 pb-2">
+    <div className="flex h-full flex-col overflow-y-auto">
+      <div className="flex flex-col pt-4 px-4 pb-2 flex-shrink-0">
         <button
           onClick={onBack}
           className="self-start mb-4 p-2 -ml-2 active:opacity-70 transition-opacity"
@@ -104,7 +107,7 @@ export const UniversitySelectionPage = ({
         </h1>
       </div>
 
-      <div className="flex-1 flex flex-col px-4 py-4 min-h-0 rounded-md text-text-secondary">
+      <div className="flex-1 flex flex-col px-4 py-4 min-h-0 rounded-md text-text-secondary flex-shrink-0">
         <SearchBar
           value={searchQuery}
           onChange={handleSearchChange}
@@ -162,7 +165,16 @@ export const UniversitySelectionPage = ({
       </div>
 
       {!shouldShowResults && (
-        <div className="px-6 py-4 pb-6">
+        <div
+          ref={buttonRef}
+          className="px-6 py-4 pb-6 flex-shrink-0"
+          style={{
+            paddingBottom:
+              keyboardHeight > 0
+                ? `${Math.max(24, keyboardHeight + 16)}px`
+                : "24px",
+          }}
+        >
           <Button
             onClick={handleContinue}
             disabled={!isContinueEnabled}

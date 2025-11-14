@@ -1,9 +1,10 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 import { ArrowLeft } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { SearchBar, Button } from "../../components/ui";
 import type { DegreeSelectionPageProps } from "../../types/pages";
 import { degreeSchema, yearSchema } from "../../lib/helpers/validations";
+import { useKeyboardHeight } from "../../hooks/logic";
 
 const MOCK_DEGREES = [
   "B.Tech",
@@ -28,8 +29,12 @@ export const DegreeSelectionPage = ({
 }: DegreeSelectionPageProps) => {
   const [searchQuery, setSearchQuery] = useState(initialDegree || "");
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
-  const [selectedDegree, setSelectedDegree] = useState<string | null>(initialDegree || null);
-  const [selectedYear, setSelectedYear] = useState<string | null>(initialYear || null);
+  const [selectedDegree, setSelectedDegree] = useState<string | null>(
+    initialDegree || null
+  );
+  const [selectedYear, setSelectedYear] = useState<string | null>(
+    initialYear || null
+  );
 
   useEffect(() => {
     if (initialDegree) {
@@ -43,6 +48,8 @@ export const DegreeSelectionPage = ({
   const [degreeError, setDegreeError] = useState<string | null>(null);
   const [yearError, setYearError] = useState<string | null>(null);
   const [touched, setTouched] = useState(false);
+  const keyboardHeight = useKeyboardHeight();
+  const buttonRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (searchQuery.trim()) {
@@ -71,7 +78,6 @@ export const DegreeSelectionPage = ({
   }, [searchQuery, selectedDegree]);
 
   const hasResults = filteredDegrees.length > 0;
-
 
   const handleSearchChange = (value: string) => {
     setSearchQuery(value);
@@ -149,8 +155,8 @@ export const DegreeSelectionPage = ({
   const years = ["1st", "2nd", "3rd", "4th", "5th"];
 
   return (
-    <div className="flex h-full flex-col bg-background">
-      <div className="flex flex-col pt-4 px-4 pb-2">
+    <div className="flex h-full flex-col bg-background overflow-y-auto">
+      <div className="flex flex-col pt-4 px-4 pb-2 flex-shrink-0">
         <button
           onClick={onBack}
           className="self-start mb-4 p-2 -ml-2 active:opacity-70 transition-opacity"
@@ -163,7 +169,7 @@ export const DegreeSelectionPage = ({
         </h1>
       </div>
 
-      <div className="flex-1 flex flex-col px-4 py-4 min-h-0 rounded-md text-text-secondary">
+      <div className="flex-1 flex flex-col px-4 py-4 min-h-0 rounded-md text-text-secondary flex-shrink-0">
         <SearchBar
           value={searchQuery}
           onChange={handleSearchChange}
@@ -198,8 +204,8 @@ export const DegreeSelectionPage = ({
                         selectedYear === year
                           ? "bg-primary text-background border-transparent"
                           : yearError && touched
-                          ? "bg-button-search text-text-primary border-red-500"
-                          : "bg-button-search text-text-primary border-border"
+                            ? "bg-button-search text-text-primary border-red-500"
+                            : "bg-button-search text-text-primary border-border"
                       }`}
                     >
                       {year}
@@ -243,7 +249,16 @@ export const DegreeSelectionPage = ({
       </div>
 
       {!shouldShowResults && (
-        <div className="px-6 py-4 pb-6">
+        <div
+          ref={buttonRef}
+          className="px-6 py-4 pb-6 flex-shrink-0"
+          style={{
+            paddingBottom:
+              keyboardHeight > 0
+                ? `${Math.max(24, keyboardHeight + 16)}px`
+                : "24px",
+          }}
+        >
           {degreeError && touched && (
             <p className="text-sm text-red-500 mb-2 px-1">{degreeError}</p>
           )}
