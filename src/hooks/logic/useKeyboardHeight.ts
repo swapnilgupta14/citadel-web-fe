@@ -23,12 +23,10 @@ export const useKeyboardHeight = () => {
         };
 
         visualViewport.addEventListener('resize', updateKeyboardHeight);
-        visualViewport.addEventListener('scroll', updateKeyboardHeight);
         updateKeyboardHeight();
 
         return () => {
             visualViewport.removeEventListener('resize', updateKeyboardHeight);
-            visualViewport.removeEventListener('scroll', updateKeyboardHeight);
         };
     }, []);
 

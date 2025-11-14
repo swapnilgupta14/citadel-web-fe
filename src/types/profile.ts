@@ -18,11 +18,12 @@ export type CreateProfileData = {
 };
 
 export type UserProfile = {
-    id: number;
+    id: string;
     email: string;
     name: string;
+    username?: string;
     university: {
-        id: number;
+        id: string;
         name: string;
         domain: string;
         country: string;
@@ -30,19 +31,21 @@ export type UserProfile = {
     degree: string;
     year: string;
     gender: string;
-    dateOfBirth: string;
+    dateOfBirth: string | null;
     skills?: string[];
+    friends?: string[];
     isProfileComplete: boolean;
     isEmailVerified: boolean;
-    aboutMe?: string;
-    sports?: string;
-    movies?: string;
-    tvShows?: string;
-    teams?: string;
-    portfolioLink?: string;
-    phoneNumber?: string;
+    aboutMe?: string | null;
+    sports?: string | null;
+    movies?: string | null;
+    tvShows?: string | null;
+    teams?: string | null;
+    portfolioLink?: string | null;
+    phoneNumber?: string | null;
     images?: Array<{
-        id: number;
+        id: string;
+        s3Key?: string;
         cloudfrontUrl: string;
         originalName?: string;
         mimeType?: string;
@@ -52,7 +55,8 @@ export type UserProfile = {
     slots?: Array<{
         slot: number;
         image: null | {
-            id: number;
+            id: string;
+            s3Key?: string;
             cloudfrontUrl: string;
             originalName?: string;
             mimeType?: string;
@@ -68,5 +72,34 @@ export type GetProfileResponse = {
     success: boolean;
     message: string;
     data: UserProfile;
+};
+
+export type UploadImageResponse = {
+    message: string;
+    data: {
+        id: string;
+        s3Key?: string;
+        cloudfrontUrl: string;
+        originalName?: string;
+        mimeType?: string;
+        fileSize?: number;
+        createdAt?: string;
+    };
+};
+
+export type UserImage = {
+    id: string;
+    userId?: string;
+    s3Key?: string;
+    cloudfrontUrl: string;
+    originalName?: string;
+    mimeType?: string;
+    fileSize?: number;
+    createdAt?: string;
+};
+
+export type GetUserImagesResponse = {
+    message: string;
+    data: UserImage[];
 };
 

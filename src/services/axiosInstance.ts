@@ -27,6 +27,9 @@ axiosInstance.interceptors.request.use(
         if (accessToken && config.headers) {
             config.headers.Authorization = `Bearer ${accessToken}`;
         }
+        if (config.data instanceof FormData && config.headers) {
+            delete config.headers["Content-Type"];
+        }
         return config;
     },
     (error) => {
@@ -164,7 +167,29 @@ axiosInstance.interceptors.response.use(
         }
 
         if (error.response) {
-            const errorData = error.response.data as { message?: string } | undefined;
+            const errorData = error.response.data as {
+                message?: string;
+                errors?: Record<string, { message?: string; kind?: string }>;
+            } | undefined;
+
+            if (errorData?.errors) {
+                const validationErrors = Object.entries(errorData.errors)
+                    .map(([field, error]) => {
+                        const errorMsg = error?.message || `${field} validation failed`;
+                        return `${field}: ${errorMsg}`;
+                    })
+                    .join(", ");
+
+                return Promise.reject(
+                    new Error(
+                        validationErrors ||
+                        errorData?.message ||
+                        error.response.statusText ||
+                        "Validation failed"
+                    )
+                );
+            }
+
             return Promise.reject(
                 new Error(
                     errorData?.message ||

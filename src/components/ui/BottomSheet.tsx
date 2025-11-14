@@ -28,7 +28,7 @@ export const BottomSheet = ({ isOpen, onClose, children }: BottomSheetProps) => 
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="fixed inset-0 bg-black/60 z-40"
+            className="fixed inset-0 bg-black/60 z-[60]"
             onClick={onClose}
           />
           <motion.div
@@ -36,7 +36,7 @@ export const BottomSheet = ({ isOpen, onClose, children }: BottomSheetProps) => 
             animate={{ y: 0 }}
             exit={{ y: "100%" }}
             transition={{ type: "spring", damping: 30, stiffness: 300 }}
-            className="fixed bottom-0 left-0 right-0 z-50 bg-background-secondary rounded-t-3xl shadow-lg max-h-[90vh] overflow-hidden"
+            className="fixed bottom-0 left-0 right-0 z-[70] bg-background-secondary rounded-t-3xl shadow-lg max-h-[90vh] overflow-hidden"
           >
             <div className="flex justify-center pt-3 pb-2">
               <div className="w-12 h-1 bg-text-secondary/30 rounded-full" />

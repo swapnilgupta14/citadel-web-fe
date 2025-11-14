@@ -12,6 +12,8 @@ import type {
     CreateProfileResponse,
     CreateProfileData,
     GetProfileResponse,
+    UploadImageResponse,
+    GetUserImagesResponse,
 } from "../types/profile";
 import type {
     AvailableSlotsResponse,
@@ -28,7 +30,6 @@ import type {
     QuizResultsResponse,
 } from "../types/quiz";
 import type {
-    PersonalityQuizResponse,
     SubmitPersonalityQuizRequest,
     SubmitPersonalityQuizResponse,
 } from "../types/personality-quiz";
@@ -132,6 +133,62 @@ export const profileApi = {
                 skills: [],
                 friends: [],
             }
+        );
+        return response.data;
+    },
+
+    uploadImage: async (
+        file: File
+    ): Promise<UploadImageResponse> => {
+        if (!file || !(file instanceof File)) {
+            throw new Error("Invalid file provided");
+        }
+
+        const formData = new FormData();
+        formData.append("image", file, file.name);
+
+        const response = await axiosInstance.post<UploadImageResponse>(
+            "/v1/profile/upload",
+            formData,
+            {
+                timeout: 30000,
+            }
+        );
+        return response.data;
+    },
+
+    assignImageToSlot: async (
+        slot: number,
+        userImageId: string
+    ): Promise<{ message: string }> => {
+        const response = await axiosInstance.put<{ message: string }>(
+            "/v1/profile/images/slot",
+            { slot, userImageId }
+        );
+        return response.data;
+    },
+
+    clearImageSlot: async (
+        slot: number
+    ): Promise<{ message: string }> => {
+        const response = await axiosInstance.delete<{ message: string }>(
+            `/v1/profile/images/slot/${slot}`
+        );
+        return response.data;
+    },
+
+    getUserImages: async (): Promise<GetUserImagesResponse> => {
+        const response = await axiosInstance.get<GetUserImagesResponse>(
+            "/v1/profile/images"
+        );
+        return response.data;
+    },
+
+    deleteUserImage: async (
+        imageId: string
+    ): Promise<{ message: string }> => {
+        const response = await axiosInstance.delete<{ message: string }>(
+            `/v1/profile/images/${imageId}`
         );
         return response.data;
     },
@@ -285,13 +342,6 @@ export const quizApi = {
 };
 
 export const personalityQuizApi = {
-    getQuestions: async (): Promise<PersonalityQuizResponse> => {
-        const response = await axiosInstance.get<PersonalityQuizResponse>(
-            "/v1/dinner-preferences/personality-quiz"
-        );
-        return response.data;
-    },
-
     submitQuiz: async (
         data: SubmitPersonalityQuizRequest
     ): Promise<SubmitPersonalityQuizResponse> => {

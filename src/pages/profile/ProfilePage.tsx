@@ -7,13 +7,18 @@ import {
   Trash2,
   Plus,
   Image as ImageIcon,
+  Loader2,
   type LucideIcon,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useState, useRef, lazy, Suspense } from "react";
 import { auth } from "../../lib/storage/auth";
 import { showToast } from "../../lib/helpers/toast";
-import { useProfile } from "../../hooks/queries/useProfile";
+import {
+  useProfile,
+  useUploadProfileImage,
+  useDeleteProfileImage,
+} from "../../hooks/queries/useProfile";
 import { ImageWithPlaceholder, BottomSheet } from "../../components/ui";
 import { ProfileSkeleton } from "../../components/skeleton";
 
@@ -31,14 +36,25 @@ interface ProfileMenuItem {
   isDanger?: boolean;
 }
 
+const MAX_FILE_SIZE = 5 * 1024 * 1024;
+const ALLOWED_FILE_TYPES = [
+  "image/jpeg",
+  "image/jpg",
+  "image/png",
+  "image/webp",
+];
+
 export const ProfilePage = () => {
   const navigate = useNavigate();
   const { data: profileResponse, isLoading } = useProfile();
   const profile = profileResponse?.data;
+  const uploadImageMutation = useUploadProfileImage();
+  const deleteImageMutation = useDeleteProfileImage();
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
   const [confirmationModal, setConfirmationModal] = useState<
     "logout" | "delete-account" | null
   >(null);
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleLogoutClick = () => {
@@ -75,8 +91,8 @@ export const ProfilePage = () => {
   };
 
   const primarySlot = profile?.slots?.find((slot) => slot.slot === 0);
-  const profileImage =
-    primarySlot?.image?.cloudfrontUrl || profile?.images?.[0]?.cloudfrontUrl;
+  const profileImageFromApi = primarySlot?.image?.cloudfrontUrl || null;
+  const profileImage = previewImage || profileImageFromApi || null;
 
   const handlePhotoClick = () => {
     if (profileImage) {
@@ -91,15 +107,74 @@ export const ProfilePage = () => {
     fileInputRef.current?.click();
   };
 
-  const handleDeletePhoto = () => {
+  const handleDeletePhoto = async () => {
     setIsBottomSheetOpen(false);
-    showToast.info("Delete Photo - Coming soon");
+    const primarySlot = profile?.slots?.find((slot) => slot.slot === 0);
+    if (!primarySlot?.image) {
+      showToast.error("No photo to delete");
+      return;
+    }
+
+    setPreviewImage(null);
+
+    try {
+      await deleteImageMutation.mutateAsync({ slot: 0 });
+      showToast.success("Profile photo deleted successfully");
+    } catch (error) {
+      showToast.error(
+        error instanceof Error
+          ? error.message
+          : "Failed to delete photo. Please try again."
+      );
+    }
   };
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const validateImageFile = (file: File): string | null => {
+    if (!ALLOWED_FILE_TYPES.includes(file.type)) {
+      return "Please upload a valid image file (JPEG, PNG, or WebP)";
+    }
+    if (file.size > MAX_FILE_SIZE) {
+      return "Image size must be less than 5MB";
+    }
+    return null;
+  };
+
+  const handleFileChange = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     const file = event.target.files?.[0];
-    if (file) {
-      showToast.info("Upload Photo - Coming soon");
+    if (!file) return;
+
+    const validationError = validateImageFile(file);
+    if (validationError) {
+      showToast.error(validationError);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      const base64String = reader.result as string;
+      setPreviewImage(base64String);
+    };
+    reader.readAsDataURL(file);
+
+    try {
+      const response = await uploadImageMutation.mutateAsync({ file, slot: 0 });
+      if (response.data?.cloudfrontUrl) {
+        setPreviewImage(null);
+      }
+      showToast.success("Profile photo uploaded successfully");
+    } catch (error) {
+      setPreviewImage(null);
+      showToast.error(
+        error instanceof Error
+          ? error.message
+          : "Failed to upload photo. Please try again."
+      );
+    } finally {
       if (fileInputRef.current) {
         fileInputRef.current.value = "";
       }
@@ -146,23 +221,23 @@ export const ProfilePage = () => {
     },
   ];
 
-  const generateUserCode = (name: string, id: number): string => {
+  const generateUserCode = (name: string, id: string): string => {
     const initials = name
       .split(" ")
       .map((n) => n[0])
       .join("")
       .toUpperCase()
       .slice(0, 2);
-    const code = id.toString().slice(-4);
+    const code = id.slice(-4);
     return `#${initials}${code}`;
   };
 
   const userData = auth.getUserData();
   const displayName = profile?.name || "User";
-  const userId = profile?.id || parseInt(userData?.id || "0");
+  const userId = profile?.id || userData?.id || "0";
   const userCode = profile
     ? generateUserCode(profile.name, profile.id)
-    : `#${userId.toString().slice(-4)}`;
+    : `#${userId.slice(-4)}`;
 
   return (
     <div className="flex h-full flex-col bg-background min-h-0 justify-around">
@@ -173,12 +248,23 @@ export const ProfilePage = () => {
           <>
             <button
               onClick={handlePhotoClick}
-              className="relative w-[130px] h-[130px] rounded-[5px] border-2 border-dashed border-white bg-background-secondary flex items-center justify-center mb-6 active:scale-95 transition-transform overflow-hidden"
+              disabled={
+                uploadImageMutation.isPending || deleteImageMutation.isPending
+              }
+              className={`relative w-[130px] h-[130px] rounded-[5px] bg-background-secondary flex items-center justify-center mb-6 active:scale-95 transition-transform overflow-hidden disabled:opacity-50 disabled:cursor-not-allowed ${
+                !profileImage ? "border-2 border-dashed border-white" : ""
+              }`}
               aria-label={
                 profileImage ? "Change profile photo" : "Upload profile photo"
               }
             >
-              {profileImage ? (
+              {uploadImageMutation.isPending ||
+              deleteImageMutation.isPending ? (
+                <Loader2
+                  className="w-12 h-12 text-primary animate-spin"
+                  strokeWidth={2}
+                />
+              ) : profileImage ? (
                 <ImageWithPlaceholder
                   src={profileImage}
                   alt={displayName}

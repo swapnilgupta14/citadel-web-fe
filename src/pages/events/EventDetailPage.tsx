@@ -27,6 +27,7 @@ export const EventDetailPage = () => {
   const verifyPaymentMutation = useVerifyPayment();
   const { data: profileData } = useProfile();
   const [isProcessingPayment, setIsProcessingPayment] = useState(false);
+  const [isVerifyingPayment, setIsVerifyingPayment] = useState(false);
 
   const event = eventData?.data;
   const userData = auth.getUserData();
@@ -39,6 +40,10 @@ export const EventDetailPage = () => {
     window.history.pushState(null, "", window.location.pathname);
 
     const handlePopState = () => {
+      if (isVerifyingPayment) {
+        window.history.pushState(null, "", window.location.pathname);
+        return;
+      }
       navigate("/personality-quiz", { replace: true });
     };
 
@@ -47,7 +52,7 @@ export const EventDetailPage = () => {
     return () => {
       window.removeEventListener("popstate", handlePopState);
     };
-  }, [navigate]);
+  }, [navigate, isVerifyingPayment]);
 
   const handleBack = () => {
     resetBookingFlow();
@@ -104,6 +109,9 @@ export const EventDetailPage = () => {
           razorpay_payment_id: string;
           razorpay_signature: string;
         }) => {
+          setIsVerifyingPayment(true);
+          const loadingToastId = showToast.loading("Verifying payment...");
+
           try {
             const verifyData = await verifyPaymentMutation.mutateAsync({
               razorpay_order_id: response.razorpay_order_id,
@@ -111,15 +119,20 @@ export const EventDetailPage = () => {
               razorpay_signature: response.razorpay_signature,
             });
 
+            showToast.dismiss(loadingToastId);
+
             if (verifyData.success) {
               showToast.success("Payment successful!");
               navigate(`/events/${eventId}/success`, { replace: true });
             } else {
               showToast.error("Payment verification failed");
+              setIsVerifyingPayment(false);
             }
           } catch (err) {
+            showToast.dismiss(loadingToastId);
             const errorMessage = handleApiError(err);
             showToast.error(errorMessage || "Payment verification failed");
+            setIsVerifyingPayment(false);
           }
         },
         prefill: {
@@ -272,7 +285,12 @@ export const EventDetailPage = () => {
       </div>
 
       <div className="px-6 py-4 flex-shrink-0 bg-background flex gap-4">
-        <Button onClick={handleBack} variant="secondary" className="flex-1">
+        <Button
+          onClick={handleBack}
+          variant="secondary"
+          className="flex-1"
+          disabled={isVerifyingPayment}
+        >
           Back
         </Button>
         <Button
