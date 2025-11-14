@@ -60,6 +60,8 @@ export const ImageGrid = ({
   const scale1 = useTransform(progress, [0, 1], [1, 0.8]);
   const scale2 = useTransform(progress, [0, 1], [1, 0.9]);
 
+  const imageScale = useTransform(progress, [0, 1], [1, 1.5]);
+
   const scaledBorderRadius = BASE_BORDER_RADIUS * scaleFactor;
   const cornerRadius = useTransform(progress, (latest) => {
     const value = scaledBorderRadius * (1 - latest);
@@ -120,6 +122,7 @@ export const ImageGrid = ({
           src="/Splash/Rectangle1.png"
           alt=""
           className="w-full h-full object-cover"
+          scale={imageScale}
         />
       </motion.div>
 
@@ -141,6 +144,7 @@ export const ImageGrid = ({
           src="/Splash/Rectangle2.png"
           alt=""
           className="w-full h-full object-cover"
+          scale={imageScale}
         />
       </motion.div>
 
@@ -162,6 +166,7 @@ export const ImageGrid = ({
           src="/Splash/Rectangle3.png"
           alt=""
           className="w-full h-full object-cover"
+          scale={imageScale}
         />
       </motion.div>
 
@@ -183,6 +188,7 @@ export const ImageGrid = ({
           src="/Splash/Rectangle4.png"
           alt=""
           className="w-full h-full object-cover"
+          scale={imageScale}
         />
       </motion.div>
 

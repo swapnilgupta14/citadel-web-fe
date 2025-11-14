@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { ImagePlaceholder } from "./ImagePlaceholder";
+import { motion, type MotionValue } from "framer-motion";
 
 interface ImageWithPlaceholderProps {
   src: string;
@@ -7,6 +8,7 @@ interface ImageWithPlaceholderProps {
   className?: string;
   loading?: "lazy" | "eager";
   onError?: () => void;
+  scale?: MotionValue<number> | number;
 }
 
 export const ImageWithPlaceholder = ({
@@ -15,6 +17,7 @@ export const ImageWithPlaceholder = ({
   className = "",
   loading = "lazy",
   onError,
+  scale,
 }: ImageWithPlaceholderProps) => {
   const [hasError, setHasError] = useState(false);
 
@@ -27,14 +30,16 @@ export const ImageWithPlaceholder = ({
     return <ImagePlaceholder className={className} />;
   }
 
+  const style = scale !== undefined ? { scale } : undefined;
+
   return (
-    <img
+    <motion.img
       src={src}
       alt={alt}
       className={className}
       loading={loading}
       onError={handleError}
+      style={style}
     />
   );
 };
-
