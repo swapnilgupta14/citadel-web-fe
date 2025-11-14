@@ -20,16 +20,21 @@ export const ConnectPage = ({ onContinue }: ConnectPageProps) => {
   }, []);
 
   useEffect(() => {
-    const updateHeight = () => {
+    const img = new Image();
+    img.src = "/Splash/waves.svg";
+  }, []);
+
+  useEffect(() => {
+    const updateDimensions = () => {
       const viewportHeight = window.innerHeight;
       const scale = viewportHeight / BASE_SCREEN_HEIGHT;
       const scaledHeight = BASE_IMAGE_GRID_HEIGHT * scale;
       setImageGridHeight(scaledHeight);
     };
 
-    updateHeight();
-    window.addEventListener("resize", updateHeight);
-    return () => window.removeEventListener("resize", updateHeight);
+    updateDimensions();
+    window.addEventListener("resize", updateDimensions);
+    return () => window.removeEventListener("resize", updateDimensions);
   }, []);
 
   return (
