@@ -26,13 +26,11 @@
   }
 
   html {
-    height: 100%;
     height: 100dvh;
   }
 
   body {
     @apply overflow-hidden antialiased bg-background text-text-primary;
-    height: 100%;
     height: 100dvh;
     padding-top: env(safe-area-inset-top);
     padding-bottom: env(safe-area-inset-bottom);
@@ -42,9 +40,6 @@
 
   #root {
     @apply mx-auto bg-background;
-    width: 100%;
-    max-width: 100%;
-    height: 100%;
     height: 100dvh;
   }
 
@@ -58,8 +53,6 @@
 
     #root {
       width: 393px;
-      height: 100vh;
-      max-height: 852px;
       overflow: hidden;
       box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
     }
