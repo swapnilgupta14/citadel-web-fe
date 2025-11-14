@@ -18,7 +18,7 @@ export const axiosInstance = axios.create({
     headers: {
         "Content-Type": "application/json",
     },
-    timeout: 30000,
+    timeout: 15000,
 });
 
 axiosInstance.interceptors.request.use(
@@ -83,7 +83,7 @@ const refreshAccessToken = async (): Promise<string | null> => {
         }
 
         return null;
-    } catch (error) {
+    } catch {
         return null;
     }
 };
