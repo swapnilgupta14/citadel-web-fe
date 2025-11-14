@@ -53,7 +53,8 @@
 
     #root {
       width: 393px;
-      height: 852px;
+      height: 100vh;
+      max-height: 852px;
       overflow: hidden;
       box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
     }
