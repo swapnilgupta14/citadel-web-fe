@@ -174,12 +174,12 @@ export const EventBookingsPage = () => {
                     </div>
 
                     {activeTab === "past" && (
-                      <div>
+                      <div className="flex justify-between">
                         <p className="text-text-secondary text-sm mb-2">
                           Tell us{" "}
-                          <span className="text-text-primary font-semibold">
+                          <div className="text-text-primary font-semibold">
                             Your experience
-                          </span>
+                          </div>
                         </p>
                         <div className="flex items-center gap-1">
                           {[1, 2, 3, 4, 5].map((star) => (
