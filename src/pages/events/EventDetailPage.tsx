@@ -5,9 +5,12 @@ import { motion } from "framer-motion";
 import { Button, ImageWithPlaceholder } from "../../components/ui";
 import { EventDetailCardSkeleton } from "../../components/skeleton";
 import { useEventDetail } from "../../hooks/queries/useEvents";
-import { useCreatePaymentOrder, useVerifyPayment } from "../../hooks/queries";
-import { profileApi } from "../../services/api";
-import { formatDate, formatTime } from "../../lib/helpers/eventUtils";
+import {
+  useCreatePaymentOrder,
+  useVerifyPayment,
+  useProfile,
+} from "../../hooks/queries";
+import { formatDate } from "../../lib/helpers/eventUtils";
 import { getLandmarkImage } from "../../lib/helpers/eventUtils";
 import { useProtectedLayout } from "../../hooks/logic/useProtectedLayout";
 import { loadRazorpayScript } from "../../lib/helpers/razorpay";
@@ -22,6 +25,7 @@ export const EventDetailPage = () => {
   const { resetBookingFlow } = useProtectedLayout();
   const createOrderMutation = useCreatePaymentOrder();
   const verifyPaymentMutation = useVerifyPayment();
+  const { data: profileData } = useProfile();
   const [isProcessingPayment, setIsProcessingPayment] = useState(false);
 
   const event = eventData?.data;
@@ -59,8 +63,7 @@ export const EventDetailPage = () => {
     setIsProcessingPayment(true);
 
     try {
-      const profileResponse = await profileApi.getProfile();
-      const profileName = profileResponse?.data?.name || "";
+      const profileName = profileData?.data?.name || userData.id;
 
       await loadRazorpayScript();
 
@@ -148,7 +151,7 @@ export const EventDetailPage = () => {
     ? event.eventDate.split("T")[0]
     : event?.eventDate;
   const formattedDate = dateStr ? formatDate(dateStr) : "";
-  const formattedTime = event?.eventTime ? formatTime(event.eventTime) : "";
+  const formattedTime = event?.eventTime;
 
   return (
     <motion.div
