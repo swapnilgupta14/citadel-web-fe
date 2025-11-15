@@ -1,13 +1,44 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 
+const BOOKING_FLOW_KEY = "bookingFlowState";
+
+const getStoredBookingState = () => {
+    try {
+        const stored = sessionStorage.getItem(BOOKING_FLOW_KEY);
+        if (stored) {
+            return JSON.parse(stored);
+        }
+    } catch (error) {
+        console.error("Error reading booking flow state:", error);
+    }
+    return { isBookingFlow: false, selectedSlotId: null, pendingEventId: null };
+};
+
+const saveBookingState = (isBookingFlow: boolean, selectedSlotId: string | null, pendingEventId: string | null) => {
+    try {
+        sessionStorage.setItem(BOOKING_FLOW_KEY, JSON.stringify({
+            isBookingFlow,
+            selectedSlotId,
+            pendingEventId
+        }));
+    } catch (error) {
+        console.error("Error saving booking flow state:", error);
+    }
+};
+
 export const useBookingFlow = () => {
     const navigate = useNavigate();
     const location = useLocation();
 
-    const [isBookingFlow, setIsBookingFlow] = useState(false);
-    const [selectedSlotId, setSelectedSlotId] = useState<string | null>(null);
-    const [pendingEventId, setPendingEventId] = useState<string | null>(null);
+    const initialState = getStoredBookingState();
+    const [isBookingFlow, setIsBookingFlow] = useState(initialState.isBookingFlow);
+    const [selectedSlotId, setSelectedSlotId] = useState<string | null>(initialState.selectedSlotId);
+    const [pendingEventId, setPendingEventId] = useState<string | null>(initialState.pendingEventId);
+
+    useEffect(() => {
+        saveBookingState(isBookingFlow, selectedSlotId, pendingEventId);
+    }, [isBookingFlow, selectedSlotId, pendingEventId]);
 
     useEffect(() => {
         if (location.pathname === "/finding-matches" && !isBookingFlow) {
