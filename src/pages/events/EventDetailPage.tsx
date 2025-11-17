@@ -1,36 +1,25 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { MapPin, ChevronRight } from "lucide-react";
 import { motion } from "framer-motion";
-import { Button, ImageWithPlaceholder } from "../../components/ui";
+import { Button, EventDetailCard } from "../../components/ui";
 import { EventDetailCardSkeleton } from "../../components/skeleton";
 import { useEventDetail } from "../../hooks/queries/useEvents";
-import {
-  useCreatePaymentOrder,
-  useVerifyPayment,
-  useProfile,
-} from "../../hooks/queries";
 import { formatDate } from "../../lib/helpers/eventUtils";
-import { getLandmarkImage } from "../../lib/helpers/eventUtils";
-import { useProtectedLayout } from "../../hooks/logic/useProtectedLayout";
-import { loadRazorpayScript } from "../../lib/helpers/razorpay";
-import { env } from "../../config/env";
-import { auth } from "../../lib/storage/auth";
-import { showToast, handleApiError } from "../../lib/helpers/toast";
+import { useProtectedLayout, useRazorpayPayment } from "../../hooks/logic";
 
 export const EventDetailPage = () => {
   const { eventId } = useParams<{ eventId: string }>();
   const navigate = useNavigate();
   const { data: eventData, isLoading, error } = useEventDetail(eventId);
   const { resetBookingFlow } = useProtectedLayout();
-  const createOrderMutation = useCreatePaymentOrder();
-  const verifyPaymentMutation = useVerifyPayment();
-  const { data: profileData } = useProfile();
-  const [isProcessingPayment, setIsProcessingPayment] = useState(false);
-  const [isVerifyingPayment, setIsVerifyingPayment] = useState(false);
+  const {
+    initiatePayment,
+    isProcessingPayment,
+    isVerifyingPayment,
+    isCreatingOrder,
+  } = useRazorpayPayment();
 
   const event = eventData?.data;
-  const userData = auth.getUserData();
 
   useEffect(() => {
     resetBookingFlow();
@@ -60,108 +49,24 @@ export const EventDetailPage = () => {
   };
 
   const handlePayAmount = async () => {
-    if (!event || !eventId || !userData?.id) {
-      showToast.error("Missing required information");
+    if (!event || !eventId) {
       return;
     }
 
-    setIsProcessingPayment(true);
-
-    try {
-      const profileName = profileData?.data?.name || userData.id;
-
-      await loadRazorpayScript();
-
-      if (!window.Razorpay) {
-        throw new Error("Razorpay SDK failed to load");
-      }
-
-      const razorpayKeyId = env.VITE_RAZORPAY_KEY_ID;
-      if (!razorpayKeyId) {
-        throw new Error("Razorpay key not configured");
-      }
-
-      const dateStr = event.eventDate.includes("T")
-        ? event.eventDate.split("T")[0]
-        : event.eventDate;
-
-      const orderData = await createOrderMutation.mutateAsync({
-        userId: userData.id,
-        eventId: eventId,
-        eventType: "dinner",
-        amount: event.bookingFee,
-        currency: "INR",
-        bookingDate: dateStr || event.eventDate,
-        bookingTime: event.eventTime,
-        location: `${event.area}, ${event.city}`,
-        guests: 1,
-      });
-
-      const options = {
-        key: razorpayKeyId,
-        amount: orderData.data.order.amount,
-        currency: orderData.data.order.currency,
-        name: "Citadel Dinners",
-        description: `Dinner on ${dateStr || event.eventDate} at ${event.eventTime}`,
-        order_id: orderData.data.order.id,
-        handler: async (response: {
-          razorpay_order_id: string;
-          razorpay_payment_id: string;
-          razorpay_signature: string;
-        }) => {
-          setIsVerifyingPayment(true);
-          const loadingToastId = showToast.loading("Verifying payment...");
-
-          try {
-            const verifyData = await verifyPaymentMutation.mutateAsync({
-              razorpay_order_id: response.razorpay_order_id,
-              razorpay_payment_id: response.razorpay_payment_id,
-              razorpay_signature: response.razorpay_signature,
-            });
-
-            showToast.dismiss(loadingToastId);
-
-            if (verifyData.success) {
-              showToast.success("Payment successful!");
-              navigate(`/events/${eventId}/success`, { replace: true });
-            } else {
-              showToast.error("Payment verification failed");
-              setIsVerifyingPayment(false);
-            }
-          } catch (err) {
-            showToast.dismiss(loadingToastId);
-            const errorMessage = handleApiError(err);
-            showToast.error(errorMessage || "Payment verification failed");
-            setIsVerifyingPayment(false);
-          }
-        },
-        prefill: {
-          name: profileName,
-          email: userData.email ?? "",
-          contact: "",
-        },
-        theme: {
-          color: "#1BEA7B",
-        },
-        modal: {
-          ondismiss: () => {
-            setIsProcessingPayment(false);
-          },
-        },
-      };
-
-      const razorpay = new window.Razorpay(options);
-      razorpay.open();
-    } catch (err) {
-      setIsProcessingPayment(false);
-      const errorMessage = handleApiError(err);
-      showToast.error(errorMessage || "Failed to initiate payment");
-    }
+    await initiatePayment({
+      eventId,
+      eventDate: event.eventDate,
+      eventTime: event.eventTime,
+      area: event.area,
+      city: event.city,
+      bookingFee: event.bookingFee,
+      maxAttendees: event.maxAttendees,
+    });
   };
 
   const hasError = !!error || (!isLoading && !event);
-  const dateStr = event?.eventDate.includes("T")
-    ? event.eventDate.split("T")[0]
+  const dateStr = event?.eventDate?.includes("T")
+    ? event?.eventDate?.split("T")[0]
     : event?.eventDate;
   const formattedDate = dateStr ? formatDate(dateStr) : "";
   const formattedTime = event?.eventTime;
@@ -175,7 +80,7 @@ export const EventDetailPage = () => {
     >
       <div className="flex-1 flex flex-col px-6 py-4 min-h-0 overflow-y-auto [&::-webkit-scrollbar]:hidden [scrollbar-width:none]">
         <div className="mb-6 text-center flex-shrink-0">
-          <h1 className="text-[28px] font-bold text-text-primary font-serif mb-2">
+          <h1 className="text-[28px] font-bold text-text-primary font-serif mb-2 leading-tight">
             Let's book your{" "}
             <span className="text-primary font-serif italic">DINNER!</span>
           </h1>
@@ -189,90 +94,25 @@ export const EventDetailPage = () => {
               </p>
             </div>
           </div>
-        ) : (
+        ) : isLoading ? (
           <div className="bg-background-secondary rounded-2xl p-4 mb-4 relative z-10 overflow-hidden">
-            {isLoading ? (
-              <EventDetailCardSkeleton />
-            ) : (
-              <>
-                <div className="relative flex flex-col gap-4">
-                  <div className="pr-24">
-                    <h2 className="text-sm font-bold text-text-primary mb-1">
-                      To be revealed
-                    </h2>
-                    <p className="text-text-secondary text-base">
-                      {event?.maxAttendees} guests
-                    </p>
-                  </div>
-
-                  <div>
-                    <p className="text-text-secondary text-sm mb-1">
-                      Date & Time
-                    </p>
-                    <p className="text-text-primary text-base font-semibold">
-                      {formattedDate} | {formattedTime}
-                    </p>
-                  </div>
-
-                  <div>
-                    <p className="text-text-secondary text-sm mb-1">Location</p>
-                    <div className="flex items-center justify-between">
-                      <p className="text-text-primary text-base font-semibold">
-                        {event?.area}, {event?.city}
-                      </p>
-                      <MapPin
-                        className="w-6 h-6 text-text-primary"
-                        strokeWidth={2}
-                      />
-                    </div>
-                  </div>
-
-                  <div className="my-1">
-                    <svg
-                      width="100%"
-                      height="2"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <line
-                        x1="0"
-                        y1="1"
-                        x2="100%"
-                        y2="1"
-                        stroke="#2C2C2C"
-                        strokeWidth="1"
-                        strokeDasharray="8 6"
-                      />
-                    </svg>
-                  </div>
-
-                  <div className="flex items-center justify-between">
-                    <div className="px-4 py-2 bg-primary/20 text-primary rounded-xl text-lg font-bold">
-                      Rs {event?.bookingFee}
-                    </div>
-                    <button
-                      onClick={() => navigate(`/events/${eventId}/guidelines`)}
-                      className="text-text-primary text-base font-medium active:opacity-70 transition-opacity flex items-center gap-1"
-                    >
-                      Guidelines{" "}
-                      <ChevronRight className="w-5 h-5" strokeWidth={2} />
-                    </button>
-                  </div>
-                </div>
-
-                {event && (
-                  <div className="absolute top-6 right-6 w-[2.8rem] h-[2.8rem] rounded-2xl overflow-hidden">
-                    <ImageWithPlaceholder
-                      src={getLandmarkImage(
-                        event.city.toLowerCase().replace(/\s+/g, "-")
-                      )}
-                      alt={event.city}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                )}
-              </>
-            )}
+            <EventDetailCardSkeleton />
           </div>
+        ) : (
+          event && (
+            <EventDetailCard
+              maxAttendees={event.maxAttendees}
+              formattedDate={formattedDate}
+              formattedTime={formattedTime || ""}
+              area={event.area}
+              city={event.city}
+              bookingFee={event.bookingFee}
+              showBookedButton={false}
+              onGuidelinesClick={() =>
+                navigate(`/events/${eventId}/guidelines`)
+              }
+            />
+          )
         )}
       </div>
 
@@ -298,7 +138,7 @@ export const EventDetailPage = () => {
           variant="primary"
           className="flex-1"
           disabled={isLoading || hasError || isProcessingPayment}
-          isLoading={isProcessingPayment || createOrderMutation.isPending}
+          isLoading={isProcessingPayment || isCreatingOrder}
         >
           Pay amount
         </Button>

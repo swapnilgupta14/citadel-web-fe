@@ -11,6 +11,7 @@ const cityImages: Record<string, string> = {
 };
 
 export const getLandmarkImage = (cityIdOrName: string): string => {
+  if (!cityIdOrName) return "";
   const normalized = cityIdOrName.toLowerCase().trim();
   return cityImages[normalized] || `/landmarks/${normalized}.jpg`;
 };
@@ -49,6 +50,7 @@ export const formatDate = (dateString: string): string => {
 };
 
 export const formatTime = (timeString: string): string => {
+  if (!timeString) return "";
   const [hours, minutes] = timeString.split(":");
   const hour = parseInt(hours);
   const ampm = hour >= 12 ? "PM" : "AM";

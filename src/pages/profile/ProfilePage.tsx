@@ -7,11 +7,10 @@ import {
   Trash2,
   Plus,
   Image as ImageIcon,
-  Loader2,
   type LucideIcon,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { useState, useRef, lazy, Suspense } from "react";
+import { useState, useRef, lazy, Suspense, useEffect } from "react";
 import { auth } from "../../lib/storage/auth";
 import { showToast } from "../../lib/helpers/toast";
 import {
@@ -46,7 +45,7 @@ const ALLOWED_FILE_TYPES = [
 
 export const ProfilePage = () => {
   const navigate = useNavigate();
-  const { data: profileResponse, isLoading } = useProfile();
+  const { data: profileResponse, isLoading, isFetching } = useProfile();
   const profile = profileResponse?.data;
   const uploadImageMutation = useUploadProfileImage();
   const deleteImageMutation = useDeleteProfileImage();
@@ -55,7 +54,26 @@ export const ProfilePage = () => {
     "logout" | "delete-account" | null
   >(null);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
+  const [isRefetchingAfterMutation, setIsRefetchingAfterMutation] =
+    useState(false);
+  const [mutationAction, setMutationAction] = useState<
+    "upload" | "delete" | null
+  >(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (!isFetching && isRefetchingAfterMutation) {
+      setIsRefetchingAfterMutation(false);
+      
+      if (mutationAction === "upload") {
+        showToast.success("Profile photo uploaded successfully");
+      } else if (mutationAction === "delete") {
+        showToast.success("Profile photo deleted successfully");
+      }
+      
+      setMutationAction(null);
+    }
+  }, [isFetching, isRefetchingAfterMutation, mutationAction]);
 
   const handleLogoutClick = () => {
     setConfirmationModal("logout");
@@ -116,11 +134,14 @@ export const ProfilePage = () => {
     }
 
     setPreviewImage(null);
+    setIsRefetchingAfterMutation(true);
+    setMutationAction("delete");
 
     try {
       await deleteImageMutation.mutateAsync({ slot: 0 });
-      showToast.success("Profile photo deleted successfully");
     } catch (error) {
+      setIsRefetchingAfterMutation(false);
+      setMutationAction(null);
       showToast.error(
         error instanceof Error
           ? error.message
@@ -165,10 +186,13 @@ export const ProfilePage = () => {
       const response = await uploadImageMutation.mutateAsync({ file, slot: 0 });
       if (response.data?.cloudfrontUrl) {
         setPreviewImage(null);
+        setIsRefetchingAfterMutation(true);
+        setMutationAction("upload");
       }
-      showToast.success("Profile photo uploaded successfully");
     } catch (error) {
       setPreviewImage(null);
+      setIsRefetchingAfterMutation(false);
+      setMutationAction(null);
       showToast.error(
         error instanceof Error
           ? error.message
@@ -222,13 +246,14 @@ export const ProfilePage = () => {
   ];
 
   const generateUserCode = (name: string, id: string): string => {
-    const initials = name
-      .split(" ")
-      .map((n) => n[0])
-      .join("")
-      .toUpperCase()
-      .slice(0, 2);
-    const code = id.slice(-4);
+    const initials =
+      name
+        ?.split(" ")
+        .map((n) => n[0])
+        .join("")
+        .toUpperCase()
+        .slice(0, 2) || "US";
+    const code = id?.slice(-4) || "0000";
     return `#${initials}${code}`;
   };
 
@@ -240,8 +265,8 @@ export const ProfilePage = () => {
     : `#${userId.slice(-4)}`;
 
   return (
-    <div className="flex h-full flex-col bg-background min-h-0 justify-around">
-      <div className="h-[18.625rem] flex-shrink-0 flex flex-col items-center justify-center py-6">
+    <div className="flex h-full flex-col bg-background min-h-0">
+      <div className="min-h-[18.65rem] flex-1 flex flex-col items-center justify-center py-6">
         {isLoading ? (
           <ProfileSkeleton />
         ) : (
@@ -249,7 +274,9 @@ export const ProfilePage = () => {
             <button
               onClick={handlePhotoClick}
               disabled={
-                uploadImageMutation.isPending || deleteImageMutation.isPending
+                uploadImageMutation.isPending ||
+                deleteImageMutation.isPending ||
+                isRefetchingAfterMutation
               }
               className={`relative w-[130px] h-[130px] rounded-[5px] bg-background-secondary flex items-center justify-center mb-6 active:scale-95 transition-transform overflow-hidden disabled:opacity-50 disabled:cursor-not-allowed ${
                 !profileImage ? "border-2 border-dashed border-white" : ""
@@ -259,11 +286,20 @@ export const ProfilePage = () => {
               }
             >
               {uploadImageMutation.isPending ||
-              deleteImageMutation.isPending ? (
-                <Loader2
-                  className="w-12 h-12 text-primary animate-spin"
-                  strokeWidth={2}
-                />
+              deleteImageMutation.isPending ||
+              isRefetchingAfterMutation ? (
+                <div className="w-full h-full bg-background-secondary relative overflow-hidden">
+                  <div className="absolute inset-0 bg-gradient-to-r from-background-secondary via-background-tertiary to-background-secondary animate-shimmer bg-[length:200%_100%]" />
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <svg
+                      className="w-16 h-16 text-white/20"
+                      fill="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+                    </svg>
+                  </div>
+                </div>
               ) : profileImage ? (
                 <ImageWithPlaceholder
                   src={profileImage}
@@ -279,11 +315,6 @@ export const ProfilePage = () => {
               {displayName}
             </h1>
             <p className="text-lg text-primary font-semibold">{userCode}</p>
-            {profile?.university && (
-              <p className="text-sm text-text-secondary mt-1">
-                {profile.university.name}
-              </p>
-            )}
           </>
         )}
       </div>
@@ -348,8 +379,8 @@ export const ProfilePage = () => {
         )}
       </Suspense>
 
-      <div className="flex-1 min-h-0 flex flex-col">
-        <div className="flex flex-col mt-auto overflow-y-auto scrollbar-hide">
+      <div className="flex-1 min-h-0 overflow-y-auto scrollbar-hide">
+        <div className="flex flex-col">
           {profileMenuItems.map((item, index) => {
             const Icon = item.icon;
             const textColor = item.isDanger

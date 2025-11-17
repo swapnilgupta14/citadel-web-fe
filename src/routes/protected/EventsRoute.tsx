@@ -6,7 +6,6 @@ export const EventsRoute = () => {
   const navigate = useNavigate();
   const {
     selectedCity,
-    hasCompletedSetup,
     startBookingFlow,
     resetBookingFlow,
   } = useProtectedLayout();
@@ -19,7 +18,6 @@ export const EventsRoute = () => {
       }}
       onStartBookingFlow={startBookingFlow}
       selectedCity={selectedCity}
-      hasCompletedSetup={hasCompletedSetup}
     />
   );
 };

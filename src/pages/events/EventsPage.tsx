@@ -15,7 +15,6 @@ interface EventsPageProps {
   onOpenLocation: () => void;
   onStartBookingFlow?: (slotId: string) => void;
   selectedCity?: City;
-  hasCompletedSetup?: boolean;
 }
 
 const defaultCity: City = {
@@ -113,7 +112,6 @@ export const EventsPage = ({
             <h2 className="text-white text-3xl font-bold text-center font-serif pb-1">
               {currentCity.name}
             </h2>
-            {/* {hasCompletedSetup && selectedCity ? ( */}
             <button
               onClick={onOpenLocation}
               className="flex items-center gap-1 text-white text-sm active:opacity-70 transition-opacity"
@@ -121,14 +119,6 @@ export const EventsPage = ({
               <span className="underline text-[15px]">Change location</span>
               <RefreshCw className="w-4 h-4" strokeWidth={2} />
             </button>
-            {/* ) : (
-              <button
-                onClick={onOpenLocation}
-                className="flex items-center gap-1 text-white text-sm active:opacity-70 transition-opacity"
-              >
-                <span className="underline text-[15px]">Please select the location</span>
-              </button>
-            )} */}
           </div>
         </div>
       </div>

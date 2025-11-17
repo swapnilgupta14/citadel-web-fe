@@ -173,17 +173,17 @@ export const SplashSequence = ({ onComplete }: SplashSequenceProps) => {
                   >
                     <div
                       className={cn(
-                        "flex items-center max-w-[75%] px-4 py-2.5 rounded-2xl text-text-primary border border-[#2C2C2C]",
+                        "flex items-center max-w-[75%] px-4 py-2 rounded-2xl text-text-primary border border-[#2C2C2C]",
                         message.isRight ? "rounded-r-none" : "rounded-l-none"
                       )}
                       style={{
                         backgroundColor: message.isRight
                           ? "#1A1A1A"
                           : "#111111",
-                        height: "4rem",
+                        height: "3rem",
                       }}
                     >
-                      <p className={cn("text-lg font-medium leading-normal")}>
+                      <p className={cn("text-md font-medium leading-normal")}>
                         {message.text}
                       </p>
                     </div>

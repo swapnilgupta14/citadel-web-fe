@@ -25,8 +25,10 @@ export const CITIES: City[] = [
 ];
 
 export const AREAS_BY_CITY: Record<string, string[]> = {
-  "new-delhi": ["CP", "Gurgaon", "South Delhi", "Hauz Khas", "Saket", "Vasant Kunj"],
-  "New Delhi": ["CP", "Gurgaon", "South Delhi", "Hauz Khas", "Saket", "Vasant Kunj"],
+  "new-delhi": ["Connaught Place", "Gurgaon"],
+  "New Delhi": ["Connaught Place", "Gurgaon"],
+  // "new-delhi": ["CP", "Gurgaon", "South Delhi", "Hauz Khas", "Saket", "Vasant Kunj"],
+  // "New Delhi": ["CP", "Gurgaon", "South Delhi", "Hauz Khas", "Saket", "Vasant Kunj"],
   "bangalore": ["Indiranagar", "Koramangala", "Whitefield", "HSR Layout", "MG Road"],
   "Bangalore": ["Indiranagar", "Koramangala", "Whitefield", "HSR Layout", "MG Road"],
   "mumbai": ["Bandra", "Andheri", "Powai", "Lower Parel", "Colaba"],

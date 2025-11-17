@@ -22,8 +22,8 @@ const isMultiSelectQuestion = (question: {
   category: string;
   question: string;
 }): boolean => {
-  const lowerCategory = question.category.toLowerCase();
-  const lowerQuestion = question.question.toLowerCase();
+  const lowerCategory = question.category?.toLowerCase() || "";
+  const lowerQuestion = question.question?.toLowerCase() || "";
 
   if (
     lowerCategory.includes("language") ||

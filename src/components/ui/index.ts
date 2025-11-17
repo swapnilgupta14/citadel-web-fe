@@ -3,6 +3,7 @@ export { Button } from "./Button";
 export { BouncingDotsLoader } from "./BouncingDotsLoader";
 export { BottomSheet } from "./BottomSheet";
 export { ImagePlaceholder, ImageGrid, ImageWithPlaceholder } from "./image";
+export { EventDetailCard } from "./EventDetailCard";
 
 export {
     Skeleton,

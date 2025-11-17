@@ -1,10 +1,9 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { ChevronLeft, MapPin, Star } from "lucide-react";
+import { ChevronLeft } from "lucide-react";
 import { motion } from "framer-motion";
-import { ImageWithPlaceholder } from "../../components/ui";
+import { EventDetailCard } from "../../components/ui";
 import { formatDate, formatTime } from "../../lib/helpers/eventUtils";
-import { getLandmarkImage } from "../../lib/helpers/eventUtils";
 import { useBookings } from "../../hooks/queries";
 import { EventDetailCardSkeleton } from "../../components/skeleton";
 
@@ -122,8 +121,8 @@ export const EventBookingsPage = () => {
         ) : (
           <div className="space-y-4">
             {bookings.map((booking) => {
-              const dateStr = booking.eventDate.includes("T")
-                ? booking.eventDate.split("T")[0]
+              const dateStr = booking.eventDate?.includes("T")
+                ? booking.eventDate?.split("T")[0]
                 : booking.eventDate;
               const formattedDate = dateStr ? formatDate(dateStr) : "";
               const formattedTime = booking.eventTime
@@ -131,127 +130,30 @@ export const EventBookingsPage = () => {
                 : "";
               const currentRating = getRating(booking.bookingId);
               const venueName = booking.venue || "To be revealed";
+              const paymentSubtitle =
+                booking.paymentAmount > 0
+                  ? `Rs ${booking.paymentAmount}`
+                  : "Free";
 
               return (
-                <div
+                <EventDetailCard
                   key={booking.bookingId}
-                  className="bg-background-secondary rounded-2xl p-4 relative overflow-hidden"
-                >
-                  <div className="relative flex flex-col gap-4">
-                    <div className="pr-24">
-                      <h2 className="text-base font-bold text-text-primary mb-1">
-                        {venueName}
-                      </h2>
-                      <p className="text-text-secondary text-base">
-                        {booking.paymentAmount > 0
-                          ? `Rs ${booking.paymentAmount}`
-                          : "Free"}
-                      </p>
-                    </div>
-
-                    <div>
-                      <p className="text-text-secondary text-sm mb-1">
-                        Date & Time
-                      </p>
-                      <p className="text-text-primary text-base font-semibold">
-                        {formattedDate} | {formattedTime}
-                      </p>
-                    </div>
-
-                    <div>
-                      <p className="text-text-secondary text-sm mb-1">
-                        Location
-                      </p>
-                      <div className="flex items-center justify-between">
-                        <p className="text-text-primary text-base font-semibold">
-                          {booking.area}, {booking.city}
-                        </p>
-                        <MapPin
-                          className="w-6 h-6 text-text-primary"
-                          strokeWidth={2}
-                        />
-                      </div>
-                    </div>
-
-                    {activeTab === "past" && (
-                      <div className="flex justify-between">
-                        <p className="text-text-secondary text-sm mb-2">
-                          Tell us{" "}
-                          <div className="text-text-primary font-semibold">
-                            Your experience
-                          </div>
-                        </p>
-                        <div className="flex items-center gap-1">
-                          {[1, 2, 3, 4, 5].map((star) => (
-                            <button
-                              key={star}
-                              onClick={() =>
-                                handleRatingClick(booking.bookingId, star)
-                              }
-                              className="active:scale-95 transition-transform"
-                              aria-label={`Rate ${star} stars`}
-                            >
-                              <Star
-                                className={`w-5 h-5 ${
-                                  star <= currentRating
-                                    ? "fill-white text-white"
-                                    : "text-text-secondary"
-                                }`}
-                                strokeWidth={2}
-                              />
-                            </button>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-
-                    <div className="my-1">
-                      <svg
-                        width="100%"
-                        height="2"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <line
-                          x1="0"
-                          y1="1"
-                          x2="100%"
-                          y2="1"
-                          stroke="#2C2C2C"
-                          strokeWidth="1"
-                          strokeDasharray="8 6"
-                        />
-                      </svg>
-                    </div>
-
-                    <div className="flex items-center justify-between">
-                      <button
-                        disabled
-                        className="px-4 py-2 bg-primary text-background rounded-xl text-base font-semibold cursor-not-allowed opacity-70"
-                      >
-                        Booked
-                      </button>
-                      <button
-                        onClick={() =>
-                          navigate(`/events/${booking.eventId}/guidelines`)
-                        }
-                        className="text-text-primary text-base font-medium active:opacity-70 transition-opacity flex items-center gap-1"
-                      >
-                        Guidelines{" "}
-                        <span className="text-base font-semibold">&gt;</span>
-                      </button>
-                    </div>
-                  </div>
-
-                  <div className="absolute top-6 right-6 w-[2.8rem] h-[2.8rem] rounded-2xl overflow-hidden">
-                    <ImageWithPlaceholder
-                      src={getLandmarkImage(
-                        booking.city.toLowerCase().replace(/\s+/g, "-")
-                      )}
-                      alt={booking.city}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                </div>
+                  title={venueName}
+                  subtitle={paymentSubtitle}
+                  formattedDate={formattedDate}
+                  formattedTime={formattedTime}
+                  area={booking.area}
+                  city={booking.city}
+                  showRating={activeTab === "past"}
+                  rating={currentRating}
+                  onRatingChange={(rating) =>
+                    handleRatingClick(booking.bookingId, rating)
+                  }
+                  showBookedButton={true}
+                  onGuidelinesClick={() =>
+                    navigate(`/events/${booking.eventId}/guidelines`)
+                  }
+                />
               );
             })}
           </div>

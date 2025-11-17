@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import type { City } from "../../types/events";
 import {
   getInitialCity,
@@ -17,9 +17,8 @@ import {
 
 export const useCitySelection = () => {
   const location = useLocation();
-  const navigate = useNavigate();
 
-  const shouldFetchPreferences = 
+  const shouldFetchPreferences =
     location.pathname === "/events" ||
     location.pathname === "/location" ||
     location.pathname === "/area-selection" ||
@@ -33,7 +32,6 @@ export const useCitySelection = () => {
   const savedPreferences = preferencesData?.data?.preferences;
 
   const selectedCityRef = useRef<City | undefined>(getInitialCity());
-  const hasLocationOpenedRef = useRef<boolean>(false);
 
   const [selectedCity, setSelectedCity] = useState<City | undefined>(
     selectedCityRef.current
@@ -42,7 +40,7 @@ export const useCitySelection = () => {
 
   useEffect(() => {
     const persistedCity = navigationPersistence.getSelectedCity();
-    
+
     if (!persistedCity) {
       navigationPersistence.saveSelectedCity(defaultCity);
       setSelectedCity(defaultCity);
@@ -69,18 +67,6 @@ export const useCitySelection = () => {
       }
     }
   }, [preferencesData]);
-
-  useEffect(() => {
-    if (
-      preferencesData &&
-      !hasCompletedSetup &&
-      !hasLocationOpenedRef.current &&
-      location.pathname === "/events"
-    ) {
-      hasLocationOpenedRef.current = true;
-      navigate("/location");
-    }
-  }, [preferencesData, hasCompletedSetup, location.pathname, navigate]);
 
   useEffect(() => {
     if (

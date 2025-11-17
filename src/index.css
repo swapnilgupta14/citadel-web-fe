@@ -71,6 +71,60 @@
   input:-webkit-autofill::first-line {
     -webkit-text-fill-color: rgba(255, 255, 255, 0.7) !important;
   }
+
+  /* Constrain Razorpay modal to mobile frame on desktop */
+  @media (min-width: 768px) {
+    /* Test mode banner - ensure it's visible and above everything */
+    body > .razorpay-test-banner,
+    body > div[class*="test-mode"],
+    body > div[class*="testmode"] {
+      position: fixed !important;
+      top: 0 !important;
+      left: 50% !important;
+      transform: translateX(-50%) !important;
+      width: 393px !important;
+      z-index: 10000 !important;
+    }
+
+    /* Target Razorpay container - only when it exists */
+    body > .razorpay-container,
+    body > div[id^="razorpay-container"] {
+      position: fixed !important;
+      left: 50% !important;
+      top: 50% !important;
+      transform: translate(-50%, -50%) !important;
+      width: 393px !important;
+      height: 100dvh !important;
+      max-width: 393px !important;
+      z-index: 9999 !important;
+    }
+
+    /* Target Razorpay iframe - only direct body children */
+    body > iframe[name^="razorpay"],
+    body > iframe[src*="razorpay"] {
+      position: fixed !important;
+      left: 50% !important;
+      top: 50% !important;
+      transform: translate(-50%, -50%) !important;
+      width: 393px !important;
+      height: 100dvh !important;
+      max-width: 393px !important;
+      border-radius: 0 !important;
+    }
+
+    /* Ensure backdrop covers full screen but only target Razorpay's backdrop */
+    body > .razorpay-backdrop {
+      position: fixed !important;
+      inset: 0 !important;
+      width: 100vw !important;
+      height: 100vh !important;
+      background: rgba(0, 0, 0, 0.7) !important;
+      z-index: 9998 !important;
+      left: 0 !important;
+      top: 0 !important;
+      transform: none !important;
+    }
+  }
 }
 
 @layer utilities {

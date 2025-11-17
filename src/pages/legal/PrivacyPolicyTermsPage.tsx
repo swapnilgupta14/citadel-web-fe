@@ -171,6 +171,9 @@ export const PrivacyPolicyTermsPage = () => {
     );
   };
 
+  const headerTitle =
+    activeTab === "privacy" ? "Privacy policy" : "Terms and conditions";
+
   return (
     <div className="flex h-full flex-col bg-background">
       <div className="flex items-center gap-4 px-2 py-4 flex-shrink-0">
@@ -182,7 +185,7 @@ export const PrivacyPolicyTermsPage = () => {
           <ChevronLeft className="w-6 h-6 text-text-primary" strokeWidth={2} />
         </button>
         <h1 className="text-2xl font-semibold text-text-primary font-serif flex-1 truncate">
-          Privacy policy and T&C
+          {headerTitle}
         </h1>
       </div>
 
