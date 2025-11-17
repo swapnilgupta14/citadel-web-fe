@@ -64,13 +64,13 @@ export const ProfilePage = () => {
   useEffect(() => {
     if (!isFetching && isRefetchingAfterMutation) {
       setIsRefetchingAfterMutation(false);
-      
+
       if (mutationAction === "upload") {
         showToast.success("Profile photo uploaded successfully");
       } else if (mutationAction === "delete") {
         showToast.success("Profile photo deleted successfully");
       }
-      
+
       setMutationAction(null);
     }
   }, [isFetching, isRefetchingAfterMutation, mutationAction]);
@@ -245,24 +245,10 @@ export const ProfilePage = () => {
     },
   ];
 
-  const generateUserCode = (name: string, id: string): string => {
-    const initials =
-      name
-        ?.split(" ")
-        .map((n) => n[0])
-        .join("")
-        .toUpperCase()
-        .slice(0, 2) || "US";
-    const code = id?.slice(-4) || "0000";
-    return `#${initials}${code}`;
-  };
-
   const userData = auth.getUserData();
-  const displayName = profile?.name || "User";
+  const displayName = profile?.name || profile?.username || "User";
   const userId = profile?.id || userData?.id || "0";
-  const userCode = profile
-    ? generateUserCode(profile.name, profile.id)
-    : `#${userId.slice(-4)}`;
+  const userCode = profile && `#${userId.slice(-4)}`;
 
   return (
     <div className="flex h-full flex-col bg-background min-h-0">
@@ -278,16 +264,15 @@ export const ProfilePage = () => {
                 deleteImageMutation.isPending ||
                 isRefetchingAfterMutation
               }
-              className={`relative w-[130px] h-[130px] rounded-[5px] bg-background-secondary flex items-center justify-center mb-6 active:scale-95 transition-transform overflow-hidden disabled:opacity-50 disabled:cursor-not-allowed ${
-                !profileImage ? "border-2 border-dashed border-white" : ""
-              }`}
+              className={`relative w-[130px] h-[130px] rounded-[5px] bg-background-secondary flex items-center justify-center mb-6 active:scale-95 transition-transform overflow-hidden disabled:opacity-50 disabled:cursor-not-allowed ${!profileImage ? "border-2 border-dashed border-white" : ""
+                }`}
               aria-label={
                 profileImage ? "Change profile photo" : "Upload profile photo"
               }
             >
               {uploadImageMutation.isPending ||
-              deleteImageMutation.isPending ||
-              isRefetchingAfterMutation ? (
+                deleteImageMutation.isPending ||
+                isRefetchingAfterMutation ? (
                 <div className="w-full h-full bg-background-secondary relative overflow-hidden">
                   <div className="absolute inset-0 bg-gradient-to-r from-background-secondary via-background-tertiary to-background-secondary animate-shimmer bg-[length:200%_100%]" />
                   <div className="absolute inset-0 flex items-center justify-center">
@@ -393,9 +378,8 @@ export const ProfilePage = () => {
               <button
                 key={item.id}
                 onClick={item.onClick}
-                className={`w-full flex items-center gap-4 p-4 bg-background-secondary active:scale-[0.98] transition-transform flex-shrink-0 ${
-                  !isLast ? "border-b border-border" : ""
-                }`}
+                className={`w-full flex items-center gap-4 p-4 bg-background-secondary active:scale-[0.98] transition-transform flex-shrink-0 ${!isLast ? "border-b border-border" : ""
+                  }`}
               >
                 <div className="w-11 h-11 rounded-xl bg-white/10 flex items-center justify-center flex-shrink-0">
                   <Icon className={`w-6 h-6 ${iconColor}`} strokeWidth={2} />
